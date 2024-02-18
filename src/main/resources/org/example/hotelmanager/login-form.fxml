@@ -24,7 +24,7 @@
                   <Font size="12.0" />
                </font>
             </Text>
-            <Button alignment="CENTER" contentDisplay="CENTER" layoutX="100.0" layoutY="370.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Create account" textAlignment="CENTER" AnchorPane.topAnchor="375.0" />
+            <Button alignment="CENTER" contentDisplay="CENTER" layoutX="100.0" layoutY="370.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#registerButtonClick" prefHeight="30.0" prefWidth="100.0" text="Create account" textAlignment="CENTER" AnchorPane.topAnchor="375.0" />
             <Text disable="true" layoutY="327.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Don't have account?&#10;Create one!" textAlignment="CENTER" wrappingWidth="300.0">
                <font>
                   <Font size="12.0" />
@@ -39,7 +39,7 @@
             <Label layoutX="50.01680511933639" layoutY="227.0" text="Password" AnchorPane.leftAnchor="50.0" />
             <TextField layoutX="50.01680511933639" layoutY="178.0" promptText="Login" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="178.0" />
             <PasswordField layoutX="50.01680511933639" layoutY="263.0" promptText="Password" AnchorPane.leftAnchor="50.0" />
-            <Button layoutX="174.0" layoutY="349.0" mnemonicParsing="false" text="Log In" AnchorPane.topAnchor="325.0" />
+            <Button fx:id="logibtn" layoutX="174.0" layoutY="349.0" mnemonicParsing="false" text="Log In" AnchorPane.topAnchor="325.0" />
             <Button layoutX="150.0" layoutY="399.0" mnemonicParsing="false" text="Cancel and Exit" AnchorPane.topAnchor="375.0" />
          </children>
          <opaqueInsets>
