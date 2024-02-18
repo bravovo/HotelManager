@@ -12,4 +12,6 @@ module org.example.hotelmanager {
 
     opens org.example.hotelmanager to javafx.fxml;
     exports org.example.hotelmanager;
+    exports org.example.hotelmanager.controllers;
+    opens org.example.hotelmanager.controllers to javafx.fxml;
 }
