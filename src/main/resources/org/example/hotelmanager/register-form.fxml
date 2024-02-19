@@ -19,12 +19,12 @@
             <content>
               <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="700.0">
                      <children>
-                        <Label layoutX="111.0" layoutY="134.0" text="Firstname" />
-                        <Label layoutX="111.0" layoutY="197.0" text="Lastname" />
-                        <TextField layoutX="111.0" layoutY="159.0" promptText="ex. John" />
-                        <TextField layoutX="111.0" layoutY="223.0" promptText="ex. Doe" />
-                        <Label layoutX="111.0" layoutY="258.0" text="Email" />
-                        <TextField layoutX="111.0" layoutY="284.0" promptText="ex. resident@gmail.com" />
+                        <Label layoutX="111.0" layoutY="134.0" text="Firstname" AnchorPane.leftAnchor="110.0" />
+                        <Label layoutX="111.0" layoutY="197.0" text="Lastname" AnchorPane.leftAnchor="110.0" />
+                        <TextField layoutX="111.0" layoutY="159.0" promptText="ex. John" AnchorPane.leftAnchor="110.0" />
+                        <TextField layoutX="111.0" layoutY="223.0" promptText="ex. Doe" AnchorPane.leftAnchor="110.0" />
+                        <Label layoutX="111.0" layoutY="258.0" text="Email" AnchorPane.leftAnchor="110.0" />
+                        <TextField layoutX="111.0" layoutY="284.0" promptText="ex. resident@gmail.com" AnchorPane.leftAnchor="110.0" />
                         <Label layoutX="418.0" layoutY="134.0" text="Password" />
                         <PasswordField fx:id="pass_field" layoutX="419.0" layoutY="159.0" />
                         <TextField fx:id="pass_text" layoutX="419.0" layoutY="159.0" visible="false" />
@@ -44,7 +44,23 @@
           </Tab>
           <Tab text="Administration">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="250.0" layoutY="56.0" text="Hotel name" AnchorPane.leftAnchor="250.0" />
+                        <Label layoutX="250.0" layoutY="107.0" text="Hotel email" AnchorPane.leftAnchor="250.0" />
+                        <TextField layoutX="250.0" layoutY="74.0" promptText="ex. Hotel California" AnchorPane.leftAnchor="250.0" />
+                        <TextField layoutX="250.0" layoutY="177.0" promptText="ex. california_admin" AnchorPane.leftAnchor="250.0" />
+                        <Label layoutX="250.0" layoutY="159.0" text="Administrator login" AnchorPane.leftAnchor="250.0" />
+                        <TextField layoutX="250.0" layoutY="125.0" promptText="ex. hotel@gmail.com" AnchorPane.leftAnchor="250.0" />
+                        <Label layoutX="251.0" layoutY="210.0" text="Administrator password" />
+                        <Button layoutX="285.0" layoutY="373.0" mnemonicParsing="false" onAction="#createHotelClick" text="Create hotel" />
+                        <PasswordField fx:id="pass_field_admin" layoutX="250.0" layoutY="228.0" AnchorPane.leftAnchor="250.0" />
+                        <TextField fx:id="admin_pass_text" layoutX="250.0" layoutY="228.0" visible="false" />
+                        <PasswordField fx:id="pass_field_confirm_admin" layoutX="250.0" layoutY="279.0" AnchorPane.leftAnchor="250.0" />
+                        <Label layoutX="250.0" layoutY="261.0" text="Confirm password" AnchorPane.leftAnchor="250.0" />
+                        <CheckBox fx:id="show_admin_pass" layoutX="249.0" layoutY="314.0" mnemonicParsing="false" onAction="#showAdminPasswordClick" text="Show password" AnchorPane.leftAnchor="250.0" />
+                        <Label fx:id="pass_match_label_admin" layoutX="200.0" layoutY="411.0" text="Passwords in password fields are not matching" textFill="RED" visible="false" />
+                     </children></AnchorPane>
             </content>
           </Tab>
         </tabs>
