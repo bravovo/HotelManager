@@ -27,7 +27,7 @@
                         <TextField layoutX="111.0" layoutY="284.0" promptText="ex. resident@gmail.com" AnchorPane.leftAnchor="110.0" />
                         <Label layoutX="418.0" layoutY="134.0" text="Password" />
                         <PasswordField fx:id="pass_field" layoutX="419.0" layoutY="159.0" />
-                        <TextField fx:id="pass_text" layoutX="419.0" layoutY="159.0" visible="false" />
+                        <TextField fx:id="pass_text" layoutX="419.0" layoutY="159.0" onMouseClicked="#editPass" visible="false" />
                         <CheckBox fx:id="show_pass_check" layoutX="420.0" layoutY="267.0" mnemonicParsing="false" onAction="#showPasswordClick" text="Show password" />
                         <Label layoutX="418.0" layoutY="197.0" text="Confirm Password" />
                         <PasswordField fx:id="pass_field_confirm" layoutX="419.0" layoutY="223.0" />
@@ -54,8 +54,8 @@
                         <TextField layoutX="250.0" layoutY="125.0" promptText="ex. hotel@gmail.com" AnchorPane.leftAnchor="250.0" />
                         <Label layoutX="251.0" layoutY="210.0" text="Administrator password" />
                         <Button layoutX="285.0" layoutY="373.0" mnemonicParsing="false" onAction="#createHotelClick" text="Create hotel" />
-                        <PasswordField fx:id="pass_field_admin" layoutX="250.0" layoutY="228.0" AnchorPane.leftAnchor="250.0" />
-                        <TextField fx:id="admin_pass_text" layoutX="250.0" layoutY="228.0" visible="false" />
+                        <PasswordField fx:id="admin_pass" layoutX="250.0" layoutY="228.0" AnchorPane.leftAnchor="250.0" />
+                        <TextField fx:id="admin_pass_text" layoutX="250.0" layoutY="228.0" onMouseClicked="#editAdminPass" visible="false" />
                         <PasswordField fx:id="pass_field_confirm_admin" layoutX="250.0" layoutY="279.0" AnchorPane.leftAnchor="250.0" />
                         <Label layoutX="250.0" layoutY="261.0" text="Confirm password" AnchorPane.leftAnchor="250.0" />
                         <CheckBox fx:id="show_admin_pass" layoutX="249.0" layoutY="314.0" mnemonicParsing="false" onAction="#showAdminPasswordClick" text="Show password" AnchorPane.leftAnchor="250.0" />
