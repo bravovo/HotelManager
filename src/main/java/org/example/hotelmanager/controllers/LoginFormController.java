@@ -20,4 +20,8 @@ public class LoginFormController {
         stage.setTitle("Create Account | Hotel Manager Studio");
         stage.show();
     }
+
+    public void cancelAndExit(ActionEvent event){
+        System.exit(0);
+    }
 }
