@@ -8,27 +8,42 @@ import com.mongodb.client.MongoDatabase;
 
 public class MongoDatabaseConnection {
 
-    public boolean createHotelObj(String hotelName, String address, String admin, String adminPass, int starsCount){
+    public Document createHotelObj(String hotelName, String address, String login, String adminPass){
         DataCredentials dataCredentials = new DataCredentials();
+        Document newHotel = new Document();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = database.getCollection("hotels");
             int count = (int)collection.countDocuments();
-            Document newHotel = new Document();
-            if(collection.find(new Document("address", address)).first() != null || collection.find(new Document("administrator", admin)).first() != null){
-                return false;
+            if(collection.find(new Document("address", address)).first() != null ||
+                    collection.find(new Document("login", login)).first() != null){
+                return null;
             }
             newHotel.append("id", count);
             newHotel.append("hotel_name", hotelName);
-            newHotel.append("administrator", admin);
+            newHotel.append("login", login);
             newHotel.append("password", adminPass);
             newHotel.append("address", address);
-            newHotel.append("stars", starsCount == 0 ? 2 : starsCount);
             collection.insertOne(newHotel);
-            return true;
+            return newHotel;
         } catch(Exception exception){
             exception.printStackTrace();
         }
-        return true;
+        return newHotel;
+    }
+
+    public boolean loginAcc(Document document){
+        DataCredentials dataCredentials = new DataCredentials();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
+            MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = database.getCollection("hotels");
+            if(collection.find(document).first() != null){
+                return true;
+            }
+//            return collection.find(document).first() != null;
+        } catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return false;
     }
 }

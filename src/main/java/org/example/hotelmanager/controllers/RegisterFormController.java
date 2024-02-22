@@ -59,6 +59,8 @@ public class RegisterFormController {
     @FXML
     private CheckBox show_pass_check;
 
+    private ManagerApplication managerApplication = new ManagerApplication();
+
     public void showPasswordClick(ActionEvent event){
         if(show_pass_check.isSelected()){
             pass_text.setText(pass_field.getText());
@@ -103,25 +105,25 @@ public class RegisterFormController {
 
     public void createAccountClick(ActionEvent event){
         if(!pass_field.getText().equals(pass_field_confirm.getText())){
-            pass_match_label.setText("Passwords in password fields are not matching");
+            pass_match_label.setText("Паролі у полях не збігаються");
             labelFading(pass_match_label);
-            //return;
+            //return; Прибрати коментар, далі буде код
         }
         else if(pass_field.getText().length() < 8){
-            pass_match_label.setText("Password must contain 8 or more characters");
+            pass_match_label.setText("Пароль повинен містити 8 або більше символів");
             labelFading(pass_match_label);
-            //return;
+            //return; Прибрати коментар, далі буде код
         }
     }
 
-    public void createHotelClick(ActionEvent event){
+    public void createHotelClick(ActionEvent event) throws IOException{
         if(!admin_pass.getText().equals(pass_field_confirm_admin.getText())){
-            pass_match_label_admin.setText("Passwords in password fields are not matching");
+            pass_match_label_admin.setText("Паролі у полях не збігаються");
             labelFading(pass_match_label_admin);
             return;
         }
         if(admin_pass.getText().length() < 8){
-            pass_match_label_admin.setText("Password must contain 8 or more characters");
+            pass_match_label_admin.setText("Пароль повинен містити 8 або більше символів");
             labelFading(pass_match_label_admin);
             return;
         }
@@ -130,12 +132,13 @@ public class RegisterFormController {
         String hotel_admin = adminLogin.getText();
         String hotel_pass = admin_pass.getText();
         MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
-        if(mongoDatabaseConnection.createHotelObj(hotel_name, hotel_address, hotel_admin, hotel_pass, 0)){
-            pass_match_label_admin.setText("Hotel was successfully created");
-            labelFading(pass_match_label_admin);
+        if(mongoDatabaseConnection.createHotelObj(hotel_name, hotel_address, hotel_admin, hotel_pass) != null){
+            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            managerApplication.openWindow(stage, "admin-form.fxml",
+                    "Версія для адміністратора | Система управління готелями", 1100, 750);
         }
         else{
-            pass_match_label_admin.setText("Hotel already exists in database");
+            pass_match_label_admin.setText("Такий готель вже існує"); // Додати причину повідомлення (існуючий логін чи адреса)
             labelFading(pass_match_label_admin);
         }
     }
@@ -148,11 +151,8 @@ public class RegisterFormController {
     }
 
     public void goBackClick(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource("login-form.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(fxmlLoader.load(), 700, 500);
-        stage.setScene(scene);
-        stage.setTitle("Hotel Manager Studio");
-        stage.show();
+        managerApplication.openWindow(stage, "login-form.fxml",
+                "Система управління готелями", 700, 500);
     }
 }
