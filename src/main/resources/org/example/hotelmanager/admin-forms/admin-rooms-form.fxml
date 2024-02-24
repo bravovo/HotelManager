@@ -8,15 +8,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="750.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.hotelmanager.controllers.admin.AdminRoomsFormController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="750.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.AdminRoomsFormController">
     <children>
         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
             <children>
                 <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Створити кімнату" />
-                <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Редагувати" />
-                <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Видалити кімнату" />
+                <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Сортувати" />
+                <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Статуси кімнат" />
                 <VBox alignment="CENTER" prefHeight="100.0" prefWidth="307.0" spacing="15.0">
                     <children>
                         <HBox alignment="CENTER" prefHeight="30.0" prefWidth="381.0" spacing="15.0">

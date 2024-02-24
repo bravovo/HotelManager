@@ -6,7 +6,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.bson.Document;
-import org.example.hotelmanager.ManagerApplication;
+import org.example.hotelmanager.FormBuilder;
+
 import java.io.IOException;
 import javafx.scene.control.*;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
@@ -23,11 +24,11 @@ public class LoginFormController {
     private Stage stage = new Stage();
     private Scene scene;
 
-    private ManagerApplication managerApplication = new ManagerApplication();
+    private FormBuilder formBuilder = new FormBuilder();
 
     public void registerButtonClick(ActionEvent event) throws IOException{
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        managerApplication.openWindow(stage, "register-form.fxml",
+        formBuilder.openWindow(stage, "register-form.fxml",
                 "Створити акаунт | Система управління готелями", 700, 500);
     }
 
@@ -36,8 +37,9 @@ public class LoginFormController {
         MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
         if(mongoDatabaseConnection.loginAcc(loginDoc)){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            managerApplication.openWindow(stage, "admin-form.fxml",
+            formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                     "Версія для адміністратора | Система управління готелями", 1100, 750);
+            //formBuilder.openDialog();
         }
         else{
             return;

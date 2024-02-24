@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" spacing="30.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.AfterRegisterFormController">
+   <padding>
+      <Insets top="40.0" />
+   </padding>
+   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Завершіть реєстрацію" />
+   <VBox>
+      <VBox alignment="CENTER_LEFT" prefHeight="69.0" prefWidth="400.0" spacing="10.0">
+         <padding>
+            <Insets left="40.0" right="40.0" />
+         </padding>
+         <Label text="Введіть електронну адресу готелю" />
+         <TextField fx:id="email_field" prefHeight="26.0" prefWidth="191.0" promptText="Електронна адреса вашого готелю" />
+      </VBox>
+      <VBox alignment="CENTER_LEFT" prefHeight="69.0" prefWidth="400.0" spacing="10.0">
+         <padding>
+            <Insets left="40.0" right="40.0" />
+         </padding>
+         <Label text="Кількість кімнат" />
+         <TextField fx:id="rooms_count_field" prefHeight="26.0" prefWidth="191.0" promptText="Максимальне значення: 25" />
+      </VBox>
+      <VBox fx:id="stars_vbox" alignment="CENTER_LEFT" prefHeight="69.0" prefWidth="400.0" spacing="10.0">
+         <padding>
+            <Insets left="40.0" right="40.0" />
+         </padding>
+         <Label text="Кількість зірок готелю" />
+         <ChoiceBox fx:id="starts_count_field" prefWidth="75.0" />
+      </VBox>
+   </VBox>
+   <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
+      <Button fx:id="ok_btn" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Ок" />
+      <Button fx:id="later_btn" mnemonicParsing="false" onAction="#laterButtonCLick" prefHeight="30.0" prefWidth="100.0" text="Пізніше" />
+   </HBox>
+</VBox>

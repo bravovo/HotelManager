@@ -3,14 +3,13 @@ package org.example.hotelmanager.controllers;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.example.hotelmanager.ManagerApplication;
+import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 
 import java.io.IOException;
@@ -59,7 +58,7 @@ public class RegisterFormController {
     @FXML
     private CheckBox show_pass_check;
 
-    private ManagerApplication managerApplication = new ManagerApplication();
+    private FormBuilder formBuilder = new FormBuilder();
 
     public void showPasswordClick(ActionEvent event){
         if(show_pass_check.isSelected()){
@@ -134,8 +133,9 @@ public class RegisterFormController {
         MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
         if(mongoDatabaseConnection.createHotelObj(hotel_name, hotel_address, hotel_admin, hotel_pass) != null){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            managerApplication.openWindow(stage, "admin-form.fxml",
+            formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                     "Версія для адміністратора | Система управління готелями", 1100, 750);
+            formBuilder.openDialog();
         }
         else{
             pass_match_label_admin.setText("Такий готель вже існує"); // Додати причину повідомлення (існуючий логін чи адреса)
@@ -152,7 +152,7 @@ public class RegisterFormController {
 
     public void goBackClick(ActionEvent event) throws IOException {
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        managerApplication.openWindow(stage, "login-form.fxml",
+        formBuilder.openWindow(stage, "login-form.fxml",
                 "Система управління готелями", 700, 500);
     }
 }
