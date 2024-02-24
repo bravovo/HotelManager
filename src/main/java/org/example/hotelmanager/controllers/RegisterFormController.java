@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
+import org.example.hotelmanager.objects.Hotel;
 
 import java.io.IOException;
 
@@ -131,10 +132,11 @@ public class RegisterFormController {
         String hotel_admin = adminLogin.getText();
         String hotel_pass = admin_pass.getText();
         MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
-        if(mongoDatabaseConnection.createHotelObj(hotel_name, hotel_address, hotel_admin, hotel_pass) != null){
+        Hotel registeredHotel = mongoDatabaseConnection.createHotelObj(hotel_name, hotel_address, hotel_admin, hotel_pass);
+        if(registeredHotel != null){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
-                    "Версія для адміністратора | Система управління готелями", 1100, 750);
+                    "Версія для адміністратора | Система управління готелями", 1100, 750, registeredHotel);
             formBuilder.openDialog();
         }
         else{

@@ -34,7 +34,7 @@
             <Insets left="40.0" right="40.0" />
          </padding>
          <Label text="Кількість зірок готелю" />
-         <ChoiceBox fx:id="starts_count_field" prefWidth="75.0" />
+         <ChoiceBox fx:id="stars_count_field" prefWidth="75.0" />
       </VBox>
    </VBox>
    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">

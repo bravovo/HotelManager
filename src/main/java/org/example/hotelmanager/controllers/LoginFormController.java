@@ -11,6 +11,7 @@ import org.example.hotelmanager.FormBuilder;
 import java.io.IOException;
 import javafx.scene.control.*;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
+import org.example.hotelmanager.objects.Hotel;
 
 public class LoginFormController {
     @FXML
@@ -32,14 +33,15 @@ public class LoginFormController {
                 "Створити акаунт | Система управління готелями", 700, 500);
     }
 
-    public void loginButtonClick(ActionEvent event) throws IOException{
+    public void loginButtonClick(ActionEvent event) throws IOException{ //TODO ПЕРЕВІРКА НА ТИП АКАУНТА (АДМІН/КЛІЄНТ)
         Document loginDoc = new Document("login", login_field.getText()).append("password", pass_field.getText());
         MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
-        if(mongoDatabaseConnection.loginAcc(loginDoc)){
+        Hotel hotel = mongoDatabaseConnection.loginAcc(loginDoc);
+        if(hotel != null){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
-                    "Версія для адміністратора | Система управління готелями", 1100, 750);
-            //formBuilder.openDialog();
+                    "Версія для адміністратора | Система управління готелями", 1100, 750, hotel);
+            formBuilder.openDialog();
         }
         else{
             return;

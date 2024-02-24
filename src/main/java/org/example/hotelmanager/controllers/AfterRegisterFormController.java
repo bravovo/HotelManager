@@ -22,14 +22,14 @@ public class AfterRegisterFormController implements Initializable {
     @FXML private Button ok_btn;
     @FXML private TextField rooms_count_field;
     @FXML private VBox stars_vbox;
-    @FXML private ChoiceBox<Integer> starts_count_field;
+    @FXML private ChoiceBox<Integer> stars_count_field;
 
     public void initialize(URL url, ResourceBundle resourceBundle){
         ObservableList<Integer> items = FXCollections.observableArrayList(
                 1, 2, 3, 4, 5
         );
-        ((ChoiceBox)starts_count_field).setItems(items);
-        starts_count_field.setValue(1);
+        ((ChoiceBox)stars_count_field).setItems(items);
+        stars_count_field.setValue(1);
     }
 
     public void laterButtonCLick(ActionEvent event){

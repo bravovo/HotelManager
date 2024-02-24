@@ -5,12 +5,14 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.example.hotelmanager.objects.Hotel;
 
 public class MongoDatabaseConnection {
 
-    public Document createHotelObj(String hotelName, String address, String login, String adminPass){
+    public Hotel createHotelObj(String hotelName, String address, String login, String adminPass){
         DataCredentials dataCredentials = new DataCredentials();
         Document newHotel = new Document();
+        Hotel hotel = new Hotel();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = database.getCollection("hotels");
@@ -19,31 +21,39 @@ public class MongoDatabaseConnection {
                     collection.find(new Document("login", login)).first() != null){
                 return null;
             }
-            newHotel.append("id", count);
+            newHotel.append("hotel_id", count);
             newHotel.append("hotel_name", hotelName);
             newHotel.append("login", login);
             newHotel.append("password", adminPass);
             newHotel.append("address", address);
             collection.insertOne(newHotel);
-            return newHotel;
+            hotel = new Hotel(count, hotelName, login, adminPass, address);
+            return hotel;
         } catch(Exception exception){
             exception.printStackTrace();
         }
-        return newHotel;
+        return hotel;
     }
 
-    public boolean loginAcc(Document document){
+    public Hotel loginAcc(Document document){
         DataCredentials dataCredentials = new DataCredentials();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = database.getCollection("hotels");
-            if(collection.find(document).first() != null){
-                return true;
+            Document foundDoc = collection.find(document).first();
+            if(foundDoc != null){
+                Hotel hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
+                foundDoc.getString("address"), foundDoc.getString("login"), foundDoc.getString("password"));
+                return hotel;
             }
 //            return collection.find(document).first() != null;
         } catch(Exception exception){
             exception.printStackTrace();
         }
-        return false;
+        return null;
+    }
+
+    public void createRoom(){
+
     }
 }
