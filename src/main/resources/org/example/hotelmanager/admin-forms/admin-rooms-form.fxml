@@ -12,7 +12,7 @@
     <children>
         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
             <children>
-                <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Створити кімнату" />
+                <Button fx:id="create_room_btn" mnemonicParsing="false" onAction="#createRoomClick" prefHeight="30.0" prefWidth="150.0" text="Створити кімнату" />
                 <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Сортувати" />
                 <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Статуси кімнат" />
                 <VBox alignment="CENTER" prefHeight="100.0" prefWidth="307.0" spacing="15.0">

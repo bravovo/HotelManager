@@ -40,12 +40,6 @@ public class Hotel {
     public String getAddress() {
         return address;
     }
-    public String getLogin() {
-        return login;
-    }
-    public String getPassword() {
-        return password;
-    }
     public String getEmail() {
         return email;
     }

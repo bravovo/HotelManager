@@ -38,12 +38,12 @@ public class FormBuilder {
         stage.show();
     }
 
-    public void openDialog(String source, String title) throws IOException{
+    public void openDialog(String source, String title, int v, int v1) throws IOException{
         fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.APPLICATION_MODAL);
-        dialogStage.setTitle(title); // ОБОВ'ЯЗКОВО ЗМІНИТИ ЗАГОЛОВОК
-        Scene dialogScene = new Scene(fxmlLoader.load(), 400, 400);
+        dialogStage.setTitle(title);
+        Scene dialogScene = new Scene(fxmlLoader.load(), v, v1);
         dialogStage.setScene(dialogScene);
         dialogStage.showAndWait();
     }
@@ -55,6 +55,7 @@ public class FormBuilder {
 
         errorLabel.setText(errorText);
         errorLabel.setAlignment(Pos.CENTER);
+
         okButton.setText("OK");
         okButton.setPrefWidth(70);
         okButton.setPrefHeight(30);
@@ -62,10 +63,12 @@ public class FormBuilder {
             Stage stage = (Stage) okButton.getScene().getWindow();
             stage.close();
         });
+
         vBox.getChildren().addAll(errorLabel, okButton);
         vBox.setSpacing(50);
         vBox.setPadding(new Insets(30));
         vBox.setAlignment(Pos.CENTER);
+
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.APPLICATION_MODAL);
         Scene scene = new Scene(vBox);

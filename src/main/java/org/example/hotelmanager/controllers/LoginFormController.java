@@ -43,7 +43,7 @@ public class LoginFormController {
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                     "Версія для адміністратора | Система управління готелями", 1100, 750, hotel);
             if(hotel.getEmail() == null){
-                formBuilder.openDialog("after-register-form.fxml", "Введення необіхдних даних");
+                formBuilder.openDialog("after-register-form.fxml", "Введення необіхдних даних", 400, 400);
             }
         }
         else{

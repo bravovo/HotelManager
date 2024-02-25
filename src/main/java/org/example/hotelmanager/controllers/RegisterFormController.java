@@ -139,7 +139,7 @@ public class RegisterFormController {
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                     "Версія для адміністратора | Система управління готелями", 1100, 750, registeredHotel);
-            formBuilder.openDialog("after-register-form.fxml", "Завершення реєстрації");
+            formBuilder.openDialog("after-register-form.fxml", "Завершення реєстрації", 400, 400);
         }
         else{
             formBuilder.errorValidation("Такий готель вже існує"); // Додати причину повідомлення (існуючий логін чи адреса)

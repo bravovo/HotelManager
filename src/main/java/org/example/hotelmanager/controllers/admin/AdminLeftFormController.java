@@ -11,13 +11,10 @@ import java.util.ResourceBundle;
 
 public class AdminLeftFormController implements Initializable {
     @FXML private Label hotel_label;
+    AdminFormController adminFormController = new AdminFormController();
     private Hotel hotel = new Hotel();
     public void initialize(URL url, ResourceBundle resourceBundle){
-        getHotel();
+        hotel = adminFormController.returnHotel();
         hotel_label.setText(hotel.getHotel_name());
-    }
-    public void getHotel(){
-        HotelHolder hotelHolder = HotelHolder.getInstance();
-        hotel = hotelHolder.getUser();
     }
 }

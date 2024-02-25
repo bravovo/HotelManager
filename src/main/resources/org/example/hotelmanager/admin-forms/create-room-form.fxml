@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.CreateRoomFormController">
+   <VBox alignment="CENTER_LEFT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="700.0" spacing="20.0">
+      <opaqueInsets>
+         <Insets />
+      </opaqueInsets>
+      <padding>
+         <Insets left="80.0" top="40.0" />
+      </padding>
+      <VBox>
+         <padding>
+            <Insets right="100.0" />
+         </padding>
+         <Label text="Тип кімнати" />
+         <ChoiceBox fx:id="type_choice" prefWidth="150.0" />
+      </VBox>
+      <VBox>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets right="100.0" />
+         </padding>
+         <Label text="Назва кімнати" />
+         <TextField fx:id="room_name" />
+      </VBox>
+      <VBox>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets right="100.0" />
+         </padding>
+         <Label text="Номер кімнати (Необов'язково)" />
+         <TextField fx:id="room_number" />
+      </VBox>
+      <VBox>
+         <padding>
+            <Insets right="100.0" />
+         </padding>
+         <Label text="Опис кімнати для гостей" />
+         <TextArea fx:id="room_description" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="100.0">
+            <VBox.margin>
+               <Insets />
+            </VBox.margin>
+         </TextArea>
+      </VBox>
+      <HBox alignment="CENTER_RIGHT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="620.0" spacing="40.0">
+         <padding>
+            <Insets right="100.0" />
+         </padding>
+         <Button fx:id="create_room_btn" mnemonicParsing="false" onAction="#createButtonClick" prefHeight="31.0" prefWidth="125.0" text="Створити кімнату" />
+         <Button fx:id="cancel_btn" mnemonicParsing="false" onAction="#cancelButtonClick" prefHeight="30.0" prefWidth="80.0" text="Скасувати" />
+      </HBox>
+   </VBox>
+</HBox>
