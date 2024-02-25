@@ -29,7 +29,6 @@ public class AfterRegisterFormController implements Initializable {
                 1, 2, 3, 4, 5
         );
         ((ChoiceBox)stars_count_field).setItems(items);
-        stars_count_field.setValue(1);
     }
 
     public void laterButtonCLick(ActionEvent event){

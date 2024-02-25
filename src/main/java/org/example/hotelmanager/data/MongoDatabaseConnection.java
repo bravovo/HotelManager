@@ -42,8 +42,17 @@ public class MongoDatabaseConnection {
             MongoCollection<Document> collection = database.getCollection("hotels");
             Document foundDoc = collection.find(document).first();
             if(foundDoc != null){
-                Hotel hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
-                foundDoc.getString("address"), foundDoc.getString("login"), foundDoc.getString("password"));
+                Hotel hotel;
+                if(foundDoc.containsKey("email") && foundDoc.containsKey("stars") && foundDoc.containsKey("rooms_count")){
+                    hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
+                            foundDoc.getString("address"), foundDoc.getString("login"),
+                            foundDoc.getString("password"), foundDoc.getString("email"),
+                            foundDoc.getInteger("stars"), foundDoc.getInteger("rooms_count"));
+                    return hotel;
+                }
+                hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
+                        foundDoc.getString("address"), foundDoc.getString("login"),
+                        foundDoc.getString("password"));
                 return hotel;
             }
 //            return collection.find(document).first() != null;

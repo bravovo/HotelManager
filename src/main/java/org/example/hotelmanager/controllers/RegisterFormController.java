@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.hotelmanager.FormBuilder;
@@ -105,26 +106,27 @@ public class RegisterFormController {
 
     public void createAccountClick(ActionEvent event){
         if(!pass_field.getText().equals(pass_field_confirm.getText())){
-            pass_match_label.setText("Паролі у полях не збігаються");
-            labelFading(pass_match_label);
+            formBuilder.errorValidation("Паролі у полях не збігаються");
             //return; Прибрати коментар, далі буде код
         }
         else if(pass_field.getText().length() < 8){
-            pass_match_label.setText("Пароль повинен містити 8 або більше символів");
-            labelFading(pass_match_label);
+            formBuilder.errorValidation("Пароль повинен містити 8 або більше символів");
             //return; Прибрати коментар, далі буде код
         }
     }
 
     public void createHotelClick(ActionEvent event) throws IOException{
+        if(hotelName.getText().length() == 0 || hotelAddress.getText().length() == 0 ||
+                adminLogin.getText().length() == 0){
+            formBuilder.errorValidation("Всі поля повинні бути заповнені");
+            return;
+        }
         if(!admin_pass.getText().equals(pass_field_confirm_admin.getText())){
-            pass_match_label_admin.setText("Паролі у полях не збігаються");
-            labelFading(pass_match_label_admin);
+            formBuilder.errorValidation("Паролі у полях не збігаються");
             return;
         }
         if(admin_pass.getText().length() < 8){
-            pass_match_label_admin.setText("Пароль повинен містити 8 або більше символів");
-            labelFading(pass_match_label_admin);
+            formBuilder.errorValidation("Пароль повинен містити 8 або більше символів");
             return;
         }
         String hotel_name = hotelName.getText();
@@ -137,24 +139,16 @@ public class RegisterFormController {
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                     "Версія для адміністратора | Система управління готелями", 1100, 750, registeredHotel);
-            formBuilder.openDialog();
+            formBuilder.openDialog("after-register-form.fxml", "Завершення реєстрації");
         }
         else{
-            pass_match_label_admin.setText("Такий готель вже існує"); // Додати причину повідомлення (існуючий логін чи адреса)
-            labelFading(pass_match_label_admin);
+            formBuilder.errorValidation("Такий готель вже існує"); // Додати причину повідомлення (існуючий логін чи адреса)
         }
     }
-    public void labelFading(Label label){
-        label.setVisible(true);
-        FadeTransition fadeOutTransition = new FadeTransition(Duration.millis(2500), pass_match_label_admin);
-        fadeOutTransition.setFromValue(1.0);
-        fadeOutTransition.setToValue(0.0);
-        fadeOutTransition.play();
-    }
-
     public void goBackClick(ActionEvent event) throws IOException {
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         formBuilder.openWindow(stage, "login-form.fxml",
                 "Система управління готелями", 700, 500);
     }
+
 }

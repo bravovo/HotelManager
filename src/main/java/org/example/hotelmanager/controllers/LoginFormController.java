@@ -39,12 +39,15 @@ public class LoginFormController {
         Hotel hotel = mongoDatabaseConnection.loginAcc(loginDoc);
         if(hotel != null){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            System.out.println(hotel.getAddress());
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                     "Версія для адміністратора | Система управління готелями", 1100, 750, hotel);
-            formBuilder.openDialog();
+            if(hotel.getEmail() == null){
+                formBuilder.openDialog("after-register-form.fxml", "Введення необіхдних даних");
+            }
         }
         else{
-            return;
+            formBuilder.errorValidation("Такого облікового запису не існує.\n\t\tСтворіть аккаунт");
         }
     }
 

@@ -1,7 +1,14 @@
 package org.example.hotelmanager;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.hotelmanager.objects.Hotel;
@@ -31,13 +38,39 @@ public class FormBuilder {
         stage.show();
     }
 
-    public void openDialog() throws IOException{
-        fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource("after-register-form.fxml"));
+    public void openDialog(String source, String title) throws IOException{
+        fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.APPLICATION_MODAL);
-        dialogStage.setTitle("Поки так"); // ОБОВ'ЯЗКОВО ЗМІНИТИ ЗАГОЛОВОК
+        dialogStage.setTitle(title); // ОБОВ'ЯЗКОВО ЗМІНИТИ ЗАГОЛОВОК
         Scene dialogScene = new Scene(fxmlLoader.load(), 400, 400);
         dialogStage.setScene(dialogScene);
         dialogStage.showAndWait();
+    }
+
+    public void errorValidation(String errorText){
+        VBox vBox = new VBox();
+        Label errorLabel = new Label();
+        Button okButton = new Button();
+
+        errorLabel.setText(errorText);
+        errorLabel.setAlignment(Pos.CENTER);
+        okButton.setText("OK");
+        okButton.setPrefWidth(70);
+        okButton.setPrefHeight(30);
+        okButton.setOnAction(e -> {
+            Stage stage = (Stage) okButton.getScene().getWindow();
+            stage.close();
+        });
+        vBox.getChildren().addAll(errorLabel, okButton);
+        vBox.setSpacing(50);
+        vBox.setPadding(new Insets(30));
+        vBox.setAlignment(Pos.CENTER);
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.APPLICATION_MODAL);
+        Scene scene = new Scene(vBox);
+        dialogStage.setScene(scene);
+        dialogStage.setTitle("Помилка");
+        dialogStage.show();
     }
 }
