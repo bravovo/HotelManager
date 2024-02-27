@@ -39,7 +39,6 @@ public class LoginFormController {
         Hotel hotel = mongoDatabaseConnection.loginAcc(loginDoc);
         if(hotel != null){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            System.out.println(hotel.getAddress());
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                     "Версія для адміністратора | Система управління готелями", 1100, 750, hotel);
             if(hotel.getEmail() == null){

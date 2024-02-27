@@ -1,12 +1,15 @@
 package org.example.hotelmanager.data;
 
 import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReturnDocument;
+import com.mongodb.client.model.Updates;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.bson.Document;
 import org.example.hotelmanager.objects.Hotel;
 import org.example.hotelmanager.objects.HotelHolder;
+import org.example.hotelmanager.objects.Room;
 
 import java.util.Collection;
 
@@ -100,9 +103,9 @@ public class MongoDatabaseConnection {
             room.append("hotel_id", hotel.getHotel_id());
             room.append("type_id", getRoomTypeId(typeName));
             room.append("type_name", typeName);
-            room.append("roomName", roomName);
+            room.append("room_name", roomName);
             room.append("description", roomDescription);
-            room.append("room_number", roomNumber); //getRoomNumber()
+            room.append("room_number", roomNumber + 1); //getRoomNumber()
             collection.insertOne(room);
         } catch(Exception exception){
             exception.printStackTrace();
@@ -137,5 +140,51 @@ public class MongoDatabaseConnection {
             exception.printStackTrace();
         }
         return docToFind.getInteger("type_id");
+    }
+
+    public void updateHotel(String email, int roomsCount, int starsCount) {
+        getHotel();
+        dataCredentials = new DataCredentials();
+        Document docToFind;
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
+            MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = database.getCollection("hotels");
+            docToFind = collection.find(new Document("hotel_id", hotel.getHotel_id())).first();
+            collection.updateOne(Filters.eq("hotel_id", docToFind.getInteger("hotel_id")),
+                    Updates.combine(
+                            Updates.set("email", email),
+                            Updates.set("stars", starsCount),
+                            Updates.set("rooms_count", roomsCount)
+                    )
+            );
+        } catch(Exception exception){
+            exception.printStackTrace();
+        }
+    }
+
+    public ObservableList<Room> getRooms() {
+        ObservableList<Room> list = FXCollections.observableArrayList();
+        int id = hotel.getHotel_id();
+        dataCredentials = new DataCredentials();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("rooms");
+            FindIterable<Document> documents = collection.find(new Document("hotel_id", id));
+            for(Document doc : documents){
+                Room room = new Room(
+                        doc.getInteger("room_id"),
+                        doc.getInteger("hotel_id"),
+                        doc.getInteger("type_id"),
+                        doc.getString("type_name"),
+                        doc.getString("room_name"),
+                        doc.getString("description"),
+                        doc.getInteger("room_number")
+                );
+                list.add(room);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return list;
     }
 }

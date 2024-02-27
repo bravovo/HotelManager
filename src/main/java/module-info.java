@@ -14,6 +14,7 @@ module org.example.hotelmanager {
     requires org.mongodb.driver.core;
 
     opens org.example.hotelmanager to javafx.fxml;
+    opens org.example.hotelmanager.objects to javafx.base;
     exports org.example.hotelmanager;
     exports org.example.hotelmanager.controllers;
     exports org.example.hotelmanager.controllers.admin;

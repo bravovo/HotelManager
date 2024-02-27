@@ -38,7 +38,7 @@
       </VBox>
    </VBox>
    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
-      <Button fx:id="ok_btn" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Ок" />
+      <Button fx:id="ok_btn" mnemonicParsing="false" onAction="#okButtonClick" prefHeight="30.0" prefWidth="100.0" text="Ок" />
       <Button fx:id="later_btn" mnemonicParsing="false" onAction="#laterButtonCLick" prefHeight="30.0" prefWidth="100.0" text="Пізніше" />
    </HBox>
 </VBox>

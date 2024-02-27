@@ -46,5 +46,7 @@ public class CreateRoomFormController implements Initializable {
     public void createButtonClick(ActionEvent event){
         mongoDatabaseConnection.createRoom(type_choice.getValue(), room_name.getText(),
                 room_description.getText());
+        Stage stage = (Stage) create_room_btn.getScene().getWindow();
+        stage.close();
     }
 }
