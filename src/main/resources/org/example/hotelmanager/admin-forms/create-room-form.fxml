@@ -35,16 +35,6 @@
          <TextField fx:id="room_name" />
       </VBox>
       <VBox>
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-         <padding>
-            <Insets right="100.0" />
-         </padding>
-         <Label text="Номер кімнати (Необов'язково)" />
-         <TextField fx:id="room_number" />
-      </VBox>
-      <VBox>
          <padding>
             <Insets right="100.0" />
          </padding>
@@ -55,7 +45,7 @@
             </VBox.margin>
          </TextArea>
       </VBox>
-      <HBox alignment="CENTER_RIGHT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="620.0" spacing="40.0">
+      <HBox alignment="CENTER_RIGHT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="96.0" prefWidth="620.0" spacing="40.0">
          <padding>
             <Insets right="100.0" />
          </padding>

@@ -37,7 +37,6 @@
                            </rotationAxis>
                         </Separator>
                         <Button fx:id="create_acc_btn" alignment="CENTER" layoutX="298.0" layoutY="348.0" mnemonicParsing="false" onAction="#createAccountClick" prefHeight="30.0" prefWidth="100.0" text="Створити акаунт" />
-                        <Label fx:id="pass_match_label" alignment="CENTER" layoutX="224.0" layoutY="385.0" text="Passwords in password fields are not matching" textFill="RED" visible="false" />
                         <Button fx:id="create_acc_btn1" alignment="CENTER" layoutX="298.0" layoutY="387.0" mnemonicParsing="false" onAction="#goBackClick" prefHeight="30.0" prefWidth="100.0" text="Назад" />
                      </children>
                   </AnchorPane>
@@ -60,7 +59,6 @@
                         <PasswordField fx:id="pass_field_confirm_admin" layoutX="225.0" layoutY="282.0" prefHeight="30.0" prefWidth="200.0" AnchorPane.leftAnchor="225.0" />
                         <Label layoutX="225.0" layoutY="264.0" text="Підтвердити пароль" AnchorPane.leftAnchor="225.0" />
                         <CheckBox fx:id="show_admin_pass" layoutX="225.0" layoutY="317.0" mnemonicParsing="false" onAction="#showAdminPasswordClick" text="Показати пароль" AnchorPane.leftAnchor="225.0" />
-                        <Label fx:id="pass_match_label_admin" alignment="CENTER" contentDisplay="CENTER" layoutX="200.0" layoutY="411.0" text="Passwords in password fields are not matching" textFill="RED" visible="false" />
                         <Button layoutX="274.0" layoutY="413.0" mnemonicParsing="false" onAction="#goBackClick" prefHeight="30.0" prefWidth="100.0" text="Назад" />
                      </children></AnchorPane>
             </content>

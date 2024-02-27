@@ -31,19 +31,11 @@ public class CreateRoomFormController implements Initializable {
     private TextField room_name;
 
     @FXML
-    private TextField room_number;
-
-    @FXML
     private ChoiceBox<String> type_choice;
     public void initialize(URL url, ResourceBundle resourceBundle){
         ObservableList<String> items = mongoDatabaseConnection.getRoomTypesNames();
         ((ChoiceBox)type_choice).setItems(items);
         type_choice.setValue(items.get(0));
-        room_number.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                room_number.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
     }
 
     public void cancelButtonClick(ActionEvent event){
@@ -52,15 +44,7 @@ public class CreateRoomFormController implements Initializable {
     }
 
     public void createButtonClick(ActionEvent event){
-        String roomNumString = room_number.getText();
-        int roomNumber;
-        if (!roomNumString.equals("")){
-            roomNumber = Integer.parseInt(roomNumString);
-        }
-        else{
-            roomNumber = 0;
-        }
         mongoDatabaseConnection.createRoom(type_choice.getValue(), room_name.getText(),
-                room_description.getText(), roomNumber);
+                room_description.getText());
     }
 }

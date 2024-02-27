@@ -11,6 +11,7 @@ import org.example.hotelmanager.objects.HotelHolder;
 import java.util.Collection;
 
 public class MongoDatabaseConnection {
+    DataCredentials dataCredentials = new DataCredentials();
     Hotel hotel = new Hotel();
     Document hotelDoc = new Document();
     public void getHotel(){
@@ -18,7 +19,7 @@ public class MongoDatabaseConnection {
         hotel = hotelHolder.getUser();
     }
     public Hotel createHotelObj(String hotelName, String address, String login, String adminPass){
-        DataCredentials dataCredentials = new DataCredentials();
+        dataCredentials = new DataCredentials();
         Document newHotel = new Document();
         Hotel hotel = new Hotel();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
@@ -45,7 +46,7 @@ public class MongoDatabaseConnection {
     }
 
     public Hotel loginAcc(Document document){
-        DataCredentials dataCredentials = new DataCredentials();
+        dataCredentials = new DataCredentials();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = database.getCollection("hotels");
@@ -72,7 +73,7 @@ public class MongoDatabaseConnection {
     }
     public ObservableList<String> getRoomTypesNames(){
         ObservableList<String> list = FXCollections.observableArrayList();
-        DataCredentials dataCredentials = new DataCredentials();
+        dataCredentials = new DataCredentials();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = database.getCollection("room_types");
@@ -86,47 +87,44 @@ public class MongoDatabaseConnection {
         return list;
     }
 
-    public void createRoom(String typeName, String roomName, String roomDescription, int roomNumber){
+    public void createRoom(String typeName, String roomName, String roomDescription){
         getHotel();
-        DataCredentials dataCredentials = new DataCredentials();
+        dataCredentials = new DataCredentials();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = database.getCollection("rooms");
             int count = (int)collection.countDocuments();
+            int roomNumber = (int)collection.countDocuments(new Document("hotel_id",
+                    hotel.getHotel_id()));
             Document room = new Document("room_id", count);
             room.append("hotel_id", hotel.getHotel_id());
             room.append("type_id", getRoomTypeId(typeName));
             room.append("type_name", typeName);
             room.append("roomName", roomName);
             room.append("description", roomDescription);
-            room.append("room_number", getRoomNumber(roomNumber));
+            room.append("room_number", roomNumber); //getRoomNumber()
             collection.insertOne(room);
         } catch(Exception exception){
             exception.printStackTrace();
         }
     }
 
-    public int getRoomNumber(int roomNumber){
-        DataCredentials dataCredentials = new DataCredentials();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = database.getCollection("rooms");
-            if (roomNumber == 0){
-                roomNumber = (int)collection.countDocuments(new Document("hotel_id",
-                        hotelDoc.getInteger("hotel_id")));
-            }
-            if(collection.find(new Document("room_number", roomNumber)).first() != null){
-                roomNumber = roomNumber + 1;
-                getRoomNumber(roomNumber);
-            }
-        } catch(Exception exception){
-            exception.printStackTrace();
-        }
-        return roomNumber;
-    }
+//    public int getRoomNumber(){
+//        int roomNumber = 0;
+//        dataCredentials = new DataCredentials();
+//        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
+//            MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
+//            MongoCollection<Document> collection = database.getCollection("rooms");
+//            roomNumber = (int)collection.countDocuments(new Document("hotel_id",
+//                        hotelDoc.getInteger("hotel_id")));
+//        } catch(Exception exception){
+//            exception.printStackTrace();
+//        }
+//        return roomNumber;
+//    }
 
     private int getRoomTypeId(String typeName) {
-        DataCredentials dataCredentials = new DataCredentials();
+        dataCredentials = new DataCredentials();
         Document docToFind = new Document();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase database = mongoClient.getDatabase("HotelDataBase");

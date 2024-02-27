@@ -37,16 +37,10 @@ public class RegisterFormController {
     private CheckBox show_admin_pass;
 
     @FXML
-    private Label pass_match_label_admin;
-
-    @FXML
     private PasswordField admin_pass;
 
     @FXML
     private PasswordField pass_field_confirm_admin;
-
-    @FXML
-    private Label pass_match_label;
 
     @FXML
     private PasswordField pass_field;
