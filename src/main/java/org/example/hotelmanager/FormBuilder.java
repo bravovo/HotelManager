@@ -6,13 +6,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.example.hotelmanager.controllers.admin.AdminFormController;
+import org.example.hotelmanager.controllers.admin.AdminRoomsFormController;
 import org.example.hotelmanager.objects.Hotel;
-import org.example.hotelmanager.objects.HotelHolder;
 
 import java.io.IOException;
 
@@ -21,6 +20,7 @@ public class FormBuilder {
     private Scene scene;
     private Hotel hotel;
     public void openWindow(Stage stage, String source, String title, int v, int v1) throws IOException {
+        stage.close();
         fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
         scene = new Scene(fxmlLoader.load(), v, v1);
         stage.setTitle(title);
@@ -30,14 +30,11 @@ public class FormBuilder {
     public void openWindow(Stage stage, String source, String title, int v, int v1, Hotel hotel) throws IOException {
         stage.close();
         fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
-        HotelHolder holder = HotelHolder.getInstance();
-        holder.setUser(hotel);
         scene = new Scene(fxmlLoader.load(), v, v1);
         stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
     }
-
     public void openDialog(String source, String title, int v, int v1) throws IOException{
         fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
         Stage dialogStage = new Stage();

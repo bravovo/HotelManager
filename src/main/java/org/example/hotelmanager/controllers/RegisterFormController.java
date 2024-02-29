@@ -1,15 +1,12 @@
 package org.example.hotelmanager.controllers;
 
-import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.objects.Hotel;
@@ -17,6 +14,8 @@ import org.example.hotelmanager.objects.Hotel;
 import java.io.IOException;
 
 public class RegisterFormController {
+
+    MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
 
     private Stage stage;
     private Scene scene;
@@ -127,12 +126,12 @@ public class RegisterFormController {
         String hotel_address = hotelAddress.getText();
         String hotel_admin = adminLogin.getText();
         String hotel_pass = admin_pass.getText();
-        MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
+
         Hotel registeredHotel = mongoDatabaseConnection.createHotelObj(hotel_name, hotel_address, hotel_admin, hotel_pass);
         if(registeredHotel != null){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
-                    "Версія для адміністратора | Система управління готелями", 1100, 750, registeredHotel);
+                    "Версія для адміністратора | Система управління готелями", 1100, 750);
             formBuilder.openDialog("after-register-form.fxml", "Завершення реєстрації", 400, 400);
         }
         else{

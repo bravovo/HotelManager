@@ -2,7 +2,6 @@ package org.example.hotelmanager.data;
 
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,27 +10,21 @@ import org.example.hotelmanager.objects.Hotel;
 import org.example.hotelmanager.objects.HotelHolder;
 import org.example.hotelmanager.objects.Room;
 
-import java.util.Collection;
-
 public class MongoDatabaseConnection {
     DataCredentials dataCredentials = new DataCredentials();
-    Hotel hotel = new Hotel();
+    Hotel hotel;
     Document hotelDoc = new Document();
-    public void getHotel(){
-        HotelHolder hotelHolder = HotelHolder.getInstance();
-        hotel = hotelHolder.getUser();
-    }
+    HotelHolder hotelHolder = HotelHolder.getInstance();
     public Hotel createHotelObj(String hotelName, String address, String login, String adminPass){
         dataCredentials = new DataCredentials();
         Document newHotel = new Document();
-        Hotel hotel = new Hotel();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = database.getCollection("hotels");
             int count = (int)collection.countDocuments();
             if(collection.find(new Document("address", address)).first() != null ||
                     collection.find(new Document("login", login)).first() != null){
-                return null;
+                return new Hotel();
             }
             newHotel.append("hotel_id", count);
             newHotel.append("hotel_name", hotelName);
@@ -40,14 +33,15 @@ public class MongoDatabaseConnection {
             newHotel.append("address", address);
             collection.insertOne(newHotel);
             hotelDoc = newHotel;
-            hotel = new Hotel(count, hotelName, login, adminPass, address);
-            return hotel;
+            this.hotel = new Hotel(count, hotelName, address, login, adminPass);
+            hotelHolder.setUser(hotel);
+            updateRoomList();
+            return this.hotel;
         } catch(Exception exception){
             exception.printStackTrace();
         }
-        return hotel;
+        return this.hotel;
     }
-
     public Hotel loginAcc(Document document){
         dataCredentials = new DataCredentials();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
@@ -56,23 +50,26 @@ public class MongoDatabaseConnection {
             Document foundDoc = collection.find(document).first();
             hotelDoc = foundDoc;
             if(foundDoc != null){
-                Hotel hotel;
                 if(foundDoc.containsKey("email") && foundDoc.containsKey("stars") && foundDoc.containsKey("rooms_count")){
-                    hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
+                    this.hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
                             foundDoc.getString("address"), foundDoc.getString("login"),
                             foundDoc.getString("password"), foundDoc.getString("email"),
                             foundDoc.getInteger("stars"), foundDoc.getInteger("rooms_count"));
-                    return hotel;
+                    hotelHolder.setUser(hotel);
+                    updateRoomList();
+                    return this.hotel;
                 }
-                hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
+                this.hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
                         foundDoc.getString("address"), foundDoc.getString("login"),
                         foundDoc.getString("password"));
-                return hotel;
+                hotelHolder.setUser(hotel);
+                updateRoomList();
+                return this.hotel;
             }
         } catch(Exception exception){
             exception.printStackTrace();
         }
-        return null;
+        return new Hotel();
     }
     public ObservableList<String> getRoomTypesNames(){
         ObservableList<String> list = FXCollections.observableArrayList();
@@ -89,9 +86,8 @@ public class MongoDatabaseConnection {
         }
         return list;
     }
-
     public void createRoom(String typeName, String roomName, String roomDescription){
-        getHotel();
+        hotel = hotelHolder.getUser();
         dataCredentials = new DataCredentials();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
@@ -107,6 +103,7 @@ public class MongoDatabaseConnection {
             room.append("description", roomDescription);
             room.append("room_number", roomNumber + 1); //getRoomNumber()
             collection.insertOne(room);
+            updateRoomList();
         } catch(Exception exception){
             exception.printStackTrace();
         }
@@ -143,7 +140,6 @@ public class MongoDatabaseConnection {
     }
 
     public void updateHotel(String email, int roomsCount, int starsCount) {
-        getHotel();
         dataCredentials = new DataCredentials();
         Document docToFind;
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
@@ -157,12 +153,50 @@ public class MongoDatabaseConnection {
                             Updates.set("rooms_count", roomsCount)
                     )
             );
+            hotel = new Hotel(
+                    hotel.getHotel_id(),
+                    hotel.getHotel_name(),
+                    hotel.getAddress(),
+                    hotel.getLogin(),
+                    hotel.getPassword(),
+                    email,
+                    starsCount,
+                    roomsCount
+            );
+            setData();
         } catch(Exception exception){
             exception.printStackTrace();
         }
+
     }
 
-    public ObservableList<Room> getRooms() {
+//    public ObservableList<Room> getRooms() {
+//        ObservableList<Room> list = FXCollections.observableArrayList();
+//        int id = hotel.getHotel_id();
+//        dataCredentials = new DataCredentials();
+//        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+//            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+//            MongoCollection<Document> collection = mongoDatabase.getCollection("rooms");
+//            FindIterable<Document> documents = collection.find(new Document("hotel_id", id));
+//            for(Document doc : documents){
+//                Room room = new Room(
+//                        doc.getInteger("room_id"),
+//                        doc.getInteger("hotel_id"),
+//                        doc.getInteger("type_id"),
+//                        doc.getString("type_name"),
+//                        doc.getString("room_name"),
+//                        doc.getString("description"),
+//                        doc.getInteger("room_number")
+//                );
+//                list.add(room);
+//            }
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        return list;
+//    }
+    public void updateRoomList(){
+        hotel = hotelHolder.getUser();
         ObservableList<Room> list = FXCollections.observableArrayList();
         int id = hotel.getHotel_id();
         dataCredentials = new DataCredentials();
@@ -171,20 +205,27 @@ public class MongoDatabaseConnection {
             MongoCollection<Document> collection = mongoDatabase.getCollection("rooms");
             FindIterable<Document> documents = collection.find(new Document("hotel_id", id));
             for(Document doc : documents){
-                Room room = new Room(
-                        doc.getInteger("room_id"),
-                        doc.getInteger("hotel_id"),
-                        doc.getInteger("type_id"),
-                        doc.getString("type_name"),
-                        doc.getString("room_name"),
-                        doc.getString("description"),
-                        doc.getInteger("room_number")
-                );
-                list.add(room);
+                if(doc.getInteger("hotel_id") == id){
+                    Room room = new Room(
+                            doc.getInteger("room_id"),
+                            doc.getInteger("hotel_id"),
+                            doc.getInteger("type_id"),
+                            doc.getString("type_name"),
+                            doc.getString("room_name"),
+                            doc.getString("description"),
+                            doc.getInteger("room_number")
+                    );
+                    list.add(room);
+                    hotel.setRooms(list);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
         }
-        return list;
+        setData();
+    }
+
+    public void setData(){
+        hotelHolder.setUser(hotel);
     }
 }

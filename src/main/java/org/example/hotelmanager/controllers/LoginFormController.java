@@ -10,10 +10,13 @@ import org.example.hotelmanager.FormBuilder;
 
 import java.io.IOException;
 import javafx.scene.control.*;
+import org.example.hotelmanager.controllers.admin.AdminRoomsFormController;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.objects.Hotel;
+import org.example.hotelmanager.objects.HotelHolder;
 
 public class LoginFormController {
+    MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
     @FXML
     private Button logibtn;
 
@@ -23,7 +26,7 @@ public class LoginFormController {
     @FXML
     private PasswordField pass_field;
     private Stage stage = new Stage();
-    private Scene scene;
+    Hotel hotel;
 
     private FormBuilder formBuilder = new FormBuilder();
 
@@ -35,14 +38,13 @@ public class LoginFormController {
 
     public void loginButtonClick(ActionEvent event) throws IOException{ //TODO ПЕРЕВІРКА НА ТИП АКАУНТА (АДМІН/КЛІЄНТ)
         Document loginDoc = new Document("login", login_field.getText()).append("password", pass_field.getText());
-        MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
-        Hotel hotel = mongoDatabaseConnection.loginAcc(loginDoc);
-        if(hotel != null){
+        hotel = mongoDatabaseConnection.loginAcc(loginDoc);
+        if(hotel.getHotel_name().length() != 0){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                     "Версія для адміністратора | Система управління готелями", 1100, 750, hotel);
             if(hotel.getEmail() == null){
-                formBuilder.openDialog("after-register-form.fxml", "Введення необіхдних даних", 400, 400);
+                formBuilder.openDialog("after-register-form.fxml", "Введення необхідних даних", 400, 400);
             }
         }
         else{

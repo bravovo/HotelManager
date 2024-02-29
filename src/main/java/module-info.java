@@ -12,6 +12,7 @@ module org.example.hotelmanager {
     requires org.mongodb.driver.sync.client;
     requires org.mongodb.bson;
     requires org.mongodb.driver.core;
+    requires java.desktop;
 
     opens org.example.hotelmanager to javafx.fxml;
     opens org.example.hotelmanager.objects to javafx.base;

@@ -16,10 +16,10 @@ public class Hotel {
     private ObservableList<Room> rooms = FXCollections.observableArrayList();
 
     public Hotel() {
+        this.hotel_name = "";
     }
 
     public Hotel(int hotel_id, String hotel_name, String address, String login, String password, String email, int stars, int rooms_count) {
-        MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
         this.hotel_id = hotel_id;
         this.hotel_name = hotel_name;
         this.address = address;
@@ -28,7 +28,6 @@ public class Hotel {
         this.email = email;
         this.stars = stars;
         this.rooms_count = rooms_count;
-        this.rooms = mongoDatabaseConnection.getRooms();
     }
 
     public Hotel(int hotel_id, String hotel_name, String address, String login, String password) {
@@ -56,8 +55,18 @@ public class Hotel {
     public int getRooms_count() {
         return rooms_count;
     }
-
     public ObservableList<Room> getRoomsForList() {
         return rooms;
+    }
+    public void setRooms(ObservableList<Room> rooms) {
+        this.rooms = rooms;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

@@ -1,6 +1,5 @@
 package org.example.hotelmanager.controllers.admin;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,9 +42,10 @@ public class CreateRoomFormController implements Initializable {
         stage.close();
     }
 
-    public void createButtonClick(ActionEvent event){
+    public void createButtonClick(ActionEvent event){ //TODO перевірка коректності введених даних
         mongoDatabaseConnection.createRoom(type_choice.getValue(), room_name.getText(),
                 room_description.getText());
+        mongoDatabaseConnection.updateRoomList();
         Stage stage = (Stage) create_room_btn.getScene().getWindow();
         stage.close();
     }
