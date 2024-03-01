@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="750.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.AdminRoomsFormController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="750.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.AdminRoomsFormController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -23,20 +23,22 @@
         <VBox alignment="CENTER" prefHeight="100.0" prefWidth="307.0" spacing="15.0">
             <HBox alignment="CENTER" prefHeight="30.0" prefWidth="381.0" spacing="15.0">
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Загальна кількість кімнат:" />
-                <Label text="Label" />
+                <Label fx:id="rooms_count" text="Label" />
             </HBox>
             <HBox alignment="CENTER" prefHeight="30.0" prefWidth="381.0" spacing="15.0">
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Кількість вільних кімнат:" />
-                <Label text="Label" />
+                <Label fx:id="count_available" text="Label" />
             </HBox>
         </VBox>
     </HBox>
     <TableView fx:id="room_table" prefHeight="621.0" prefWidth="710.0">
       <columns>
-          <TableColumn fx:id="room_number" prefWidth="246.85710960626602" text="Номер кімнати" />
-          <TableColumn fx:id="type_name" minWidth="0.0" prefWidth="158.92437744140625" text="Тип" />
-          <TableColumn fx:id="room_name" minWidth="0.0" prefWidth="153.27728271484375" text="Назва" />
-          <TableColumn fx:id="status" minWidth="0.0" prefWidth="152.4705810546875" text="Статус" />
+          <TableColumn fx:id="room_number" prefWidth="68.57144218683243" text="Номер" />
+          <TableColumn fx:id="type_name" minWidth="0.0" prefWidth="118.58820343017578" text="Тип" />
+          <TableColumn fx:id="room_name" minWidth="0.0" prefWidth="185.54624938964844" text="Назва" />
+          <TableColumn fx:id="status" minWidth="0.0" prefWidth="138.75628662109375" text="Статус" />
+         <TableColumn fx:id="from_date" prefWidth="99.226806640625" text="Початок" />
+         <TableColumn fx:id="to_date" prefWidth="100.03369140625" text="Кінець" />
       </columns>
     </TableView>
 </VBox>

@@ -1,5 +1,8 @@
 package org.example.hotelmanager.objects;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Room {
     private int room_id;
     private int hotel_id;
@@ -9,10 +12,12 @@ public class Room {
     private String room_description;
     private int room_number;
     private String status;
+    private String dateFrom;
+    private String dateTo;
 
     public Room(int room_id, int hotel_id,
                 int type_id, String type_name,
-                String room_name, String room_description, int room_number) {
+                String room_name, String room_description, int room_number, String status, Date dateFrom, Date dateTo) {
         this.room_id = room_id;
         this.hotel_id = hotel_id;
         this.type_id = type_id;
@@ -20,7 +25,12 @@ public class Room {
         this.room_name = room_name;
         this.room_description = room_description;
         this.room_number = room_number;
-        this.status = "Availible";
+        this.status = status;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate = dateFormat.format(dateFrom);
+        this.dateFrom = formattedDate;
+        formattedDate = dateFormat.format(dateTo);
+        this.dateTo = formattedDate;
     }
 
     public String getType_name() {
@@ -37,5 +47,12 @@ public class Room {
 
     public String getStatus() {
         return status;
+    }
+
+    public String getDateFrom() {
+        return dateFrom;
+    }
+    public String getDateTo() {
+        return dateTo;
     }
 }

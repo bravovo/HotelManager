@@ -65,8 +65,16 @@ public class Hotel {
     public String getLogin() {
         return login;
     }
-
     public String getPassword() {
         return password;
+    }
+    public int countAvailableRooms(){
+        int counter = 0;
+        for(Room room : rooms){
+            if(room.getStatus().equals("Available")){
+                counter++;
+            }
+        }
+        return counter;
     }
 }
