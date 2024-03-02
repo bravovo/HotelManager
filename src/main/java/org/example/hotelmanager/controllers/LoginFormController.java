@@ -35,7 +35,7 @@ public class LoginFormController {
 
     public void loginButtonClick(ActionEvent event) throws IOException{ //TODO ПЕРЕВІРКА НА ТИП АКАУНТА (АДМІН/КЛІЄНТ)
         Document loginDoc = new Document("login", login_field.getText()).append("password", pass_field.getText());
-        hotel = mongoDatabaseConnection.loginAcc(loginDoc);
+        hotel = mongoDatabaseConnection.loginAccount(loginDoc);
         if(hotel.getHotel_name().length() != 0){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",

@@ -4,9 +4,7 @@ import com.mongodb.client.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.bson.Document;
-import org.example.hotelmanager.model.Hotel;
-import org.example.hotelmanager.model.HotelHolder;
-import org.example.hotelmanager.model.Room;
+import org.example.hotelmanager.model.*;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -14,21 +12,50 @@ import java.util.Date;
 public class MongoDatabaseConnection {
     DataCredentials dataCredentials = new DataCredentials();
     Hotel hotel;
+    Client client;
     Document hotelDoc = new Document();
+    Document clientDoc = new Document();
     HotelHolder hotelHolder = HotelHolder.getInstance();
-    public boolean createHotelObject(String hotelName, String address, String login, String adminPass,
+    ClientHolder clientHolder = ClientHolder.getInstance();
+
+    public boolean registerClientAccount(String firstName, String lastName, String clientEmail, String clientPhoneNumber,
+                                         LocalDate dateOfBirth, String clientPassword){
+        Document newClient = new Document();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("clients");
+            int clientCount = (int)collection.countDocuments();
+            if(collection.find(new Document("client_email", clientEmail)).first() != null){
+                return false;
+            }
+            newClient.append("client_id", clientCount);
+            newClient.append("firstname", firstName);
+            newClient.append("lastname", firstName);
+            newClient.append("client_email", clientEmail);
+            newClient.append("client_phone", clientPhoneNumber);
+            newClient.append("dateOfBirth", dateOfBirth);
+            newClient.append("password", clientPassword);
+            collection.insertOne(newClient);
+            clientDoc = newClient;
+            this.client = new Client(clientCount, firstName, lastName, clientEmail, clientPhoneNumber, dateOfBirth);
+            clientHolder.setUser(client);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return true;
+    }
+    public boolean registerHotel(String hotelName, String address, String login, String adminPass,
                                      String email, String phoneNumber, int roomsCount){
-        dataCredentials = new DataCredentials();
         Document newHotel = new Document();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = database.getCollection("hotels");
-            int count = (int)collection.countDocuments();
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("hotels");
+            int hotelCount = (int)collection.countDocuments();
             if(collection.find(new Document("address", address)).first() != null ||
                     collection.find(new Document("login", login)).first() != null){
                 return false;
             }
-            newHotel.append("hotel_id", count);
+            newHotel.append("hotel_id", hotelCount);
             newHotel.append("hotel_name", hotelName);
             newHotel.append("login", login);
             newHotel.append("password", adminPass);
@@ -38,7 +65,7 @@ public class MongoDatabaseConnection {
             newHotel.append("phone_number", phoneNumber);
             collection.insertOne(newHotel);
             hotelDoc = newHotel;
-            this.hotel = new Hotel(count, hotelName, address, login, adminPass, email, roomsCount, phoneNumber);
+            this.hotel = new Hotel(hotelCount, hotelName, address, login, adminPass, email, roomsCount, phoneNumber);
             hotelHolder.setUser(hotel);
             updateRoomList();
             return true;
@@ -47,11 +74,10 @@ public class MongoDatabaseConnection {
         }
         return true;
     }
-    public Hotel loginAcc(Document document){
-        dataCredentials = new DataCredentials();
+    public Hotel loginAccount(Document document){ //TODO ПЕРЕВІРКА НА ТИП АКАУНТА (АДМІН/КЛІЄНТ)
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = database.getCollection("hotels");
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("hotels");
             Document foundDoc = collection.find(document).first();
             hotelDoc = foundDoc;
             if(foundDoc != null){
@@ -71,10 +97,9 @@ public class MongoDatabaseConnection {
     }
     public ObservableList<String> getRoomTypesNames(){
         ObservableList<String> list = FXCollections.observableArrayList();
-        dataCredentials = new DataCredentials();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = database.getCollection("room_types");
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("room_types");
             FindIterable<Document> documents = collection.find();
             for(Document coll : documents){
                 list.add(coll.getString("type_name"));
@@ -86,14 +111,13 @@ public class MongoDatabaseConnection {
     }
     public void createRoom(String typeName, String roomName, String roomDescription){
         hotel = hotelHolder.getUser();
-        dataCredentials = new DataCredentials();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = database.getCollection("rooms");
-            int count = (int)collection.countDocuments();
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("rooms");
+            int roomsCount = (int)collection.countDocuments();
             int roomNumber = (int)collection.countDocuments(new Document("hotel_id",
                     hotel.getHotel_id()));
-            Document room = new Document("room_id", count);
+            Document room = new Document("room_id", roomsCount);
             room.append("hotel_id", hotel.getHotel_id());
             room.append("type_id", getRoomTypeId(typeName));
             room.append("type_name", typeName);
@@ -113,11 +137,10 @@ public class MongoDatabaseConnection {
         }
     }
     private int getRoomTypeId(String typeName) {
-        dataCredentials = new DataCredentials();
         Document docToFind = new Document();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase database = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = database.getCollection("room_types");
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("room_types");
             docToFind = collection.find(new Document("type_name", typeName)).first();
             if (docToFind == null){
                 docToFind = new Document("type_id", 0);
@@ -131,7 +154,6 @@ public class MongoDatabaseConnection {
         hotel = hotelHolder.getUser();
         ObservableList<Room> list = FXCollections.observableArrayList();
         int id = hotel.getHotel_id();
-        dataCredentials = new DataCredentials();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = mongoDatabase.getCollection("rooms");

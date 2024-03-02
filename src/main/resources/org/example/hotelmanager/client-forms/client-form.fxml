@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.ClientFormController">
+
+    <left>
+        <fx:include fx:id="client_left" source="client-left-form.fxml" />
+    </left>
+
+    <center>
+        <fx:include fx:id="client_my_bookings" source="client-my-bookings-form.fxml" />
+    </center>
+
+</BorderPane>

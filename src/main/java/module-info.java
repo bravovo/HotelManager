@@ -19,6 +19,7 @@ module org.example.hotelmanager {
     exports org.example.hotelmanager;
     exports org.example.hotelmanager.controllers;
     exports org.example.hotelmanager.controllers.admin;
+    exports org.example.hotelmanager.controllers.client;
     opens org.example.hotelmanager.controllers to javafx.fxml;
     opens org.example.hotelmanager.controllers.admin to javafx.fxml;
 }

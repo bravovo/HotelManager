@@ -49,13 +49,6 @@ public class Hotel {
     public void setRooms(ObservableList<Room> rooms) {
         this.rooms = rooms;
     }
-
-    public String getLogin() {
-        return login;
-    }
-    public String getPassword() {
-        return password;
-    }
     public int countAvailableRooms(){
         int counter = 0;
         for(Room room : rooms){
