@@ -1,7 +1,5 @@
 package org.example.hotelmanager.controllers;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,11 +7,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
-import org.example.hotelmanager.objects.Hotel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,8 +25,6 @@ public class RegisterFormController implements Initializable {
     @FXML private Button later_btn;
     @FXML private Button ok_btn;
     @FXML private TextField rooms_count_field;
-    @FXML private VBox stars_vbox;
-    @FXML private ChoiceBox<Integer> stars_count_field;
 
     //-------------------------------------------------------->
 
@@ -45,6 +39,7 @@ public class RegisterFormController implements Initializable {
     @FXML private PasswordField pass_field_confirm;
     @FXML private TextField pass_text;
     @FXML private CheckBox show_pass_check;
+    @FXML private TextField phone_number = new TextField();
 
     private FormBuilder formBuilder = new FormBuilder();
 
@@ -54,11 +49,11 @@ public class RegisterFormController implements Initializable {
                 rooms_count_field.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
-        ObservableList<Integer> items = FXCollections.observableArrayList(
-                1, 2, 3, 4, 5
-        );
-        ((ChoiceBox)stars_count_field).setItems(items);
-        stars_count_field.setValue(0);
+        phone_number.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                phone_number.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
     }
 
     public void showPasswordClick(ActionEvent event){
@@ -117,7 +112,7 @@ public class RegisterFormController implements Initializable {
         if(hotelName.getText().length() == 0 ||
            hotelAddress.getText().length() == 0 ||
            adminLogin.getText().length() == 0 ||
-           stars_count_field.getValue() == 0 ||
+           phone_number.getText().length() == 0 ||
            email_field.getText().length() == 0 ||
            rooms_count_field.getText().length() == 0)
         {
@@ -142,8 +137,12 @@ public class RegisterFormController implements Initializable {
         String hotel_address = hotelAddress.getText();
         String hotel_admin = adminLogin.getText();
         String hotel_pass = admin_pass.getText();
+        String hotel_email = email_field.getText();
+        String mobile_phone_number = phone_number.getText();
+        int rooms_count = Integer.parseInt(rooms_count_field.getText());
 
-        if(mongoDatabaseConnection.createHotelObject(hotel_name, hotel_address, hotel_admin, hotel_pass)){
+        if(mongoDatabaseConnection.createHotelObject(hotel_name, hotel_address, hotel_admin, hotel_pass,
+                hotel_email, mobile_phone_number, roomsCount)){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                     "Версія для адміністратора | Система управління готелями", 1100, 750);

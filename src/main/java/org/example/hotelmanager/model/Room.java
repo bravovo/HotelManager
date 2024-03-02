@@ -1,4 +1,4 @@
-package org.example.hotelmanager.objects;
+package org.example.hotelmanager.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

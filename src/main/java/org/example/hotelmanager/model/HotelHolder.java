@@ -1,4 +1,4 @@
-package org.example.hotelmanager.objects;
+package org.example.hotelmanager.model;
 
 public final class HotelHolder {
     private Hotel hotel;

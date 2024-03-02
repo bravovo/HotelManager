@@ -10,7 +10,7 @@ import org.example.hotelmanager.FormBuilder;
 import java.io.IOException;
 import javafx.scene.control.*;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
-import org.example.hotelmanager.objects.Hotel;
+import org.example.hotelmanager.model.Hotel;
 
 public class LoginFormController {
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();

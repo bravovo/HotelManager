@@ -4,8 +4,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import org.example.hotelmanager.objects.Hotel;
-import org.example.hotelmanager.objects.HotelHolder;
+import org.example.hotelmanager.model.Hotel;
+import org.example.hotelmanager.model.HotelHolder;
 
 import javafx.scene.image.ImageView;
 import java.net.URL;

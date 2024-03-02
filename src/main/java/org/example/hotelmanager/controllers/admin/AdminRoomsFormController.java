@@ -8,13 +8,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.hotelmanager.FormBuilder;
-import org.example.hotelmanager.objects.Hotel;
-import org.example.hotelmanager.objects.HotelHolder;
-import org.example.hotelmanager.objects.Room;
+import org.example.hotelmanager.model.Hotel;
+import org.example.hotelmanager.model.HotelHolder;
+import org.example.hotelmanager.model.Room;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 public class AdminRoomsFormController  implements Initializable {

@@ -1,8 +1,7 @@
-package org.example.hotelmanager.objects;
+package org.example.hotelmanager.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.example.hotelmanager.data.MongoDatabaseConnection;
 
 public class Hotel {
     private int hotel_id;
@@ -11,31 +10,23 @@ public class Hotel {
     private String login;
     private String password;
     private String email;
-    private int stars;
     private int rooms_count;
+    private String phone_number;
     private ObservableList<Room> rooms = FXCollections.observableArrayList();
 
     public Hotel() {
         this.hotel_name = "";
     }
 
-    public Hotel(int hotel_id, String hotel_name, String address, String login, String password, String email, int stars, int rooms_count) {
+    public Hotel(int hotel_id, String hotel_name, String address, String login, String password, String email, int rooms_count, String phoneNumber) {
         this.hotel_id = hotel_id;
         this.hotel_name = hotel_name;
         this.address = address;
         this.login = login;
         this.password = password;
         this.email = email;
-        this.stars = stars;
         this.rooms_count = rooms_count;
-    }
-
-    public Hotel(int hotel_id, String hotel_name, String address, String login, String password) {
-        this.hotel_id = hotel_id;
-        this.hotel_name = hotel_name;
-        this.address = address;
-        this.login = login;
-        this.password = password;
+        this.phone_number = phoneNumber;
     }
     public int getHotel_id() {
         return hotel_id;
@@ -48,9 +39,6 @@ public class Hotel {
     }
     public String getEmail() {
         return email;
-    }
-    public int getStars() {
-        return stars;
     }
     public int getRooms_count() {
         return rooms_count;

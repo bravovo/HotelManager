@@ -15,7 +15,7 @@ module org.example.hotelmanager {
     requires java.desktop;
 
     opens org.example.hotelmanager to javafx.fxml;
-    opens org.example.hotelmanager.objects to javafx.base;
+    opens org.example.hotelmanager.model to javafx.base;
     exports org.example.hotelmanager;
     exports org.example.hotelmanager.controllers;
     exports org.example.hotelmanager.controllers.admin;

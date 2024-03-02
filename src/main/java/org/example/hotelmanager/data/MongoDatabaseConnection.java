@@ -1,17 +1,14 @@
 package org.example.hotelmanager.data;
 
 import com.mongodb.client.*;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.bson.Document;
-import org.example.hotelmanager.objects.Hotel;
-import org.example.hotelmanager.objects.HotelHolder;
-import org.example.hotelmanager.objects.Room;
+import org.example.hotelmanager.model.Hotel;
+import org.example.hotelmanager.model.HotelHolder;
+import org.example.hotelmanager.model.Room;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 
 public class MongoDatabaseConnection {
@@ -19,7 +16,8 @@ public class MongoDatabaseConnection {
     Hotel hotel;
     Document hotelDoc = new Document();
     HotelHolder hotelHolder = HotelHolder.getInstance();
-    public boolean createHotelObject(String hotelName, String address, String login, String adminPass){
+    public boolean createHotelObject(String hotelName, String address, String login, String adminPass,
+                                     String email, String phoneNumber, int roomsCount){
         dataCredentials = new DataCredentials();
         Document newHotel = new Document();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
@@ -35,9 +33,12 @@ public class MongoDatabaseConnection {
             newHotel.append("login", login);
             newHotel.append("password", adminPass);
             newHotel.append("address", address);
+            newHotel.append("email", email);
+            newHotel.append("rooms_count", roomsCount);
+            newHotel.append("phone_number", phoneNumber);
             collection.insertOne(newHotel);
             hotelDoc = newHotel;
-            this.hotel = new Hotel(count, hotelName, address, login, adminPass);
+            this.hotel = new Hotel(count, hotelName, address, login, adminPass, email, roomsCount, phoneNumber);
             hotelHolder.setUser(hotel);
             updateRoomList();
             return true;
@@ -54,18 +55,11 @@ public class MongoDatabaseConnection {
             Document foundDoc = collection.find(document).first();
             hotelDoc = foundDoc;
             if(foundDoc != null){
-                if(foundDoc.containsKey("email") && foundDoc.containsKey("stars") && foundDoc.containsKey("rooms_count")){
-                    this.hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
-                            foundDoc.getString("address"), foundDoc.getString("login"),
-                            foundDoc.getString("password"), foundDoc.getString("email"),
-                            foundDoc.getInteger("stars"), foundDoc.getInteger("rooms_count"));
-                    hotelHolder.setUser(hotel);
-                    updateRoomList();
-                    return this.hotel;
-                }
                 this.hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
                         foundDoc.getString("address"), foundDoc.getString("login"),
-                        foundDoc.getString("password"));
+                        foundDoc.getString("password"), foundDoc.getString("email"),
+                        foundDoc.getInteger("rooms_count"),
+                        foundDoc.getString("phone_number"));
                 hotelHolder.setUser(hotel);
                 updateRoomList();
                 return this.hotel;
@@ -108,7 +102,7 @@ public class MongoDatabaseConnection {
             room.append("room_number", roomNumber + 1);
             room.append("status", "Available");
             room.append("from", new Date()); // База створює дату і час сама, але часовий пояс збитий
-            LocalDate today = LocalDate.now(); // Дає правильну дату без часу
+            LocalDate today = LocalDate.now().plusDays(3); // Дає правильну дату без часу
             room.append("to", today);
 
             collection.insertOne(room);

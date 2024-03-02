@@ -9,9 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.example.hotelmanager.controllers.admin.AdminFormController;
-import org.example.hotelmanager.controllers.admin.AdminRoomsFormController;
-import org.example.hotelmanager.objects.Hotel;
+import org.example.hotelmanager.model.Hotel;
 
 import java.io.IOException;
 
