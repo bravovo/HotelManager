@@ -3,17 +3,24 @@ package org.example.hotelmanager.data;
 import com.mongodb.client.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.stage.Stage;
 import org.bson.Document;
+import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.model.*;
 
+import javafx.event.ActionEvent;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class MongoDatabaseConnection {
+    FormBuilder formBuilder = new FormBuilder();
     DataCredentials dataCredentials = new DataCredentials();
     Hotel hotel;
     Client client;
-    Document hotelDoc = new Document();
+    Document foundHotel = new Document();
     Document clientDoc = new Document();
     HotelHolder hotelHolder = HotelHolder.getInstance();
     ClientHolder clientHolder = ClientHolder.getInstance();
@@ -64,7 +71,7 @@ public class MongoDatabaseConnection {
             newHotel.append("rooms_count", roomsCount);
             newHotel.append("phone_number", phoneNumber);
             collection.insertOne(newHotel);
-            hotelDoc = newHotel;
+            foundHotel = newHotel;
             this.hotel = new Hotel(hotelCount, hotelName, address, login, adminPass, email, roomsCount, phoneNumber);
             hotelHolder.setUser(hotel);
             updateRoomList();
@@ -74,26 +81,58 @@ public class MongoDatabaseConnection {
         }
         return true;
     }
-    public Hotel loginAccount(Document document){ //TODO ПЕРЕВІРКА НА ТИП АКАУНТА (АДМІН/КЛІЄНТ)
+    public void loginAccount(Document document, ActionEvent event){
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = mongoDatabase.getCollection("hotels");
-            Document foundDoc = collection.find(document).first();
-            hotelDoc = foundDoc;
-            if(foundDoc != null){
-                this.hotel = new Hotel(foundDoc.getInteger("hotel_id"), foundDoc.getString("hotel_name"),
-                        foundDoc.getString("address"), foundDoc.getString("login"),
-                        foundDoc.getString("password"), foundDoc.getString("email"),
-                        foundDoc.getInteger("rooms_count"),
-                        foundDoc.getString("phone_number"));
+            Document findHotel = collection.find(document).first();
+            foundHotel = findHotel;
+            if(findHotel != null){
+                this.hotel = new Hotel(findHotel.getInteger("hotel_id"), findHotel.getString("hotel_name"),
+                        findHotel.getString("address"), findHotel.getString("login"),
+                        findHotel.getString("password"), findHotel.getString("email"),
+                        findHotel.getInteger("rooms_count"),
+                        findHotel.getString("phone_number"));
                 hotelHolder.setUser(hotel);
                 updateRoomList();
-                return this.hotel;
+                Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
+                        "Версія для адміністратора | Система управління готелями", 1100, 750);
+                return;
             }
+
+            // Якщо не знайдено акаунт готелю, то шукати акаунт користувача ----------------------
+
+            collection = mongoDatabase.getCollection("clients");
+            Document clientDocument = new Document("client_email", document.getString("login"))
+                    .append("password", document.getString("password"));
+            Document findClient = collection.find(clientDocument).first();
+            if(findClient != null){
+                this.client = new Client(
+                        findClient.getInteger("client_id"),
+                        findClient.getString("firstname"),
+                        findClient.getString("lastname"),
+                        findClient.getString("client_email"),
+                        findClient.getString("client_phone"),
+                        findClient.getDate("dateOfBirth")
+                                .toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                );
+                clientHolder.setUser(client);
+                Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                formBuilder.openWindow(stage, "client-forms/client-form.fxml",
+                        "Версія для адміністратора | Система управління готелями", 1100, 750);
+                return;
+            }
+
+            // Якщо не знайдено користувача також, тоді акаунта не існує, або введені неправильні дані
+
+            formBuilder.errorValidation("Неправильно введені дані для авторизації");
+
         } catch(Exception exception){
             exception.printStackTrace();
         }
-        return new Hotel();
     }
     public ObservableList<String> getRoomTypesNames(){
         ObservableList<String> list = FXCollections.observableArrayList();
@@ -180,5 +219,38 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
         hotelHolder.setUser(hotel);
+    }
+
+    public void createBooking(LocalDate checkIN_date, LocalDate checkOUT_date){
+        client = clientHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("bookings");
+            FindIterable<Document> bookingDocuments = collection.find(new Document("hotel_id", 0).append("room_number", 1));
+            boolean isAvailable = true;
+            for(Document booking : bookingDocuments){
+                Date checkIn = booking.getDate("checkIN_date");
+                Date checkOut = booking.getDate("checkIN_date");
+                LocalDate checkInDate = checkIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate checkOutDate = checkOut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                if((checkOutDate.compareTo(checkIN_date) >= 0 || checkInDate.compareTo(checkOUT_date) <= 0)){
+                    isAvailable = false;
+                    break;
+                }
+            }
+            if(isAvailable){
+                int bookingCount = (int)collection.countDocuments();
+                Document book = new Document("booking_id", bookingCount);
+                book.append("guest_id", client.getClientID());
+                book.append("hotel_id", 0);
+                book.append("room_number", 1);
+                book.append("checkIN_date", checkIN_date);
+                book.append("checkOUT_date", checkOUT_date);
+                book.append("total_price", 1200);
+                collection.insertOne(book);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

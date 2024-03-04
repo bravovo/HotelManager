@@ -33,17 +33,9 @@ public class LoginFormController {
                 "Створити акаунт | Система управління готелями", 700, 500);
     }
 
-    public void loginButtonClick(ActionEvent event) throws IOException{ //TODO ПЕРЕВІРКА НА ТИП АКАУНТА (АДМІН/КЛІЄНТ)
+    public void loginButtonClick(ActionEvent event){
         Document loginDoc = new Document("login", login_field.getText()).append("password", pass_field.getText());
-        hotel = mongoDatabaseConnection.loginAccount(loginDoc);
-        if(hotel.getHotel_name().length() != 0){
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
-                    "Версія для адміністратора | Система управління готелями", 1100, 750, hotel);
-        }
-        else{
-            formBuilder.errorValidation("Такого облікового запису не існує.\n\t\tСтворіть аккаунт");
-        }
+        mongoDatabaseConnection.loginAccount(loginDoc, event);
     }
 
     public void cancelAndExit(ActionEvent event){

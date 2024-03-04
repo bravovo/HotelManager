@@ -1,5 +1,7 @@
 package org.example.hotelmanager.controllers.admin;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -54,9 +56,10 @@ public class AdminRoomsFormController  implements Initializable {
         status.setCellValueFactory(new PropertyValueFactory<>("status"));
         from_date.setCellValueFactory(new PropertyValueFactory<>("dateFrom"));
         to_date.setCellValueFactory(new PropertyValueFactory<>("dateTo"));
-        room_table.setItems(hotel.getRoomsForList());
+        ObservableList<Room> rooms = hotel.getRoomsForList();
+        room_table.setItems(rooms);
 
-        rooms_count.setText(String.valueOf(hotel.getRoomsForList().size()));
+        rooms_count.setText(String.valueOf(rooms.size()));
         count_available.setText(String.valueOf(hotel.countAvailableRooms()));
     }
 }

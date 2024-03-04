@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.example.hotelmanager.model.Hotel;
 
 import java.io.IOException;
@@ -16,17 +17,11 @@ import java.io.IOException;
 public class FormBuilder {
     private FXMLLoader fxmlLoader;
     private Scene scene;
-    private Hotel hotel;
     public void openWindow(Stage stage, String source, String title, int v, int v1) throws IOException {
         stage.close();
-        fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
-        scene = new Scene(fxmlLoader.load(), v, v1);
-        stage.setTitle(title);
-        stage.setScene(scene);
-        stage.show();
-    }
-    public void openWindow(Stage stage, String source, String title, int v, int v1, Hotel hotel) throws IOException {
-        stage.close();
+        stage.setMaximized(false);
+        stage.setFullScreen(false);
+        stage.setResizable(false);
         fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
         scene = new Scene(fxmlLoader.load(), v, v1);
         stage.setTitle(title);
@@ -42,7 +37,6 @@ public class FormBuilder {
         dialogStage.setScene(dialogScene);
         dialogStage.showAndWait();
     }
-
     public void errorValidation(String errorText){
         VBox vBox = new VBox();
         Label errorLabel = new Label();
