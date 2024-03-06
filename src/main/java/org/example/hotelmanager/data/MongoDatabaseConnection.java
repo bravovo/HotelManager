@@ -10,9 +10,7 @@ import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.model.*;
 
 import javafx.event.ActionEvent;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Date;
 
 public class MongoDatabaseConnection {
@@ -52,7 +50,7 @@ public class MongoDatabaseConnection {
         return true;
     }
     public boolean registerHotel(String hotelName, String address, String login, String adminPass,
-                                     String email, String phoneNumber, int roomsCount){
+                                 String email, String phoneNumber, int roomsCount){
         Document newHotel = new Document();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
@@ -163,10 +161,9 @@ public class MongoDatabaseConnection {
             room.append("room_name", roomName);
             room.append("description", roomDescription);
             room.append("room_number", roomNumber + 1);
-            room.append("status", "Available");
-            room.append("from", new Date()); // База створює дату і час сама, але часовий пояс збитий
-            LocalDate today = LocalDate.now().plusDays(3); // Дає правильну дату без часу
-            room.append("to", today);
+            room.append("status", "Доступна");
+            room.append("from", LocalDate.now());
+            room.append("to", LocalDate.now().plusDays(1));
 
             collection.insertOne(room);
             hotelHolder.setUser(hotel);
@@ -189,37 +186,199 @@ public class MongoDatabaseConnection {
         }
         return docToFind.getInteger("type_id");
     }
+
     public void updateRoomList(){
         hotel = hotelHolder.getUser();
-        ObservableList<Room> list = FXCollections.observableArrayList();
         int id = hotel.getHotel_id();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = mongoDatabase.getCollection("rooms");
-            FindIterable<Document> documents = collection.find(new Document("hotel_id", id));
-            for(Document doc : documents){
-                if(doc.getInteger("hotel_id") == id){
-                    Room room = new Room(
-                            doc.getInteger("room_id"),
-                            doc.getInteger("hotel_id"),
-                            doc.getInteger("type_id"),
-                            doc.getString("type_name"),
-                            doc.getString("room_name"),
-                            doc.getString("description"),
-                            doc.getInteger("room_number"),
-                            doc.getString("status"),
-                            doc.getDate("from"),
-                            doc.getDate("to")
+            MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
+            FindIterable<Document> roomDocuments = roomsCollection.find(new Document("hotel_id", id));
+            MongoCollection<Document> bookingsCollection = mongoDatabase.getCollection("bookings");
+            for(Document roomDoc: roomDocuments){
+                FindIterable<Document> bookingDocuments =
+                        bookingsCollection.find(new Document("room_number", roomDoc.getInteger("room_number"))
+                                .append("hotel_id", id));
+                Document updatedRoom;
+                for(Document bookingDoc : bookingDocuments) {
+                    updatedRoom = new Document("$set", new Document(
+                            "room_id", roomDoc.getInteger("room_id"))
+                            .append("hotel_id", roomDoc.getInteger("hotel_id"))
+                            .append("type_id", roomDoc.getInteger("type_id"))
+                            .append("type_name", roomDoc.getString("type_name"))
+                            .append("room_name", roomDoc.getString("room_name"))
+                            .append("description", roomDoc.getString("description"))
+                            .append("room_number", roomDoc.getInteger("room_number"))
                     );
-                    list.add(room);
-                    hotel.setRooms(list);
+
+                    Date dateFromDB = bookingDoc.getDate("checkIN_date");
+                    Instant instant = dateFromDB.toInstant();
+                    LocalDate checkIN_date = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+
+                    dateFromDB = bookingDoc.getDate("checkOUT_date");
+                    instant = dateFromDB.toInstant();
+                    LocalDate checkOUT_date = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+
+                    if (LocalDate.now().isAfter(checkIN_date) && LocalDate.now().isBefore(checkOUT_date)) {
+                        updatedRoom.append("$set", new Document("status", "Занята")
+                                .append("from", bookingDoc.getDate("checkIN_date"))
+                                .append("to", bookingDoc.getDate("checkOUT_date")));
+                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
+                        break;
+                    } else if (LocalDateTime.now().isBefore(LocalDateTime.of(checkIN_date, LocalTime.of(11, 30)))) {
+                        LocalDateTime localDateTime = LocalDateTime.now();
+                        instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                        Date dateToDB = Date.from(instant);
+                        updatedRoom.append("status", "Чек-аут")
+                                .append("from", dateToDB);
+
+                        localDateTime = LocalDateTime.of(checkIN_date, LocalTime.of(11, 30));
+                        instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                        dateToDB = Date.from(instant);
+                        updatedRoom.append("to", dateToDB);
+                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
+                        break;
+                    } else if (LocalDateTime.now().isAfter(LocalDateTime.of(checkIN_date, LocalTime.of(11, 30))) &&
+                            LocalDateTime.now().isBefore(LocalDateTime.of(checkIN_date, LocalTime.of(14, 30)))) {
+                        LocalDateTime localDateTime = LocalDateTime.of(checkIN_date, LocalTime.of(11, 30));
+                        instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                        Date dateToDB = Date.from(instant);
+                        updatedRoom.append("status", "Прибирання")
+                                .append("from", dateToDB);
+
+                        localDateTime = LocalDateTime.of(checkIN_date, LocalTime.of(14, 30));
+                        instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                        dateToDB = Date.from(instant);
+                        updatedRoom.append("to", dateToDB);
+                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
+                        break;
+                    } else if (LocalDateTime.now().isAfter(LocalDateTime.of(checkIN_date, LocalTime.of(14, 30)))) {
+                        LocalDateTime localDateTime = LocalDateTime.of(checkIN_date, LocalTime.of(14, 30));
+                        instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                        Date dateToDB = Date.from(instant);
+                        updatedRoom.append("status", "Чек-ін")
+                                .append("from", dateToDB);
+
+                        localDateTime = LocalDateTime.of(checkIN_date.plusDays(1), LocalTime.of(0, 0));
+                        instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                        dateToDB = Date.from(instant);
+                        updatedRoom.append("to", dateToDB);
+                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
+                        break;
+                    } else {
+                        LocalDateTime localDateTime = LocalDateTime.now();
+                        instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                        Date dateToDB = Date.from(instant);
+                        updatedRoom.append("status", "Доступна")
+                                .append("from", dateToDB);
+
+                        localDateTime = LocalDateTime.now().plusDays(1);
+                        instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                        dateToDB = Date.from(instant);
+                        updatedRoom.append("to", dateToDB);
+                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
+                    }
                 }
             }
+            ObservableList<Room> roomList = FXCollections.observableArrayList();
+            roomDocuments = roomsCollection.find(new Document("hotel_id", hotel.getHotel_id()));
+            for(Document roomDoc : roomDocuments){
+                Room room = new Room(
+                        roomDoc.getInteger("room_id"),
+                        roomDoc.getInteger("hotel_id"),
+                        roomDoc.getInteger("type_id"),
+                        roomDoc.getString("type_name"),
+                        roomDoc.getString("room_name"),
+                        roomDoc.getString("description"),
+                        roomDoc.getInteger("room_number"),
+                        roomDoc.getString("status"),
+                        roomDoc.getDate("from"),
+                        roomDoc.getDate("to")
+                );
+                bookingsCollection = mongoDatabase.getCollection("bookings");
+                FindIterable<Document> bookingDocuments =
+                        bookingsCollection.find(new Document("room_number", roomDoc.getInteger("room_number")));
+                ObservableList<Booking> bookings = FXCollections.observableArrayList();
+                for(Document bookingDoc : bookingDocuments){
+                    Object totalPrice = bookingDoc.get("total_price");
+                    double priceInDouble = 0;
+                    if (totalPrice instanceof Integer) {
+                        Integer intValue = (Integer) totalPrice;
+                        priceInDouble = intValue.doubleValue();
+                    } else if (totalPrice instanceof Double) {
+                        priceInDouble = (Double) totalPrice;
+                    }
+                    Booking booking = new Booking(
+                            bookingDoc.getInteger("booking_id"),
+                            bookingDoc.getInteger("hotel_id"),
+                            bookingDoc.getInteger("guest_id"),
+                            bookingDoc.getInteger("room_number"),
+                            bookingDoc.getDate("checkIN_date"),
+                            bookingDoc.getDate("checkOUT_date"),
+                            priceInDouble
+                    );
+                    bookings.add(booking);
+                }
+                room.setBookings(bookings);
+                roomList.add(room);
+            }
+            hotel.setRooms(roomList);
+            hotelHolder.setUser(hotel);
         }catch (Exception e){
             e.printStackTrace();
         }
-        hotelHolder.setUser(hotel);
     }
+
+//    public void updateRoomBookings(){ // TODO Доробити це, з'єднати з методом updateRoomList()
+//        hotel = hotelHolder.getUser();
+//        ObservableList<Room> list = FXCollections.observableArrayList();
+//        int id = hotel.getHotel_id();
+//        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+//            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+//            MongoCollection<Document> collection = mongoDatabase.getCollection("bookings");
+//            for(Room room : hotel.getRoomsForList()){
+//                FindIterable<Document> bookingDocument = collection.find(new Document("room_number", room.getRoom_number()));
+//                for(Document booking : bookingDocument){
+//                    LocalDate checkIN_date = booking.getDate("checkIN_date")
+//                            .toInstant()
+//                            .atZone(ZoneId.systemDefault())
+//                            .toLocalDate().minusDays(1);
+//                    LocalDate checkOUT_date = booking.getDate("checkOUT_date")
+//                            .toInstant()
+//                            .atZone(ZoneId.systemDefault())
+//                            .toLocalDate().minusDays(1);
+//                    if(LocalDate.now().isAfter(checkIN_date) && LocalDate.now().isBefore(checkOUT_date)){
+//                        room.setStatus("Занята");
+//                        room.setDateTo(checkIN_date);
+//                        room.setDateTo(checkOUT_date);
+//                        break;
+//                    }
+//                    else if(LocalDateTime.now().isBefore(LocalDateTime.of(checkIN_date, LocalTime.of(11, 30)))){
+//                        room.setStatus("Чек-аут");
+//                        break;
+//                    }
+//                    else if(LocalDateTime.now().isAfter(LocalDateTime.of(checkIN_date, LocalTime.of(11, 30))) &&
+//                            LocalDateTime.now().isBefore(LocalDateTime.of(checkIN_date, LocalTime.of(14, 30)))){
+//                        room.setStatus("Прибирання");
+//                        break;
+//                    }
+//                    else if(LocalDateTime.now().isAfter(LocalDateTime.of(checkIN_date, LocalTime.of(14, 30)))){
+//                        room.setStatus("Чек-ін");
+//                        break;
+//                    }
+//                    else {
+//                        room.setStatus("Доступна");
+//                        break;
+//                    }
+//                }
+//                list.add(room);
+//            }
+//            hotel.setRooms(list);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        hotelHolder.setUser(hotel);
+//    }
 
     public void createBooking(LocalDate checkIN_date, LocalDate checkOUT_date){
         client = clientHolder.getUser();
@@ -230,11 +389,12 @@ public class MongoDatabaseConnection {
             boolean isAvailable = true;
             for(Document booking : bookingDocuments){
                 Date checkIn = booking.getDate("checkIN_date");
-                Date checkOut = booking.getDate("checkIN_date");
+                Date checkOut = booking.getDate("checkOUT_date");
                 LocalDate checkInDate = checkIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 LocalDate checkOutDate = checkOut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                if((checkOutDate.compareTo(checkIN_date) >= 0 || checkInDate.compareTo(checkOUT_date) <= 0)){
+                if (checkInDate.isBefore(checkOUT_date) && checkOutDate.isAfter(checkIN_date)) {
                     isAvailable = false;
+                    System.out.println("NOPE");
                     break;
                 }
             }
@@ -244,9 +404,14 @@ public class MongoDatabaseConnection {
                 book.append("guest_id", client.getClientID());
                 book.append("hotel_id", 0);
                 book.append("room_number", 1);
-                book.append("checkIN_date", checkIN_date);
-                book.append("checkOUT_date", checkOUT_date);
+                book.append("checkIN_date", Date.from(checkIN_date
+                        .atStartOfDay(ZoneId.systemDefault())
+                        .toInstant()));
+                book.append("checkOUT_date", Date.from(checkOUT_date
+                        .atStartOfDay(ZoneId.systemDefault())
+                        .toInstant()));
                 book.append("total_price", 1200);
+                System.out.println("DONE");
                 collection.insertOne(book);
             }
         }catch (Exception e){

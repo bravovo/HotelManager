@@ -1,6 +1,13 @@
 package org.example.hotelmanager.model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.awt.print.Book;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class Room {
@@ -12,8 +19,12 @@ public class Room {
     private String room_description;
     private int room_number;
     private String status;
-    private String dateFrom;
-    private String dateTo;
+    private LocalDate dateFrom;
+    private LocalDate dateTo;
+    private ObservableList<Booking> bookings = FXCollections.observableArrayList();
+
+    public Room() {
+    }
 
     public Room(int room_id, int hotel_id,
                 int type_id, String type_name,
@@ -26,11 +37,14 @@ public class Room {
         this.room_description = room_description;
         this.room_number = room_number;
         this.status = status;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String formattedDate = dateFormat.format(dateFrom);
-        this.dateFrom = formattedDate;
-        formattedDate = dateFormat.format(dateTo);
-        this.dateTo = formattedDate;
+
+        Instant instant = dateFrom.toInstant();
+        LocalDate fromDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        this.dateFrom = fromDate;
+
+        instant = dateTo.toInstant();
+        LocalDate toDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        this.dateTo = toDate;
     }
 
     public String getType_name() {
@@ -49,10 +63,27 @@ public class Room {
         return status;
     }
 
-    public String getDateFrom() {
+    public LocalDate getDateFrom() {
         return dateFrom;
     }
-    public String getDateTo() {
+
+    public LocalDate getDateTo() {
         return dateTo;
+    }
+
+    public void setBookings(ObservableList<Booking> bookings) {
+        this.bookings = bookings;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setDateFrom(LocalDate dateFrom) {
+        this.dateFrom = dateFrom;
+    }
+
+    public void setDateTo(LocalDate dateTo) {
+        this.dateTo = dateTo;
     }
 }

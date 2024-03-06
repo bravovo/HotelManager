@@ -13,6 +13,7 @@ module org.example.hotelmanager {
     requires org.mongodb.bson;
     requires org.mongodb.driver.core;
     requires java.desktop;
+    requires java.sql;
 
     opens org.example.hotelmanager to javafx.fxml;
     opens org.example.hotelmanager.model to javafx.base;

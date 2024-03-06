@@ -52,7 +52,7 @@ public class Hotel {
     public int countAvailableRooms(){
         int counter = 0;
         for(Room room : rooms){
-            if(room.getStatus().equals("Available")){
+            if(room.getStatus().equals("Доступна")){
                 counter++;
             }
         }
