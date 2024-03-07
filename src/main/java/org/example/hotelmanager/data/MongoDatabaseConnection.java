@@ -201,16 +201,10 @@ public class MongoDatabaseConnection {
                                 .append("hotel_id", id));
                 Document updatedRoom;
                 for(Document bookingDoc : bookingDocuments) {
-                    updatedRoom = new Document("$set", new Document(
-                            "room_id", roomDoc.getInteger("room_id"))
-                            .append("hotel_id", roomDoc.getInteger("hotel_id"))
-                            .append("type_id", roomDoc.getInteger("type_id"))
-                            .append("type_name", roomDoc.getString("type_name"))
-                            .append("room_name", roomDoc.getString("room_name"))
-                            .append("description", roomDoc.getString("description"))
-                            .append("room_number", roomDoc.getInteger("room_number"))
-                    );
-
+                    boolean toUpdate = false;
+                    String status = "Доступна";
+                    Date dateTO;
+                    Date dateFROM;
                     Date dateFromDB = bookingDoc.getDate("checkIN_date");
                     Instant instant = dateFromDB.toInstant();
                     LocalDate checkIN_date = instant.atZone(ZoneId.systemDefault()).toLocalDate();
@@ -220,68 +214,87 @@ public class MongoDatabaseConnection {
                     LocalDate checkOUT_date = instant.atZone(ZoneId.systemDefault()).toLocalDate();
 
                     if (LocalDate.now().isAfter(checkIN_date) && LocalDate.now().isBefore(checkOUT_date)) {
-                        updatedRoom.append("$set", new Document("status", "Занята")
-                                .append("from", bookingDoc.getDate("checkIN_date"))
-                                .append("to", bookingDoc.getDate("checkOUT_date")));
-                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
-                        break;
-                    } else if (LocalDateTime.now().isBefore(LocalDateTime.of(checkIN_date, LocalTime.of(11, 30)))) {
+                        status = "Занята";
+                        dateFROM = bookingDoc.getDate("checkIN_date");
+                        dateTO = bookingDoc.getDate("checkOUT_date");
+                        toUpdate = true;
+                    } else if (LocalDateTime.now().isBefore(LocalDateTime.of(checkOUT_date, LocalTime.of(11, 30))) &&
+                    LocalDateTime.now().isAfter(LocalDateTime.of(checkOUT_date, LocalTime.of(0, 0)))) {
                         LocalDateTime localDateTime = LocalDateTime.now();
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-                        Date dateToDB = Date.from(instant);
-                        updatedRoom.append("status", "Чек-аут")
-                                .append("from", dateToDB);
+                        dateFROM = Date.from(instant);
 
-                        localDateTime = LocalDateTime.of(checkIN_date, LocalTime.of(11, 30));
+                        status = "Чек-аут";
+
+                        localDateTime = LocalDateTime.of(checkOUT_date, LocalTime.of(11, 30));
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-                        dateToDB = Date.from(instant);
-                        updatedRoom.append("to", dateToDB);
-                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
-                        break;
+                        dateTO = Date.from(instant);
+                        toUpdate = true;
                     } else if (LocalDateTime.now().isAfter(LocalDateTime.of(checkIN_date, LocalTime.of(11, 30))) &&
                             LocalDateTime.now().isBefore(LocalDateTime.of(checkIN_date, LocalTime.of(14, 30)))) {
                         LocalDateTime localDateTime = LocalDateTime.of(checkIN_date, LocalTime.of(11, 30));
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-                        Date dateToDB = Date.from(instant);
-                        updatedRoom.append("status", "Прибирання")
-                                .append("from", dateToDB);
+                        dateFROM = Date.from(instant);
+
+                        status = "Прибирання";
 
                         localDateTime = LocalDateTime.of(checkIN_date, LocalTime.of(14, 30));
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-                        dateToDB = Date.from(instant);
-                        updatedRoom.append("to", dateToDB);
-                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
-                        break;
+                        dateTO = Date.from(instant);
+                        toUpdate = true;
                     } else if (LocalDateTime.now().isAfter(LocalDateTime.of(checkIN_date, LocalTime.of(14, 30)))) {
                         LocalDateTime localDateTime = LocalDateTime.of(checkIN_date, LocalTime.of(14, 30));
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-                        Date dateToDB = Date.from(instant);
-                        updatedRoom.append("status", "Чек-ін")
-                                .append("from", dateToDB);
+                        dateFROM = Date.from(instant);
+
+                        status = "Чек-ін";
 
                         localDateTime = LocalDateTime.of(checkIN_date.plusDays(1), LocalTime.of(0, 0));
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-                        dateToDB = Date.from(instant);
-                        updatedRoom.append("to", dateToDB);
-                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
-                        break;
+                        dateTO = Date.from(instant);
+                        toUpdate = true;
                     } else {
                         LocalDateTime localDateTime = LocalDateTime.now();
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-                        Date dateToDB = Date.from(instant);
-                        updatedRoom.append("status", "Доступна")
-                                .append("from", dateToDB);
+                        dateFROM = Date.from(instant);
 
                         localDateTime = LocalDateTime.now().plusDays(1);
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-                        dateToDB = Date.from(instant);
-                        updatedRoom.append("to", dateToDB);
-                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
+                        dateTO = Date.from(instant);
                     }
+                    if(toUpdate){
+                        updatedRoom = new Document("$set", new Document(
+                                "room_id", roomDoc.getInteger("room_id"))
+                                .append("hotel_id", roomDoc.getInteger("hotel_id"))
+                                .append("type_id", roomDoc.getInteger("type_id"))
+                                .append("type_name", roomDoc.getString("type_name"))
+                                .append("room_name", roomDoc.getString("room_name"))
+                                .append("description", roomDoc.getString("description"))
+                                .append("room_number", roomDoc.getInteger("room_number"))
+                                .append("status", status)
+                                .append("from", dateFROM)
+                                .append("to", dateTO)
+                        );
+                        roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
+                        break;
+                    }
+                    updatedRoom = new Document("$set", new Document(
+                            "room_id", roomDoc.getInteger("room_id"))
+                            .append("hotel_id", roomDoc.getInteger("hotel_id"))
+                            .append("type_id", roomDoc.getInteger("type_id"))
+                            .append("type_name", roomDoc.getString("type_name"))
+                            .append("room_name", roomDoc.getString("room_name"))
+                            .append("description", roomDoc.getString("description"))
+                            .append("room_number", roomDoc.getInteger("room_number"))
+                            .append("status", status)
+                            .append("from", dateFROM)
+                            .append("to", dateTO)
+                    );
+                    roomsCollection.updateOne(new Document("hotel_id", id), updatedRoom);
                 }
             }
             ObservableList<Room> roomList = FXCollections.observableArrayList();
-            roomDocuments = roomsCollection.find(new Document("hotel_id", hotel.getHotel_id()));
+            roomDocuments = roomsCollection.find(new Document("hotel_id", id));
             for(Document roomDoc : roomDocuments){
                 Room room = new Room(
                         roomDoc.getInteger("room_id"),
