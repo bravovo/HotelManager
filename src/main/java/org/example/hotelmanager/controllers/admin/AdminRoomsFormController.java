@@ -1,33 +1,34 @@
 package org.example.hotelmanager.controllers.admin;
 
-import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
+import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.Hotel;
 import org.example.hotelmanager.model.HotelHolder;
 import org.example.hotelmanager.model.Room;
+import org.example.hotelmanager.model.RoomHolder;
 
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.util.EventListener;
 import java.util.ResourceBundle;
 
 public class AdminRoomsFormController  implements Initializable {
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
+    Room room = new Room();
+    RoomHolder roomHolder = RoomHolder.getInstance();
     Hotel hotel = new Hotel();
     HotelHolder hotelHolder = HotelHolder.getInstance();
 
@@ -43,6 +44,7 @@ public class AdminRoomsFormController  implements Initializable {
     @FXML private TableColumn<Room, Integer> type_name;
     @FXML private TableColumn<Room, String> from_date;
     @FXML private TableColumn<Room, String> to_date;
+    @FXML private TableColumn<Room, Double> room_price;
     @FXML private ToggleButton find_room_btn;
 
     @FXML private ChoiceBox<String> filter_choice;
@@ -58,10 +60,24 @@ public class AdminRoomsFormController  implements Initializable {
         );
         ((ChoiceBox)filter_choice).setItems(items);
         filter_choice.setValue("Фільтр для пошуку");
+        room_table.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) { // Перевіряємо, чи було зроблено подвійне клацання
+                Room selectedRoom = room_table.getSelectionModel().getSelectedItem();
+                if (selectedRoom != null) {
+                    roomHolder.setRoom(selectedRoom);
+                    try{
+                        formBuilder.openDialog("admin-forms/edit-room-form.fxml", "Редагувати кімнати", 700, 500);
+                        resetTable();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
     public void createRoomClick(ActionEvent event) throws IOException {
         formBuilder.openDialog("admin-forms/create-room-form.fxml", "Створення кімнати", 700, 500);
-        setRoomsTable();
+        resetTable();
     }
 
     public void findRoomButtonClick(ActionEvent event){
@@ -124,13 +140,14 @@ public class AdminRoomsFormController  implements Initializable {
     }
 
     public void resetTableButtonClick(ActionEvent event){
+        find_input.setText("");
         resetTable();
     }
     public void resetTable(){
-        find_input.setText("");
         mongoDatabaseConnection.updateRoomList();
         setRoomsTable();
     }
+
     public void setRoomsTable(){
         hotel = hotelHolder.getUser();
         room_number.setCellValueFactory(new PropertyValueFactory<>("room_number"));
@@ -139,6 +156,7 @@ public class AdminRoomsFormController  implements Initializable {
         status.setCellValueFactory(new PropertyValueFactory<>("status"));
         from_date.setCellValueFactory(new PropertyValueFactory<>("dateFrom"));
         to_date.setCellValueFactory(new PropertyValueFactory<>("dateTo"));
+        room_price.setCellValueFactory(new PropertyValueFactory<>("price"));
         ObservableList<Room> rooms = hotel.getRoomsForList();
         room_table.setItems(rooms);
 
@@ -152,6 +170,7 @@ public class AdminRoomsFormController  implements Initializable {
         status.setCellValueFactory(new PropertyValueFactory<>("status"));
         from_date.setCellValueFactory(new PropertyValueFactory<>("dateFrom"));
         to_date.setCellValueFactory(new PropertyValueFactory<>("dateTo"));
+        room_price.setCellValueFactory(new PropertyValueFactory<>("price"));
         room_table.setItems(roomList);
     }
 

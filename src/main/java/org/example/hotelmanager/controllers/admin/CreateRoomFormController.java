@@ -34,9 +34,9 @@ public class CreateRoomFormController implements Initializable {
     @FXML
     private ChoiceBox<String> type_choice;
     public void initialize(URL url, ResourceBundle resourceBundle){
-        ObservableList<String> items = mongoDatabaseConnection.getRoomTypesNames();
-        ((ChoiceBox)type_choice).setItems(items);
-        type_choice.setValue(items.get(0));
+        ObservableList<String> typeNames = mongoDatabaseConnection.getRoomTypesNames();
+        ((ChoiceBox)type_choice).setItems(typeNames);
+        type_choice.setValue(typeNames.get(0));
 
         room_price.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*(\\.\\d*)?")) {

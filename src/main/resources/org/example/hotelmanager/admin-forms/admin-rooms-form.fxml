@@ -61,11 +61,12 @@
                <TableView fx:id="room_table" prefHeight="621.0" prefWidth="710.0" AnchorPane.topAnchor="0.0">
                   <columns>
                      <TableColumn fx:id="room_number" prefWidth="68.57144218683243" text="Номер" />
-                     <TableColumn fx:id="type_name" minWidth="0.0" prefWidth="118.58820343017578" text="Тип" />
-                     <TableColumn fx:id="room_name" minWidth="0.0" prefWidth="185.54624938964844" text="Назва" />
-                     <TableColumn fx:id="status" minWidth="0.0" prefWidth="138.75628662109375" text="Статус" />
-                     <TableColumn fx:id="from_date" prefWidth="99.226806640625" text="Початок" />
-                     <TableColumn fx:id="to_date" prefWidth="100.03369140625" text="Кінець" />
+                     <TableColumn fx:id="type_name" minWidth="0.0" prefWidth="84.70587921142578" text="Тип" />
+                     <TableColumn fx:id="room_name" minWidth="0.0" prefWidth="169.4116668701172" text="Назва" />
+                     <TableColumn fx:id="status" minWidth="0.0" prefWidth="104.87396240234375" text="Статус" />
+                     <TableColumn fx:id="from_date" prefWidth="95.1932373046875" text="Початок" />
+                     <TableColumn fx:id="to_date" prefWidth="104.8740234375" text="Кінець" />
+                     <TableColumn fx:id="room_price" prefWidth="85.5125732421875" text="Ціна" />
                   </columns>
                </TableView>
             </AnchorPane>

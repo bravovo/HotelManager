@@ -22,6 +22,7 @@ public class MongoDatabaseConnection {
     Document clientDoc = new Document();
     HotelHolder hotelHolder = HotelHolder.getInstance();
     ClientHolder clientHolder = ClientHolder.getInstance();
+    RoomHolder roomHolder = RoomHolder.getInstance();
 
     public boolean registerClientAccount(String firstName, String lastName, String clientEmail, String clientPhoneNumber,
                                          LocalDate dateOfBirth, String clientPassword){
@@ -133,21 +134,49 @@ public class MongoDatabaseConnection {
         }
     }
     public ObservableList<String> getRoomTypesNames(){
-        ObservableList<String> list = FXCollections.observableArrayList();
+        ObservableList<String> typeNameList = FXCollections.observableArrayList();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = mongoDatabase.getCollection("room_types");
             FindIterable<Document> documents = collection.find();
             for(Document coll : documents){
-                list.add(coll.getString("type_name"));
+                typeNameList.add(coll.getString("type_name"));
             }
         } catch(Exception exception){
             exception.printStackTrace();
         }
-        return list;
+        return typeNameList;
+    }
+    public ObservableList<Integer> getRoomTypesIDs() {
+        ObservableList<Integer> typeIDsList = FXCollections.observableArrayList();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("room_types");
+            FindIterable<Document> documents = collection.find();
+            for(Document coll : documents){
+                typeIDsList.add(coll.getInteger("type_id"));
+            }
+        } catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return typeIDsList;
+    }
+    private int getRoomTypeId(String typeName) {
+        Document docToFind = new Document();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("room_types");
+            docToFind = collection.find(new Document("type_name", typeName)).first();
+            if (docToFind == null){
+                docToFind = new Document("type_id", 0);
+            }
+        } catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return docToFind.getInteger("type_id");
     }
     public void createRoom(String typeName, String roomName, String roomDescription, String roomPrice){
-        hotel = hotelHolder.getUser();
+        hotel = hotelHolder.getUser(); // TODO Виправити перевірку наявності ціни на кімнату
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = mongoDatabase.getCollection("rooms");
@@ -169,26 +198,35 @@ public class MongoDatabaseConnection {
 
             collection.insertOne(room);
             hotelHolder.setUser(hotel);
-            updateRoomList();
         } catch(Exception exception){
             exception.printStackTrace();
         }
     }
-    private int getRoomTypeId(String typeName) {
-        Document docToFind = new Document();
+    public void editRoom(Room room){
+        hotel = hotelHolder.getUser();
+        roomHolder.setRoom(room);
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = mongoDatabase.getCollection("room_types");
-            docToFind = collection.find(new Document("type_name", typeName)).first();
-            if (docToFind == null){
-                docToFind = new Document("type_id", 0);
-            }
+            MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
+            Document roomDocument = new Document("$set", new Document("room_id", room.getRoom_id())
+                    .append("hotel_id", hotel.getHotel_id())
+                    .append("type_id", room.getType_id())
+                    .append("type_name", room.getType_name())
+                    .append("room_name", room.getRoom_name())
+                    .append("description", room.getRoom_description())
+                    .append("room_number", room.getRoom_number())
+                    .append("status", room.getStatus())
+                    .append("from", room.getDateFrom())
+                    .append("to", room.getDateTo())
+                    .append("price", room.getPrice()));
+            roomCollection.updateOne(new Document("hotel_id", hotel.getHotel_id())
+                    .append("room_number", room.getRoom_number()), roomDocument);
+            hotelHolder.setUser(hotel);
+            System.out.println("Hello");
         } catch(Exception exception){
             exception.printStackTrace();
         }
-        return docToFind.getInteger("type_id");
     }
-
     public void updateRoomList(){
         hotel = hotelHolder.getUser();
         int id = hotel.getHotel_id();
