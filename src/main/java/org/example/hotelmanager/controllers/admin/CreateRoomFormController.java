@@ -28,6 +28,8 @@ public class CreateRoomFormController implements Initializable {
 
     @FXML
     private TextField room_name;
+    @FXML
+    private TextField room_price;
 
     @FXML
     private ChoiceBox<String> type_choice;
@@ -35,6 +37,12 @@ public class CreateRoomFormController implements Initializable {
         ObservableList<String> items = mongoDatabaseConnection.getRoomTypesNames();
         ((ChoiceBox)type_choice).setItems(items);
         type_choice.setValue(items.get(0));
+
+        room_price.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*(\\.\\d*)?")) {
+                room_price.setText(oldValue);
+            }
+        });
     }
 
     public void cancelButtonClick(ActionEvent event){
@@ -44,7 +52,7 @@ public class CreateRoomFormController implements Initializable {
 
     public void createButtonClick(ActionEvent event){ //TODO перевірка коректності введених даних
         mongoDatabaseConnection.createRoom(type_choice.getValue(), room_name.getText(),
-                room_description.getText());
+                room_description.getText(), room_price.getText());
         mongoDatabaseConnection.updateRoomList();
         Stage stage = (Stage) create_room_btn.getScene().getWindow();
         stage.close();

@@ -21,6 +21,7 @@ public class Room {
     private String status;
     private LocalDate dateFrom;
     private LocalDate dateTo;
+    private double price;
     private ObservableList<Booking> bookings = FXCollections.observableArrayList();
 
     public Room() {
@@ -28,7 +29,8 @@ public class Room {
 
     public Room(int room_id, int hotel_id,
                 int type_id, String type_name,
-                String room_name, String room_description, int room_number, String status, Date dateFrom, Date dateTo) {
+                String room_name, String room_description, int room_number,
+                String status, Date dateFrom, Date dateTo, double price) {
         this.room_id = room_id;
         this.hotel_id = hotel_id;
         this.type_id = type_id;
@@ -45,6 +47,7 @@ public class Room {
         instant = dateTo.toInstant();
         LocalDate toDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
         this.dateTo = toDate;
+        this.price = price;
     }
 
     public String getType_name() {
