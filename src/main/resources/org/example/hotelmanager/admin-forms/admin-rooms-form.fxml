@@ -17,7 +17,7 @@
    <children>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="750.0" spacing="10.0">
          <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            <Insets bottom="20.0" top="20.0" />
          </padding>
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
@@ -25,9 +25,14 @@
                   <Insets left="30.0" />
                </padding>
                <children>
-                  <Button fx:id="create_room_btn" mnemonicParsing="false" onAction="#createRoomClick" prefHeight="30.0" prefWidth="150.0" text="Створити кімнату" />
+                  <Button fx:id="create_room_btn" mnemonicParsing="false" onAction="#createRoomClick" prefHeight="31.0" prefWidth="150.0" text="Створити кімнату" />
                   <ToggleButton fx:id="find_room_btn" mnemonicParsing="false" onAction="#findRoomButtonClick" prefHeight="30.0" prefWidth="150.0" text="Пошук кімнат" />
-                  <Button fx:id="room_types_btn" mnemonicParsing="false" onAction="#roomTypesButtonClicked" prefHeight="30.0" prefWidth="150.0" text="Типи кімнат" />
+                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="150.0">
+                     <children>
+                        <Button fx:id="room_types_btn" mnemonicParsing="false" onAction="#roomTypesButtonClicked" prefHeight="30.0" prefWidth="150.0" text="Типи кімнат" />
+                        <Button fx:id="delete_room_btn" disable="true" mnemonicParsing="false" onAction="#deleteRoomButtonClick" prefHeight="30.0" prefWidth="150.0" text="Видалити кімнату" visible="false" />
+                     </children>
+                  </AnchorPane>
                   <VBox alignment="CENTER" prefHeight="100.0" prefWidth="307.0" spacing="15.0">
                      <children>
                         <HBox alignment="CENTER" prefHeight="30.0" prefWidth="381.0" spacing="15.0">
@@ -46,7 +51,7 @@
                   </VBox>
                </children>
             </HBox>
-            <AnchorPane fx:id="rooms_anchor_pane" prefHeight="200.0" prefWidth="200.0">
+            <AnchorPane fx:id="rooms_anchor_pane" prefHeight="200.0" prefWidth="1152.0">
                <VBox fx:id="find_room_vbox" prefHeight="80.0" prefWidth="712.0">
                   <children>
                      <HBox alignment="CENTER" prefHeight="80.0" prefWidth="200.0" spacing="20.0">
@@ -58,7 +63,7 @@
                         </children>
                      </HBox>
                   </children></VBox>
-               <TableView fx:id="room_table" prefHeight="621.0" prefWidth="710.0" AnchorPane.topAnchor="0.0">
+               <TableView fx:id="room_table" layoutX="20.0" prefHeight="621.0" prefWidth="710.0" AnchorPane.topAnchor="0.0">
                   <columns>
                      <TableColumn fx:id="room_number" prefWidth="68.57144218683243" text="Номер" />
                      <TableColumn fx:id="type_name" minWidth="0.0" prefWidth="84.70587921142578" text="Тип" />
@@ -69,6 +74,9 @@
                      <TableColumn fx:id="room_price" prefWidth="85.5125732421875" text="Ціна" />
                   </columns>
                </TableView>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
             </AnchorPane>
          </children>
       </VBox>

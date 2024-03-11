@@ -53,6 +53,7 @@ public class AdminRoomsFormController  implements Initializable {
     @FXML private Button find_button;
     @FXML private TextField find_input;
     @FXML private Button reset_button;
+    @FXML private Button delete_room_btn;
     FormBuilder formBuilder = new FormBuilder();
 
     public void initialize(URL url, ResourceBundle resourceBundle){
@@ -63,8 +64,8 @@ public class AdminRoomsFormController  implements Initializable {
         ((ChoiceBox)filter_choice).setItems(items);
         filter_choice.setValue("Фільтр для пошуку");
         room_table.setOnMouseClicked(event -> {
+            Room selectedRoom = room_table.getSelectionModel().getSelectedItem();
             if (event.getClickCount() == 2) { // Перевіряємо, чи було зроблено подвійне клацання
-                Room selectedRoom = room_table.getSelectionModel().getSelectedItem();
                 if (selectedRoom != null) {
                     roomHolder.setRoom(selectedRoom);
                     try{
@@ -74,8 +75,24 @@ public class AdminRoomsFormController  implements Initializable {
                         e.printStackTrace();
                     }
                 }
+            } else if (event.getClickCount() == 1) { // Одинарне клацання
+                if (selectedRoom != null) {
+                    delete_room_btn.setVisible(true);
+                    delete_room_btn.setDisable(false);
+                    room_types_btn.setDisable(true);
+                    room_types_btn.setVisible(false);
+                    roomHolder.setRoom(selectedRoom);
+                }
             }
         });
+    }
+    public void deleteRoomButtonClick(ActionEvent event) throws IOException{
+        formBuilder.openDialog("confirming-dialog-form.fxml", "Підтвердити видалення", 300, 200);
+        resetTable();
+        delete_room_btn.setVisible(false);
+        delete_room_btn.setDisable(true);
+        room_types_btn.setDisable(false);
+        room_types_btn.setVisible(true);
     }
     public void createRoomClick(ActionEvent event) throws IOException {
         formBuilder.openDialog("admin-forms/create-room-form.fxml", "Створення кімнати", 700, 500);

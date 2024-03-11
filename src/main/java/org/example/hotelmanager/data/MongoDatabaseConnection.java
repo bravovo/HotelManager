@@ -16,6 +16,7 @@ import java.util.Date;
 public class MongoDatabaseConnection {
     FormBuilder formBuilder = new FormBuilder();
     DataCredentials dataCredentials = new DataCredentials();
+    Room roomToDelete = new Room();
     Hotel hotel;
     Client client;
     Document foundHotel = new Document();
@@ -491,5 +492,22 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
         return roomTypes;
+    }
+
+    public void deleteRoom() { //TODO Додати видалення бронювань пов'язаних з кімнатою
+        hotel = hotelHolder.getUser();
+        Document roomDocument;
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
+            roomToDelete = roomHolder.getRoom();
+            roomDocument = roomsCollection.find(new Document("hotel_id", roomToDelete.getHotel_id())
+                    .append("room_id", roomToDelete.getRoom_id())).first();
+            if (roomDocument != null){
+                roomsCollection.deleteOne(roomDocument);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
