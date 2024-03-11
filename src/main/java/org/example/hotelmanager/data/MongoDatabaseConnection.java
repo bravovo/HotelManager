@@ -384,58 +384,6 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
     }
-
-//    public void updateRoomBookings(){ // TODO Доробити це, з'єднати з методом updateRoomList()
-//        hotel = hotelHolder.getUser();
-//        ObservableList<Room> list = FXCollections.observableArrayList();
-//        int id = hotel.getHotel_id();
-//        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
-//            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-//            MongoCollection<Document> collection = mongoDatabase.getCollection("bookings");
-//            for(Room room : hotel.getRoomsForList()){
-//                FindIterable<Document> bookingDocument = collection.find(new Document("room_number", room.getRoom_number()));
-//                for(Document booking : bookingDocument){
-//                    LocalDate checkIN_date = booking.getDate("checkIN_date")
-//                            .toInstant()
-//                            .atZone(ZoneId.systemDefault())
-//                            .toLocalDate().minusDays(1);
-//                    LocalDate checkOUT_date = booking.getDate("checkOUT_date")
-//                            .toInstant()
-//                            .atZone(ZoneId.systemDefault())
-//                            .toLocalDate().minusDays(1);
-//                    if(LocalDate.now().isAfter(checkIN_date) && LocalDate.now().isBefore(checkOUT_date)){
-//                        room.setStatus("Занята");
-//                        room.setDateTo(checkIN_date);
-//                        room.setDateTo(checkOUT_date);
-//                        break;
-//                    }
-//                    else if(LocalDateTime.now().isBefore(LocalDateTime.of(checkIN_date, LocalTime.of(11, 30)))){
-//                        room.setStatus("Чек-аут");
-//                        break;
-//                    }
-//                    else if(LocalDateTime.now().isAfter(LocalDateTime.of(checkIN_date, LocalTime.of(11, 30))) &&
-//                            LocalDateTime.now().isBefore(LocalDateTime.of(checkIN_date, LocalTime.of(14, 30)))){
-//                        room.setStatus("Прибирання");
-//                        break;
-//                    }
-//                    else if(LocalDateTime.now().isAfter(LocalDateTime.of(checkIN_date, LocalTime.of(14, 30)))){
-//                        room.setStatus("Чек-ін");
-//                        break;
-//                    }
-//                    else {
-//                        room.setStatus("Доступна");
-//                        break;
-//                    }
-//                }
-//                list.add(room);
-//            }
-//            hotel.setRooms(list);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//        hotelHolder.setUser(hotel);
-//    }
-
     public void createBooking(LocalDate checkIN_date, LocalDate checkOUT_date){
         client = clientHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
@@ -474,7 +422,6 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
     }
-
     public ObservableList<Room> findRoomByFilter(String filter, String value){
         hotel = hotelHolder.getUser();
         ObservableList<Room> roomList = FXCollections.observableArrayList();
@@ -524,5 +471,25 @@ public class MongoDatabaseConnection {
             formBuilder.errorValidation("Помилка виконання. Спробуйте ще раз");
         }
         return roomList;
+    }
+    public ObservableList<RoomType> getRoomTypes(){
+        ObservableList<RoomType> roomTypes = FXCollections.observableArrayList();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> roomTypesCollection = mongoDatabase.getCollection("room_types");
+            FindIterable<Document> roomTypesFound = roomTypesCollection.find();
+            for(Document roomTypeDocument : roomTypesFound){
+                RoomType roomType = new RoomType(
+                        roomTypeDocument.getInteger("type_id"),
+                        roomTypeDocument.getString("type_name"),
+                        roomTypeDocument.getString("description"),
+                        roomTypeDocument.getInteger("capacity")
+                );
+                roomTypes.add(roomType);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return roomTypes;
     }
 }

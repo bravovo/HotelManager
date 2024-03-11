@@ -31,12 +31,12 @@
          <padding>
             <Insets right="100.0" />
          </padding>
-         <Label text="Назва кімнати" />
+         <Label text="Назва кімнати*" />
          <TextField fx:id="room_name" />
       </VBox>
       <VBox>
          <children>
-            <Label text="Ціна кімнати" />
+            <Label text="Ціна кімнати*" />
             <TextField fx:id="room_price" />
          </children>
          <padding>

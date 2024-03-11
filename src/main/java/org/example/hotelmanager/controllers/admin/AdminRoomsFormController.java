@@ -6,13 +6,16 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
+import org.example.hotelmanager.ManagerApplication;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.Hotel;
 import org.example.hotelmanager.model.HotelHolder;
@@ -27,14 +30,13 @@ import java.util.ResourceBundle;
 
 public class AdminRoomsFormController  implements Initializable {
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
-    Room room = new Room();
     RoomHolder roomHolder = RoomHolder.getInstance();
     Hotel hotel = new Hotel();
     HotelHolder hotelHolder = HotelHolder.getInstance();
 
     @FXML private VBox find_room_vbox;
     @FXML private AnchorPane rooms_anchor_pane;
-
+    @FXML private Button room_types_btn;
     @FXML private Label count_available;
     @FXML private Label rooms_count;
     @FXML private TableView<Room> room_table;
@@ -111,12 +113,14 @@ public class AdminRoomsFormController  implements Initializable {
                 int room_number = 0;
                 try{
                     room_number = Integer.parseInt(find_input.getText());
+                    filter = "Номер кімнати";
+                    value = String.valueOf(room_number);
                 }catch (Exception e){
                     FormBuilder formBuilder = new FormBuilder();
                     formBuilder.errorValidation("Номер кімнати повинен бути числом!");
+                    find_input.setText("");
+                    return;
                 }
-                filter = "Номер кімнати";
-                value = String.valueOf(room_number);
             }
             case "Назва кімнати" -> {
                 String room_name = find_input.getText();
@@ -127,12 +131,14 @@ public class AdminRoomsFormController  implements Initializable {
                 double price = 0;
                 try{
                     price = Double.parseDouble(find_input.getText());
+                    filter = "Ціна";
+                    value = String.valueOf(price);
                 }catch (Exception e){
                     FormBuilder formBuilder = new FormBuilder();
                     formBuilder.errorValidation("Ціна повинна бути числом!");
+                    find_input.setText("");
+                    return;
                 }
-                filter = "Ціна";
-                value = String.valueOf(price);
             }
         }
         ObservableList<Room> roomList = mongoDatabaseConnection.findRoomByFilter(filter, value);
@@ -173,5 +179,16 @@ public class AdminRoomsFormController  implements Initializable {
         room_price.setCellValueFactory(new PropertyValueFactory<>("price"));
         room_table.setItems(roomList);
     }
-
+    public void roomTypesButtonClicked(ActionEvent event) throws IOException{
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader =
+                new FXMLLoader(ManagerApplication.class.getResource("admin-forms/room-types-form.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 600,400);
+        stage.setMaximized(false);
+        stage.setFullScreen(false);
+        stage.setResizable(false);
+        stage.setTitle("Інформація про типи кімнат");
+        stage.setScene(scene);
+        stage.show();
+    }
 }

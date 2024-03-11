@@ -27,7 +27,7 @@
                <children>
                   <Button fx:id="create_room_btn" mnemonicParsing="false" onAction="#createRoomClick" prefHeight="30.0" prefWidth="150.0" text="Створити кімнату" />
                   <ToggleButton fx:id="find_room_btn" mnemonicParsing="false" onAction="#findRoomButtonClick" prefHeight="30.0" prefWidth="150.0" text="Пошук кімнат" />
-                  <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Типи кімнат" />
+                  <Button fx:id="room_types_btn" mnemonicParsing="false" onAction="#roomTypesButtonClicked" prefHeight="30.0" prefWidth="150.0" text="Типи кімнат" />
                   <VBox alignment="CENTER" prefHeight="100.0" prefWidth="307.0" spacing="15.0">
                      <children>
                         <HBox alignment="CENTER" prefHeight="30.0" prefWidth="381.0" spacing="15.0">

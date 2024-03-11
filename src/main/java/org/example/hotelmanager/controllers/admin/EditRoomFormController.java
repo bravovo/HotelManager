@@ -9,6 +9,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.Room;
 import org.example.hotelmanager.model.RoomHolder;
@@ -37,13 +38,24 @@ public class EditRoomFormController implements Initializable {
         room = roomHolder.getRoom();
         ObservableList<Integer> roomTypesIDs = mongoDatabaseConnection.getRoomTypesIDs();
         ObservableList<String> roomTypesNames = mongoDatabaseConnection.getRoomTypesNames();
-        ((ChoiceBox)type_id).setItems(roomTypesIDs);
+        ObservableList<Pair<Integer, String>> roomTypes = FXCollections.observableArrayList();
+        for (int i = 0; i < roomTypesIDs.size(); i++){
+            roomTypes.add(new Pair<>(i, roomTypesNames.get(i)));
+        }
+        type_id.setItems(roomTypesIDs);
         type_id.setValue(room.getType_id());
-        ((ChoiceBox)type_name).setItems(roomTypesNames);
+        type_name.setItems(roomTypesNames);
         type_name.setValue(room.getType_name());
         room_price.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*(\\.\\d*)?")) {
                 room_price.setText(oldValue);
+            }
+        });
+        type_name.setOnAction(e -> {
+            String selectedName = type_name.getSelectionModel().getSelectedItem();
+            int index = roomTypesNames.indexOf(selectedName);
+            if (index >= 0) {
+                type_id.setValue(roomTypes.get(index).getKey());
             }
         });
         room_name.setText(room.getRoom_name());

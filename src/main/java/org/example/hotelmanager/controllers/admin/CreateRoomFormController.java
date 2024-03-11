@@ -9,6 +9,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 
 import java.net.URL;
@@ -16,6 +17,7 @@ import java.util.ResourceBundle;
 
 public class CreateRoomFormController implements Initializable {
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
+    FormBuilder formBuilder = new FormBuilder();
 
     @FXML
     private Button cancel_btn;
@@ -51,6 +53,16 @@ public class CreateRoomFormController implements Initializable {
     }
 
     public void createButtonClick(ActionEvent event){ //TODO перевірка коректності введених даних
+        TextField[] textFields = {
+                room_name,
+                room_price,
+        };
+        for(TextField textField : textFields){
+            if (textField.getText().length() == 0){
+                formBuilder.errorValidation("Всі обов'язкові поля повинні бути заповнені");
+                return;
+            }
+        }
         mongoDatabaseConnection.createRoom(type_choice.getValue(), room_name.getText(),
                 room_description.getText(), room_price.getText());
         mongoDatabaseConnection.updateRoomList();
