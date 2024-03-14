@@ -97,7 +97,7 @@ public class MongoDatabaseConnection {
                 updateRoomList();
                 Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                 formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
-                        "Версія для адміністратора | Система управління готелями", 1100, 750);
+                        "Версія для адміністратора | Система управління готелями", 1350, 750);
                 return;
             }
 
@@ -236,6 +236,7 @@ public class MongoDatabaseConnection {
             MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
             FindIterable<Document> roomDocuments = roomsCollection.find(new Document("hotel_id", id));
             MongoCollection<Document> bookingsCollection = mongoDatabase.getCollection("bookings");
+            MongoCollection<Document> bookingsDoneCollection = mongoDatabase.getCollection("booking_done");
             for(Document roomDoc : roomDocuments){
                 FindIterable<Document> bookingDocuments =
                         bookingsCollection.find(new Document("hotel_id", id)
@@ -253,7 +254,11 @@ public class MongoDatabaseConnection {
                     dateFromDB = bookingDoc.getDate("checkOUT_date");
                     instant = dateFromDB.toInstant();
                     LocalDate checkOUT_date = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-
+                    if(LocalDate.now().isAfter(checkIN_date) && LocalDate.now().isAfter(checkOUT_date)){
+                        bookingsDoneCollection.insertOne(bookingDoc);
+                        bookingsCollection.deleteOne(bookingDoc);
+                        continue;
+                    }
                     if (LocalDate.now().isAfter(checkIN_date) && LocalDate.now().isBefore(checkOUT_date)) {
                         status = "Занята";
                         dateFROM = bookingDoc.getDate("checkIN_date");
@@ -283,7 +288,7 @@ public class MongoDatabaseConnection {
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
                         dateTO = Date.from(instant);
                         toUpdate = true;
-                    } else if (LocalDateTime.now().isAfter(LocalDateTime.of(checkIN_date, LocalTime.of(14, 30)))) {
+                    } else if (LocalDate.now().isEqual(checkIN_date) && LocalDateTime.now().isAfter(LocalDateTime.of(checkIN_date, LocalTime.of(14, 30)))) {
                         LocalDateTime localDateTime = LocalDateTime.of(checkIN_date, LocalTime.of(14, 30));
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
                         dateFROM = Date.from(instant);

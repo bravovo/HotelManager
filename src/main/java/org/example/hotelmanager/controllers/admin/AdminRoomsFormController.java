@@ -3,8 +3,6 @@ package org.example.hotelmanager.controllers.admin;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -21,11 +19,8 @@ import org.example.hotelmanager.model.Hotel;
 import org.example.hotelmanager.model.HotelHolder;
 import org.example.hotelmanager.model.Room;
 import org.example.hotelmanager.model.RoomHolder;
-
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
-import java.util.EventListener;
 import java.util.ResourceBundle;
 
 public class AdminRoomsFormController  implements Initializable {
@@ -77,11 +72,11 @@ public class AdminRoomsFormController  implements Initializable {
                 }
             } else if (event.getClickCount() == 1) { // Одинарне клацання
                 if (selectedRoom != null) {
-                    delete_room_btn.setVisible(true);
                     delete_room_btn.setDisable(false);
-                    room_types_btn.setDisable(true);
-                    room_types_btn.setVisible(false);
                     roomHolder.setRoom(selectedRoom);
+                }
+                else {
+                    delete_room_btn.setDisable(true);
                 }
             }
         });
@@ -89,10 +84,7 @@ public class AdminRoomsFormController  implements Initializable {
     public void deleteRoomButtonClick(ActionEvent event) throws IOException{
         formBuilder.openDialog("confirming-dialog-form.fxml", "Підтвердити видалення", 300, 200);
         resetTable();
-        delete_room_btn.setVisible(false);
         delete_room_btn.setDisable(true);
-        room_types_btn.setDisable(false);
-        room_types_btn.setVisible(true);
     }
     public void createRoomClick(ActionEvent event) throws IOException {
         formBuilder.openDialog("admin-forms/create-room-form.fxml", "Створення кімнати", 700, 500);

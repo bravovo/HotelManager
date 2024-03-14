@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.AdminBookingsFormController">
+   <children>
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1000.0" spacing="10.0">
+         <padding>
+            <Insets bottom="20.0" top="20.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <padding>
+                  <Insets left="30.0" />
+               </padding>
+               <children>
+                  <Button fx:id="create_booking_btn" mnemonicParsing="false"  prefHeight="31.0" prefWidth="150.0" text="Створити бронювання" />
+                  <ToggleButton fx:id="find_booking_btn" mnemonicParsing="false"  prefHeight="30.0" prefWidth="150.0" text="Пошук бронювань" />
+                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="150.0">
+                     <children>
+                        <Button fx:id="delete_room_btn" mnemonicParsing="false"  prefHeight="30.0" prefWidth="150.0" text="Видалити бронювання" />
+                     </children>
+                  </AnchorPane>
+                  <VBox alignment="CENTER" prefHeight="100.0" prefWidth="307.0" spacing="15.0">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="30.0" prefWidth="381.0" spacing="15.0">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Загальна кількість бронювань:" />
+                              <Label fx:id="rooms_count" text="Label" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="30.0" prefWidth="381.0" spacing="15.0">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Кількість вільних кімнат:" />
+                              <Label fx:id="count_available" text="Label" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <AnchorPane fx:id="bookings_anchor_pane" prefHeight="200.0" prefWidth="1152.0">
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding>
+               <children>
+                  <VBox fx:id="find_booking_vbox" prefHeight="81.0" prefWidth="860.0">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="80.0" prefWidth="200.0" spacing="20.0">
+                           <children>
+                              <ChoiceBox fx:id="filter_choice" prefHeight="30.0" prefWidth="150.0" />
+                              <TextField fx:id="find_input" prefHeight="30.0" prefWidth="250.0" />
+                              <Button fx:id="find_button" mnemonicParsing="false"  prefHeight="30.0" prefWidth="100.0" text="Знайти" />
+                              <Button fx:id="reset_button" mnemonicParsing="false"  prefHeight="30.0" prefWidth="100.0" text="Скинути" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <TableView fx:id="booking_table" layoutX="20.0" prefHeight="621.0" prefWidth="710.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <columns>
+                        <TableColumn fx:id="room_number" prefWidth="68.03361183404922" text="ID" />
+                        <TableColumn fx:id="type_name" minWidth="0.0" prefWidth="169.1428680419922" text="Ім'я гостя" />
+                        <TableColumn fx:id="room_name" minWidth="0.0" prefWidth="183.1261444091797" text="Прізвище гостя" />
+                        <TableColumn prefWidth="99.49581909179688" text="Номер кімнати" />
+                        <TableColumn fx:id="status" minWidth="0.0" prefWidth="140.0" text="Статус" />
+                        <TableColumn fx:id="from_date" prefWidth="100.0" text="Чек-ін" />
+                        <TableColumn fx:id="to_date" minWidth="0.0" prefWidth="100.0" text="Чек-аут" />
+                        <TableColumn fx:id="room_price" prefWidth="100.0" text="Вартість" />
+                     </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
