@@ -95,6 +95,7 @@ public class MongoDatabaseConnection {
                         findHotel.getString("phone_number"));
                 hotelHolder.setUser(hotel);
                 updateRoomList();
+                setBookingList();
                 Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                 formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                         "Версія для адміністратора | Система управління готелями", 1350, 750);
@@ -134,6 +135,57 @@ public class MongoDatabaseConnection {
             exception.printStackTrace();
         }
     }
+
+    private void setBookingList() {
+        ObservableList<Booking> bookings = FXCollections.observableArrayList();
+        ObservableList<Booking> bookingsDone = FXCollections.observableArrayList();
+        hotel = hotelHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> bookingsCollection = mongoDatabase.getCollection("bookings");
+            FindIterable<Document> bookingOfHotel =
+                    bookingsCollection.find(new Document("hotel_id", hotel.getHotel_id()));
+            for(Document bookingDoc : bookingOfHotel){
+                Booking booking = new Booking(
+                        bookingDoc.getInteger("booking_id"),
+                        hotel.getHotel_id(),
+                        bookingDoc.getInteger("guest_id"),
+                        "John",
+                        "Doe",
+                        bookingDoc.getInteger("room_number"),
+                        "Виконується",
+                        bookingDoc.getDate("checkIN_date"),
+                        bookingDoc.getDate("checkOUT_date"),
+                        bookingDoc.getDouble("total_price")
+                );
+                bookings.add(booking);
+            }
+            MongoCollection<Document> bookingsDoneCollection = mongoDatabase.getCollection("booking_done");
+            FindIterable<Document> bookingDoneOfHotel =
+                    bookingsDoneCollection.find(new Document("hotel_id", hotel.getHotel_id()));
+            for(Document bookingDoc : bookingDoneOfHotel){
+                Booking booking = new Booking(
+                        bookingDoc.getInteger("booking_id"),
+                        hotel.getHotel_id(),
+                        bookingDoc.getInteger("guest_id"),
+                        "John",
+                        "Doe",
+                        bookingDoc.getInteger("room_number"),
+                        "Виконується",
+                        bookingDoc.getDate("checkIN_date"),
+                        bookingDoc.getDate("checkOUT_date"),
+                        bookingDoc.getDouble("total_price")
+                );
+                bookingsDone.add(booking);
+            }
+            hotel.setBookingsDone(bookingsDone);
+            hotel.setBookings(bookings);
+            hotelHolder.setUser(hotel);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public ObservableList<String> getRoomTypesNames(){
         ObservableList<String> typeNameList = FXCollections.observableArrayList();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
@@ -374,7 +426,10 @@ public class MongoDatabaseConnection {
                             bookingDoc.getInteger("booking_id"),
                             bookingDoc.getInteger("hotel_id"),
                             bookingDoc.getInteger("guest_id"),
+                            "John",
+                            "Doe",
                             bookingDoc.getInteger("room_number"),
+                            "Виконується",
                             bookingDoc.getDate("checkIN_date"),
                             bookingDoc.getDate("checkOUT_date"),
                             priceInDouble
@@ -420,7 +475,7 @@ public class MongoDatabaseConnection {
                 book.append("checkOUT_date", Date.from(checkOUT_date
                         .atStartOfDay(ZoneId.systemDefault())
                         .toInstant()));
-                book.append("total_price", 1200);
+                book.append("total_price", Double.valueOf(1200));
                 System.out.println("DONE");
                 collection.insertOne(book);
             }
@@ -498,7 +553,6 @@ public class MongoDatabaseConnection {
         }
         return roomTypes;
     }
-
     public void deleteRoom() { //TODO Додати видалення бронювань пов'язаних з кімнатою
         hotel = hotelHolder.getUser();
         Document roomDocument;

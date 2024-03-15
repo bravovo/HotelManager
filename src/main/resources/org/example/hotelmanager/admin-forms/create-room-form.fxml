@@ -58,8 +58,8 @@
          <padding>
             <Insets right="100.0" />
          </padding>
-         <Button fx:id="create_room_btn" mnemonicParsing="false" onAction="#createButtonClick" prefHeight="31.0" prefWidth="125.0" text="Створити кімнату" />
-         <Button fx:id="cancel_btn" mnemonicParsing="false" onAction="#cancelButtonClick" prefHeight="30.0" prefWidth="80.0" text="Скасувати" />
+         <Button fx:id="create_room_btn" mnemonicParsing="false" onAction="#createButtonClick" prefHeight="30.0" prefWidth="150.0" text="Створити кімнату" />
+         <Button fx:id="cancel_btn" mnemonicParsing="false" onAction="#cancelButtonClick" prefHeight="30.0" prefWidth="150.0" text="Скасувати" />
       </HBox>
    </VBox>
 </HBox>

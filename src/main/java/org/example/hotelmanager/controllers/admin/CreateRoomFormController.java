@@ -4,10 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
@@ -52,7 +49,7 @@ public class CreateRoomFormController implements Initializable {
         stage.close();
     }
 
-    public void createButtonClick(ActionEvent event){ //TODO перевірка коректності введених даних
+    public void createButtonClick(ActionEvent event){
         TextField[] textFields = {
                 room_name,
                 room_price,
