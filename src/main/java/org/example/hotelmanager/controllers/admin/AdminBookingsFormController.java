@@ -29,7 +29,6 @@ public class AdminBookingsFormController implements Initializable {
     @FXML private Label bookings_count;
     @FXML private TableColumn<Booking, LocalDate> check_in;
     @FXML private TableColumn<Booking, LocalDate> check_out;
-    @FXML private Label count_available;
     @FXML private Button create_booking_btn;
     @FXML private Button delete_booking_btn;
     @FXML private ChoiceBox<String> filter_choice;
@@ -101,10 +100,9 @@ public class AdminBookingsFormController implements Initializable {
         delete_booking_btn.setDisable(true);
     }
     public void createBookingClick(ActionEvent event) throws IOException {
-        formBuilder.openDialog("admin-forms/create-booking-form.fxml", "Створення бронювання", 700, 500);
-        setBookingsTable();
+        formBuilder.openWindow("admin-forms/find-available-room-form.fxml", "Створення бронювання", 800, 500);
     }
-    public void findBookingButtonClick(ActionEvent event){ //TODO Перевірка, чи вибрано щось у choice box
+    public void findBookingButtonClick(ActionEvent event){
         if(find_booking_btn.isSelected()){
             AnchorPane.setTopAnchor(booking_table, 80.0);
             find_booking_vbox.setVisible(true);
@@ -120,6 +118,10 @@ public class AdminBookingsFormController implements Initializable {
     public void findBookingClick(ActionEvent event){
         String filter;
         String value;
+        if (filter_choice.getValue().equals("Фільтр для пошуку")){
+            formBuilder.errorValidation("Фільтр для пошуку повинен бути вибраний!");
+            return;
+        }
         switch (filter_choice.getValue()){
             case "ID" -> {
                 int bookingID;

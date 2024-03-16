@@ -35,6 +35,7 @@ public class EditRoomFormController implements Initializable {
     Room room = new Room();
 
     public void initialize(URL url, ResourceBundle resourceBundle){
+        room_description.setWrapText(true);
         room = roomHolder.getRoom();
         ObservableList<Integer> roomTypesIDs = mongoDatabaseConnection.getRoomTypesIDs();
         ObservableList<String> roomTypesNames = mongoDatabaseConnection.getRoomTypesNames();

@@ -10,6 +10,8 @@ import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.model.*;
 
 import javafx.event.ActionEvent;
+
+import javax.print.Doc;
 import java.time.*;
 import java.util.Date;
 
@@ -156,7 +158,8 @@ public class MongoDatabaseConnection {
                         "Виконується",
                         bookingDoc.getDate("checkIN_date"),
                         bookingDoc.getDate("checkOUT_date"),
-                        bookingDoc.getDouble("total_price")
+                        bookingDoc.getDouble("total_price"),
+                        ""
                 );
                 bookings.add(booking);
             }
@@ -174,7 +177,8 @@ public class MongoDatabaseConnection {
                         "Виконується",
                         bookingDoc.getDate("checkIN_date"),
                         bookingDoc.getDate("checkOUT_date"),
-                        bookingDoc.getDouble("total_price")
+                        bookingDoc.getDouble("total_price"),
+                        ""
                 );
                 bookingsDone.add(booking);
             }
@@ -229,7 +233,7 @@ public class MongoDatabaseConnection {
         return docToFind.getInteger("type_id");
     }
     public void createRoom(String typeName, String roomName, String roomDescription, String roomPrice){
-        hotel = hotelHolder.getUser(); // TODO Виправити перевірку наявності ціни на кімнату
+        hotel = hotelHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = mongoDatabase.getCollection("rooms");
@@ -248,6 +252,15 @@ public class MongoDatabaseConnection {
             room.append("to", LocalDate.now().plusDays(1));
             double roomPriceConverted = Double.parseDouble(roomPrice);
             room.append("price", roomPriceConverted);
+            int capacity = 0;
+            if(typeName.equals("F")){
+                capacity = 4;
+            } else if (typeName.charAt(1) == 'S') {
+                capacity = 1;
+            } else if (typeName.charAt(1) == 'D' || typeName.charAt(1) == 'T'){
+                capacity = 2;
+            }
+            room.append("capacity", capacity);
 
             collection.insertOne(room);
             hotelHolder.setUser(hotel);
@@ -261,6 +274,14 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
+            int capacity = 0;
+            if(room.getType_name().equals("F")){
+                capacity = 4;
+            } else if (room.getType_name().charAt(1) == 'S') {
+                capacity = 1;
+            } else if (room.getType_name().charAt(1) == 'D' || room.getType_name().charAt(1) == 'T'){
+                capacity = 2;
+            }
             Document roomDocument = new Document("$set", new Document("room_id", room.getRoom_id())
                     .append("hotel_id", hotel.getHotel_id())
                     .append("type_id", room.getType_id())
@@ -271,7 +292,8 @@ public class MongoDatabaseConnection {
                     .append("status", room.getStatus())
                     .append("from", room.getDateFrom())
                     .append("to", room.getDateTo())
-                    .append("price", room.getPrice()));
+                    .append("price", room.getPrice())
+                    .append("capacity", capacity));
             roomCollection.updateOne(new Document("hotel_id", hotel.getHotel_id())
                     .append("room_number", room.getRoom_number()), roomDocument);
             hotelHolder.setUser(hotel);
@@ -365,6 +387,7 @@ public class MongoDatabaseConnection {
                                 .append("from", dateFROM)
                                 .append("to", dateTO)
                                 .append("price", roomDoc.getDouble("price"))
+                                .append("capacity", roomDoc.getInteger("capacity"))
                         );
                         roomsCollection.updateOne(new Document("hotel_id", id)
                                 .append("room_number", roomDoc.getInteger("room_number")), updatedRoom);
@@ -388,6 +411,8 @@ public class MongoDatabaseConnection {
                             .append("status", status)
                             .append("from", dateFROM)
                             .append("to", dateTO)
+                            .append("price", roomDoc.getDouble("price"))
+                            .append("capacity", roomDoc.getInteger("capacity"))
                     );
                     roomsCollection.updateOne(new Document("hotel_id", id)
                             .append("room_number", roomDoc.getInteger("room_number")), updatedRoom);
@@ -407,7 +432,8 @@ public class MongoDatabaseConnection {
                         roomDoc.getString("status"),
                         roomDoc.getDate("from"),
                         roomDoc.getDate("to"),
-                        roomDoc.getDouble("price")
+                        roomDoc.getDouble("price"),
+                        roomDoc.getInteger("capacity")
                 );
                 bookingsCollection = mongoDatabase.getCollection("bookings");
                 FindIterable<Document> bookingDocuments =
@@ -432,7 +458,8 @@ public class MongoDatabaseConnection {
                             "Виконується",
                             bookingDoc.getDate("checkIN_date"),
                             bookingDoc.getDate("checkOUT_date"),
-                            priceInDouble
+                            priceInDouble,
+                            ""
                     );
                     bookings.add(booking);
                 }
@@ -445,12 +472,60 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
     }
+    public ObservableList<Room> adminFindAvailableRoomsForBooking(Booking booking){
+        hotel = hotelHolder.getUser();
+        ObservableList<Room> availableRooms = FXCollections.observableArrayList();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
+            MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
+            FindIterable<Document> hotelRooms = roomsCollection.find(new Document("hotel_id", hotel.getHotel_id())
+                    .append("capacity", new Document("$gte", booking.getPeopleCount())));
+            for(Document hotelRoom : hotelRooms){
+                boolean isAvailable = true;
+                FindIterable<Document> hotelBookings =
+                        bookingCollection.find(new Document("hotel_id", hotel.getHotel_id())
+                                .append("room_number", hotelRoom.getInteger("room_number")));
+                for(Document hotelBooking : hotelBookings) {
+                    Date checkIn = hotelBooking.getDate("checkIN_date");
+                    Date checkOut = hotelBooking.getDate("checkOUT_date");
+                    LocalDate checkInDate = checkIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate checkOutDate = checkOut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    if (checkInDate.isBefore(booking.getCheckOUT_date())
+                            && checkOutDate.isAfter(booking.getCheckIN_date())) {
+                        isAvailable = false;
+                        break;
+                    }
+                }
+                if(isAvailable){
+                    Room availableRoom = new Room(
+                            hotelRoom.getInteger("room_id"),
+                            hotelRoom.getInteger("hotel_id"),
+                            hotelRoom.getInteger("type_id"),
+                            hotelRoom.getString("type_name"),
+                            hotelRoom.getString("room_name"),
+                            hotelRoom.getString("description"),
+                            hotelRoom.getInteger("room_number"),
+                            hotelRoom.getString("status"),
+                            hotelRoom.getDate("from"),
+                            hotelRoom.getDate("to"),
+                            hotelRoom.getDouble("price"),
+                            hotelRoom.getInteger("capacity")
+                    );
+                    availableRooms.add(availableRoom);
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return availableRooms;
+    }
     public void createBooking(LocalDate checkIN_date, LocalDate checkOUT_date){
         client = clientHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = mongoDatabase.getCollection("bookings");
-            FindIterable<Document> bookingDocuments = collection.find(new Document("hotel_id", 0).append("room_number", 2));
+            FindIterable<Document> bookingDocuments = collection.find(new Document("hotel_id", 0).append("room_number", 1));
             boolean isAvailable = true;
             for(Document booking : bookingDocuments){
                 Date checkIn = booking.getDate("checkIN_date");
@@ -468,7 +543,7 @@ public class MongoDatabaseConnection {
                 Document book = new Document("booking_id", bookingCount);
                 book.append("guest_id", client.getClientID());
                 book.append("hotel_id", 0);
-                book.append("room_number", 2);
+                book.append("room_number", 1);
                 book.append("checkIN_date", Date.from(checkIN_date
                         .atStartOfDay(ZoneId.systemDefault())
                         .toInstant()));
@@ -524,7 +599,8 @@ public class MongoDatabaseConnection {
                         roomDocument.getString("status"),
                         roomDocument.getDate("from"),
                         roomDocument.getDate("to"),
-                        roomDocument.getDouble("price")
+                        roomDocument.getDouble("price"),
+                        roomDocument.getInteger("capacity")
                 );
                 roomList.add(room);
             }

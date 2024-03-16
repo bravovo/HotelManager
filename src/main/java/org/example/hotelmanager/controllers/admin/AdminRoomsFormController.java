@@ -107,6 +107,10 @@ public class AdminRoomsFormController  implements Initializable {
     public void findButtonClick(ActionEvent event){
         String filter = "";
         String value = "";
+        if (filter_choice.getValue().equals("Фільтр для пошуку")){
+            formBuilder.errorValidation("Фільтр для пошуку повинен бути вибраний!");
+            return;
+        }
         switch (filter_choice.getValue()){
             case "Статус" -> {
                 String status = find_input.getText();

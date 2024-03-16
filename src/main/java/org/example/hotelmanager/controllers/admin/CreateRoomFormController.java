@@ -33,6 +33,7 @@ public class CreateRoomFormController implements Initializable {
     @FXML
     private ChoiceBox<String> type_choice;
     public void initialize(URL url, ResourceBundle resourceBundle){
+        room_description.setWrapText(true);
         ObservableList<String> typeNames = mongoDatabaseConnection.getRoomTypesNames();
         ((ChoiceBox)type_choice).setItems(typeNames);
         type_choice.setValue(typeNames.get(0));

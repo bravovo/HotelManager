@@ -28,6 +28,14 @@ public class FormBuilder {
         stage.setScene(scene);
         stage.show();
     }
+    public void openWindow(String source, String title, int v, int v1) throws IOException {
+        fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
+        Stage stage = new Stage();
+        stage.setTitle(title);
+        Scene dialogScene = new Scene(fxmlLoader.load(), v, v1);
+        stage.setScene(dialogScene);
+        stage.showAndWait();
+    }
     public void openDialog(String source, String title, int v, int v1) throws IOException{
         fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
         Stage dialogStage = new Stage();
