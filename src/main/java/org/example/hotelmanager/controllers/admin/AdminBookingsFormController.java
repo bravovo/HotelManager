@@ -96,6 +96,7 @@ public class AdminBookingsFormController implements Initializable {
         booking_table.setItems(bookings);
     }
     public void deleteBookingButtonClick(ActionEvent event) throws IOException {
+        formBuilder.openDialog("confirming-booking-dialog-form.fxml", "Підтвердити видалення", 300, 200);
         setBookingsTable();
         delete_booking_btn.setDisable(true);
     }

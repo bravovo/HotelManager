@@ -12,7 +12,6 @@ import org.example.hotelmanager.model.*;
 
 import javafx.event.ActionEvent;
 
-import javax.print.Doc;
 import java.time.*;
 import java.util.Date;
 
@@ -20,6 +19,7 @@ public class MongoDatabaseConnection {
     FormBuilder formBuilder = new FormBuilder();
     DataCredentials dataCredentials = new DataCredentials();
     Room roomToDelete = new Room();
+    Booking bookingToDelete = new Booking();
     Hotel hotel;
     Client client;
     Document foundHotel = new Document();
@@ -27,6 +27,7 @@ public class MongoDatabaseConnection {
     HotelHolder hotelHolder = HotelHolder.getInstance();
     ClientHolder clientHolder = ClientHolder.getInstance();
     RoomHolder roomHolder = RoomHolder.getInstance();
+    BookingHolder bookingHolder = BookingHolder.getInstance();
 
     public boolean registerClientAccount(String firstName, String lastName, String clientEmail, String clientPhoneNumber,
                                          LocalDate dateOfBirth, String clientPassword){
@@ -280,7 +281,6 @@ public class MongoDatabaseConnection {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
-            MongoCollection<Document> bookingDoneCollection = mongoDatabase.getCollection("booking_done");
             int capacity = 0;
             if(room.getType_name().equals("F")){
                 capacity = 4;
@@ -322,6 +322,7 @@ public class MongoDatabaseConnection {
             exception.printStackTrace();
         }
         setBookingList();
+        updateRoomList();
     }
     public void updateRoomList(){
         hotel = hotelHolder.getUser();
@@ -581,57 +582,6 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
     }
-    public ObservableList<Room> findRoomByFilter(String filter, String value){
-        hotel = hotelHolder.getUser();
-        ObservableList<Room> roomList = FXCollections.observableArrayList();
-        try (MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
-            FindIterable<Document> roomsFound = null;
-            switch (filter){
-                case "Статус" -> {
-                    roomsFound = roomCollection.find(new Document("hotel_id",
-                            hotel.getHotel_id()).append("status", value));
-                }
-                case "Назва кімнати" -> {
-                    roomsFound = roomCollection.find(new Document("hotel_id",
-                            hotel.getHotel_id()).append("room_name", value));
-                }
-                case "Тип кімнати" -> {
-                    roomsFound = roomCollection.find(new Document("hotel_id",
-                            hotel.getHotel_id()).append("type_name", value));
-                }
-                case "Номер кімнати" -> {
-                    roomsFound = roomCollection.find(new Document("hotel_id",
-                            hotel.getHotel_id()).append("room_number", Integer.parseInt(value)));
-                }
-                case "Ціна" -> {
-                    roomsFound = roomCollection.find(new Document("hotel_id",
-                            hotel.getHotel_id()).append("price", Double.parseDouble(value)));
-                }
-            }
-            for(Document roomDocument : roomsFound){
-                Room room = new Room(
-                        roomDocument.getInteger("room_id"),
-                        roomDocument.getInteger("hotel_id"),
-                        roomDocument.getInteger("type_id"),
-                        roomDocument.getString("type_name"),
-                        roomDocument.getString("room_name"),
-                        roomDocument.getString("description"),
-                        roomDocument.getInteger("room_number"),
-                        roomDocument.getString("status"),
-                        roomDocument.getDate("from"),
-                        roomDocument.getDate("to"),
-                        roomDocument.getDouble("price"),
-                        roomDocument.getInteger("capacity")
-                );
-                roomList.add(room);
-            }
-        }catch (Exception e){
-            formBuilder.errorValidation("Помилка виконання. Спробуйте ще раз");
-        }
-        return roomList;
-    }
     public ObservableList<RoomType> getRoomTypes(){
         ObservableList<RoomType> roomTypes = FXCollections.observableArrayList();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
@@ -667,6 +617,26 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             e.printStackTrace();
         }
+        updateRoomList();
+    }
+
+    public void deleteBooking() {
+        hotel = hotelHolder.getUser();
+        Document bookingDocument;
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> bookingsCollection = mongoDatabase.getCollection("bookings");
+            bookingToDelete = bookingHolder.getBooking();
+            bookingDocument = bookingsCollection.find(new Document("hotel_id", bookingToDelete.getHotelID())
+                    .append("booking_id", bookingToDelete.getBookingID())).first();
+            if (bookingDocument != null){
+                bookingsCollection.deleteOne(bookingDocument);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        setBookingList();
+        updateRoomList();
     }
 
     // ----------------------------------------------------------------------------------------------->
@@ -702,9 +672,10 @@ public class MongoDatabaseConnection {
                     .append("total_price", booking.getTotalPrice())
                     .append("add_info", booking.getAdditionalInfo());
             bookingCollection.insertOne(adminBooking);
-            setBookingList();
         }catch (Exception e){
             e.printStackTrace();
         }
+        setBookingList();
+        updateRoomList();
     }
 }

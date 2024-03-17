@@ -9,8 +9,8 @@ public class Booking {
     private final int bookingID;
     private final int hotelID;
     private final int guestID;
-    private final String guestFirstName;
-    private final String guestSecondName;
+    private String guestFirstName;
+    private String guestSecondName;
     private String guestPhoneNumber;
     private String guestEmail;
     private int roomNumber;
@@ -22,6 +22,12 @@ public class Booking {
     private LocalDate checkOUT_date;
     private Double totalPrice;
     private String additionalInfo;
+
+    public Booking(){
+        this.bookingID = -1;
+        this.hotelID = -1;
+        this.guestID = -1;
+    }
 
     public Booking(int bookingID,
                    int hotelID,

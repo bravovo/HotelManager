@@ -15,10 +15,8 @@ import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.ManagerApplication;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
-import org.example.hotelmanager.model.Hotel;
-import org.example.hotelmanager.model.HotelHolder;
-import org.example.hotelmanager.model.Room;
-import org.example.hotelmanager.model.RoomHolder;
+import org.example.hotelmanager.model.*;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -105,6 +103,7 @@ public class AdminRoomsFormController  implements Initializable {
     }
 
     public void findButtonClick(ActionEvent event){
+        ObservableList<Room> roomList = FXCollections.observableArrayList();
         String filter = "";
         String value = "";
         if (filter_choice.getValue().equals("Фільтр для пошуку")){
@@ -116,11 +115,13 @@ public class AdminRoomsFormController  implements Initializable {
                 String status = find_input.getText();
                 filter = "Статус";
                 value = status;
+                roomList = findBookingsByFilterAndValue(filter, value);
             }
             case "Тип кімнати" -> {
                 String room_type = find_input.getText();
                 filter = "Тип кімнати";
                 value = room_type;
+                roomList = findBookingsByFilterAndValue(filter, value);
             }
             case "Номер кімнати" -> {
                 int room_number = 0;
@@ -134,11 +135,13 @@ public class AdminRoomsFormController  implements Initializable {
                     find_input.setText("");
                     return;
                 }
+                roomList = findBookingsByFilterAndValue(filter, value);
             }
             case "Назва кімнати" -> {
                 String room_name = find_input.getText();
                 filter = "Назва кімнати";
                 value = room_name;
+                roomList = findBookingsByFilterAndValue(filter, value);
             }
             case "Ціна" -> {
                 double price = 0;
@@ -152,18 +155,53 @@ public class AdminRoomsFormController  implements Initializable {
                     find_input.setText("");
                     return;
                 }
+                roomList = findBookingsByFilterAndValue(filter, value);
             }
         }
-        ObservableList<Room> roomList = mongoDatabaseConnection.findRoomByFilter(filter, value);
         setRoomsTable(roomList);
     }
+    public ObservableList<Room> findBookingsByFilterAndValue(String filter, String value){
+        ObservableList<Room> rooms = FXCollections.observableArrayList();
+        for(Room room : hotel.getRoomsForList()){
+            switch (filter){
+                case "Номер кімнати" -> {
+                    int roomNumberValue = Integer.parseInt(value);
+                    if (room.getRoom_number() == roomNumberValue){
+                        rooms.add(room);
+                    }
+                }
+                case "Ціна" -> {
+                    double roomPrice = Double.parseDouble(value);
+                    if(room.getPrice() == roomPrice){
+                        rooms.add(room);
+                    }
+                }
+                case "Статус" -> {
+                    if(room.getStatus().equals(value)){
+                        rooms.add(room);
+                    }
+                }
+                case "Тип кімнати" -> {
+                    if(room.getType_name().equals(value)){
+                        rooms.add(room);
+                    }
+                }
+                case "Назва кімнати" -> {
+                    if(room.getRoom_name().equals(value)){
+                        rooms.add(room);
+                    }
+                }
+            }
+        }
+        return rooms;
+    }
+
 
     public void resetTableButtonClick(ActionEvent event){
-        find_input.setText("");
         resetTable();
     }
     public void resetTable(){
-        mongoDatabaseConnection.updateRoomList();
+        find_input.setText("");
         setRoomsTable();
     }
 

@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 
-public class ConfirmingDialogFormController {
+public class ConfirmingBookingDialogFormController {
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
 
     @FXML private Button cancel_btn;
@@ -20,7 +20,7 @@ public class ConfirmingDialogFormController {
     }
     @FXML
     void confirmButtonClick(ActionEvent event) {
-        mongoDatabaseConnection.deleteRoom();
+        mongoDatabaseConnection.deleteBooking();
         Stage stage = (Stage) confirm_btn.getScene().getWindow();
         stage.close();
     }
