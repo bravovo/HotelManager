@@ -101,6 +101,7 @@ public class AdminBookingsFormController implements Initializable {
     }
     public void createBookingClick(ActionEvent event) throws IOException {
         formBuilder.openWindow("admin-forms/find-available-room-form.fxml", "Створення бронювання", 800, 500);
+        setBookingsTable();
     }
     public void findBookingButtonClick(ActionEvent event){
         if(find_booking_btn.isSelected()){

@@ -75,11 +75,17 @@ public class FindAvailableRoomFormController implements Initializable {
                 return;
             }
         }
+        /*TODO Перевірка на правильність введених дат
+        *  Дата чек-іну не може бути пізніше дати чек-ауту і не може йому дорівнювати
+        *  Обидві дати не можуть бути раніше сьогоднішньої дати
+        */
         long nightPeriod = ChronoUnit.DAYS.between(checkIN_date.getValue(), checkOUT_date.getValue());
         //System.out.println(nightPeriod);
         Booking newBooking = new Booking(
                 guest_first_name.getText(),
                 guest_second_name.getText(),
+                guest_phone_number.getText(),
+                guest_email.getText(),
                 checkIN_date.getValue(),
                 checkOUT_date.getValue(),
                 Integer.parseInt(people_count.getText()),
@@ -88,6 +94,10 @@ public class FindAvailableRoomFormController implements Initializable {
         );
         ObservableList<Room> availableRooms = mongoDatabaseConnection.adminFindAvailableRoomsForBooking(newBooking);
         roomHolder.setRoomList(availableRooms);
+        if (availableRooms.size() == 0){
+            formBuilder.errorValidation("Не вдалось знайти вільних кімнат");
+            return;
+        }
         bookingHolder.setBooking(newBooking);
         formBuilder.openWindow(
                 "admin-forms/confirm-booking-form.fxml",

@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
+import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.Booking;
 import org.example.hotelmanager.model.BookingHolder;
 import org.example.hotelmanager.model.Room;
@@ -17,6 +18,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ConfirmBookingFormController implements Initializable {
+    MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
     FormBuilder formBuilder = new FormBuilder();
     BookingHolder bookingHolder = BookingHolder.getInstance();
     RoomHolder roomHolder = RoomHolder.getInstance();
@@ -66,7 +68,22 @@ public class ConfirmBookingFormController implements Initializable {
         setBookingFields();
     }
     public void confirmBookingButtonClick(javafx.event.ActionEvent e){
-        System.out.println("Yeah");
+        Booking adminBooking = new Booking(
+                guest_first_name.getText(),
+                guest_second_name.getText(),
+                booking.getGuestPhoneNumber(),
+                booking.getGuestEmail(),
+                Integer.parseInt(room_number.getText()),
+                String.valueOf(room_type_name.getValue()),
+                Integer.parseInt(people_count.getText()),
+                checkIN_date.getValue(),
+                checkOUT_date.getValue(),
+                Double.parseDouble(total_price.getText()),
+                booking_add_info.getText()
+        );
+        mongoDatabaseConnection.createAdminBooking(adminBooking);
+        Stage stage = (Stage) go_back_btn.getScene().getWindow();
+        stage.close();
     }
     public void setBookingFields(){
         room_type_name.setValue(room.getType_name());
