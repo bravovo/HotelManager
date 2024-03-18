@@ -10,83 +10,57 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.EditRoomFormController">
-   <children>
-      <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
-               <children>
-                  <VBox prefHeight="200.0" prefWidth="250.0" spacing="20.0">
-                     <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Label text="ID типу кімнати" />
-                              <ChoiceBox fx:id="type_id" disable="true" prefWidth="90.0" />
-                           </children>
-                        </VBox>
-                        <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Label text="Назва типу кімнати" />
-                              <ChoiceBox fx:id="type_name" prefWidth="90.0" />
-                           </children>
-                        </VBox>
-                        <VBox layoutX="10.0" layoutY="60.0" prefHeight="55.0" prefWidth="250.0">
-                           <children>
-                              <Label text="Назва кімнати" />
-                              <TextField fx:id="room_name" />
-                           </children>
-                           <padding>
-                              <Insets right="40.0" />
-                           </padding>
-                        </VBox>
-                        <VBox layoutX="10.0" layoutY="137.0" prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Label text="Номер кімнати" />
-                              <TextField fx:id="room_number" disable="true" />
-                           </children>
-                           <padding>
-                              <Insets right="40.0" />
-                           </padding>
-                        </VBox>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="200.0" prefWidth="250.0" spacing="20.0">
-                     <children>
-                        <VBox prefWidth="100.0">
-                           <children>
-                              <Label text="Статус кімнати" />
-                              <TextField fx:id="room_status" />
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </VBox>
-                        <VBox layoutX="10.0" layoutY="10.0" prefWidth="100.0">
-                           <children>
-                              <Label text="Ціна кімнати" />
-                              <TextField fx:id="room_price" />
-                           </children>
-                        </VBox>
-                        <VBox layoutX="10.0" layoutY="74.0" prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Label text="Опис кімнати" />
-                              <TextArea fx:id="room_description" prefHeight="200.0" prefWidth="200.0" />
-                           </children>
-                        </VBox>
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
-               <children>
-                  <Button fx:id="save_btn" mnemonicParsing="false" onAction="#saveChangesButtonClick" prefHeight="30.0" prefWidth="150.0" text="Зберегти" />
-                  <Button fx:id="cancel_btn" mnemonicParsing="false" onAction="#cancelButtonClick" prefHeight="30.0" prefWidth="150.0" text="Скасувати" />
-               </children>
+<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.EditRoomFormController">
+   <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+         <VBox prefHeight="200.0" prefWidth="250.0" spacing="20.0">
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <Label text="ID типу кімнати" />
+               <ChoiceBox fx:id="type_id" disable="true" prefWidth="90.0" />
+            </VBox>
+            <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
+               <Label text="Назва типу кімнати" />
+               <ChoiceBox fx:id="type_name" prefWidth="90.0" />
+            </VBox>
+            <VBox layoutX="10.0" layoutY="60.0" prefHeight="55.0" prefWidth="250.0">
                <padding>
-                  <Insets right="90.0" />
+                  <Insets right="40.0" />
                </padding>
-            </HBox>
-         </children>
-      </VBox>
-   </children>
+               <Label text="Назва кімнати*" />
+               <TextField fx:id="room_name" />
+            </VBox>
+            <VBox layoutX="10.0" layoutY="137.0" prefHeight="200.0" prefWidth="100.0">
+               <padding>
+                  <Insets right="40.0" />
+               </padding>
+               <Label text="Номер кімнати" />
+               <TextField fx:id="room_number" disable="true" />
+            </VBox>
+         </VBox>
+         <VBox prefHeight="200.0" prefWidth="250.0" spacing="20.0">
+            <VBox prefWidth="100.0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <Label text="Статус кімнати" />
+               <TextField fx:id="room_status" />
+            </VBox>
+            <VBox layoutX="10.0" layoutY="10.0" prefWidth="100.0">
+               <Label text="Ціна кімнати*" />
+               <TextField fx:id="room_price" />
+            </VBox>
+            <VBox layoutX="10.0" layoutY="74.0" prefHeight="200.0" prefWidth="100.0">
+               <Label text="Опис кімнати" />
+               <TextArea fx:id="room_description" prefHeight="200.0" prefWidth="200.0" />
+            </VBox>
+         </VBox>
+      </HBox>
+      <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
+         <padding>
+            <Insets right="90.0" />
+         </padding>
+         <Button fx:id="save_btn" mnemonicParsing="false" onAction="#saveChangesButtonClick" prefHeight="30.0" prefWidth="150.0" text="Зберегти" />
+         <Button fx:id="cancel_btn" mnemonicParsing="false" onAction="#cancelButtonClick" prefHeight="30.0" prefWidth="150.0" text="Скасувати" />
+      </HBox>
+   </VBox>
 </AnchorPane>

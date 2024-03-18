@@ -10,17 +10,16 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.Room;
 import org.example.hotelmanager.model.RoomHolder;
 
 import java.net.URL;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ResourceBundle;
 
 public class EditRoomFormController implements Initializable {
+    FormBuilder formBuilder = new FormBuilder();
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
     @FXML private Button cancel_btn;
     @FXML private TextArea room_description;
@@ -76,6 +75,16 @@ public class EditRoomFormController implements Initializable {
         stage.close();
     }
     public void saveChangesButtonClick(javafx.event.ActionEvent e){
+        TextField[] textFields = {
+                room_name,
+                room_price,
+        };
+        for(TextField textField : textFields){
+            if (textField.getText().length() == 0){
+                formBuilder.errorValidation("Всі обов'язкові поля повинні бути заповнені");
+                return;
+            }
+        }
         Room roomToEdit = new Room(
                 room.getRoom_id(),
                 room.getHotel_id(),
@@ -89,8 +98,10 @@ public class EditRoomFormController implements Initializable {
                 room.getDateTo(),
                 Double.parseDouble(room_price.getText())
         );
-        mongoDatabaseConnection.editRoom(roomToEdit);
-        roomHolder.setRoom(roomToEdit);
+        if(!roomToEdit.equals(room)){
+            mongoDatabaseConnection.editRoom(roomToEdit);
+            roomHolder.setRoom(roomToEdit);
+        }
         Stage stage = (Stage) save_btn.getScene().getWindow();
         stage.close();
     }

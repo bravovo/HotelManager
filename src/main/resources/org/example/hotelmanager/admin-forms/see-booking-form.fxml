@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.SeeBookingFormController">
+   <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox alignment="CENTER" prefHeight="292.0" prefWidth="700.0" spacing="20.0">
+         <VBox prefHeight="200.0" prefWidth="250.0" spacing="20.0">
+            <VBox layoutX="10.0" layoutY="60.0" prefHeight="55.0" prefWidth="250.0">
+               <padding>
+                  <Insets right="40.0" />
+               </padding>
+               <Label text="Ім'я гостя*" />
+               <TextField fx:id="guest_first_name" editable="false" />
+            </VBox>
+            <VBox layoutX="10.0" layoutY="137.0" prefHeight="55.0" prefWidth="100.0">
+               <padding>
+                  <Insets right="40.0" />
+               </padding>
+               <Label text="Прізвище гостя*" />
+               <TextField fx:id="guest_second_name" editable="false" />
+            </VBox>
+            <VBox prefHeight="55.0" prefWidth="250.0">
+               <padding>
+                  <Insets right="40.0" />
+               </padding>
+               <Label text="Номер телефону гостя*" />
+               <TextField fx:id="guest_phone_number" editable="false" />
+            </VBox>
+            <VBox prefHeight="55.0" prefWidth="250.0">
+               <padding>
+                  <Insets right="40.0" />
+               </padding>
+               <Label text="Електорнна пошта гостя*" />
+               <TextField fx:id="guest_email" editable="false" />
+            </VBox>
+         </VBox>
+         <VBox prefHeight="200.0" prefWidth="250.0" spacing="20.0">
+            <VBox prefHeight="55.0" prefWidth="100.0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <Label text="Кількість людей, які проживатимуть в готелі*" />
+               <TextField fx:id="people_count" editable="false" />
+            </VBox>
+            <VBox layoutX="10.0" layoutY="10.0" prefWidth="100.0">
+               <Label text="Чек-ін дата" />
+               <DatePicker fx:id="checkIN" disable="true" editable="false" />
+               <VBox prefWidth="100.0">
+                  <Label text="Чек-аут дата" />
+                  <DatePicker fx:id="checkOUT" disable="true" editable="false" />
+               </VBox>
+            </VBox>
+            <VBox layoutX="10.0" layoutY="74.0" prefHeight="91.0" prefWidth="250.0">
+               <Label text="Додаткові відомості" />
+               <TextArea fx:id="add_info" editable="false" prefHeight="200.0" prefWidth="250.0" />
+            </VBox>
+         </VBox>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
+         <padding>
+            <Insets right="90.0" top="30.0" />
+         </padding>
+         <children>
+            <Button fx:id="ok_btn" mnemonicParsing="false" onAction="#okButtonClick" prefHeight="30.0" prefWidth="150.0" text="ОК" />
+         </children>
+      </HBox>
+   </VBox>
+</AnchorPane>

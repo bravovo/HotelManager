@@ -160,10 +160,13 @@ public class MongoDatabaseConnection {
                         bookingDoc.getString("guest_email"),
                         bookingDoc.getInteger("room_number"),
                         bookingDoc.getString("room_type"),
-                        bookingDoc.getDate("checkIN_date"),
-                        bookingDoc.getDate("checkOUT_date"),
+                        bookingDoc.getDate("checkIN_date")
+                                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        bookingDoc.getDate("checkOUT_date")
+                                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
                         bookingDoc.getDouble("total_price"),
-                        bookingDoc.getString("add_info")
+                        bookingDoc.getString("add_info"),
+                        bookingDoc.getInteger("people_count")
                 );
                 bookings.add(booking);
             }
@@ -181,10 +184,13 @@ public class MongoDatabaseConnection {
                         bookingDoc.getString("guest_email"),
                         bookingDoc.getInteger("room_number"),
                         bookingDoc.getString("room_type"),
-                        bookingDoc.getDate("checkIN_date"),
-                        bookingDoc.getDate("checkOUT_date"),
+                        bookingDoc.getDate("checkIN_date")
+                                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        bookingDoc.getDate("checkOUT_date")
+                                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
                         bookingDoc.getDouble("total_price"),
-                        bookingDoc.getString("add_info")
+                        bookingDoc.getString("add_info"),
+                        bookingDoc.getInteger("people_count")
                 );
                 bookingsDone.add(booking);
             }
@@ -242,10 +248,13 @@ public class MongoDatabaseConnection {
         hotel = hotelHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = mongoDatabase.getCollection("rooms");
-            int roomsCount = (int)collection.countDocuments();
-            int roomNumber = (int)collection.countDocuments(new Document("hotel_id",
-                    hotel.getHotel_id()));
+            MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
+            int roomsCount = (int)roomsCollection.countDocuments();
+            Document sortedByIdBooking = roomsCollection.find().sort(Sorts.descending("room_number")).first();
+            int roomNumber = 0;
+            if (sortedByIdBooking != null){
+                roomNumber = sortedByIdBooking.getInteger("room_number");
+            }
             Document room = new Document("room_id", roomsCount);
             room.append("hotel_id", hotel.getHotel_id());
             room.append("type_id", getRoomTypeId(typeName));
@@ -268,7 +277,7 @@ public class MongoDatabaseConnection {
             }
             room.append("capacity", capacity);
 
-            collection.insertOne(room);
+            roomsCollection.insertOne(room);
             hotelHolder.setUser(hotel);
         } catch(Exception exception){
             exception.printStackTrace();
@@ -462,14 +471,6 @@ public class MongoDatabaseConnection {
                         bookingsCollection.find(new Document("room_number", roomDoc.getInteger("room_number")));
                 ObservableList<Booking> bookings = FXCollections.observableArrayList();
                 for(Document bookingDoc : bookingDocuments){
-                    Object totalPrice = bookingDoc.get("total_price");
-                    double priceInDouble = 0;
-                    if (totalPrice instanceof Integer) {
-                        Integer intValue = (Integer) totalPrice;
-                        priceInDouble = intValue.doubleValue();
-                    } else if (totalPrice instanceof Double) {
-                        priceInDouble = (Double) totalPrice;
-                    }
                     Booking booking = new Booking(
                             bookingDoc.getInteger("booking_id"),
                             hotel.getHotel_id(),
@@ -480,10 +481,13 @@ public class MongoDatabaseConnection {
                             bookingDoc.getString("guest_email"),
                             bookingDoc.getInteger("room_number"),
                             bookingDoc.getString("room_type"),
-                            bookingDoc.getDate("checkIN_date"),
-                            bookingDoc.getDate("checkOUT_date"),
+                            bookingDoc.getDate("checkIN_date")
+                                    .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                            bookingDoc.getDate("checkOUT_date")
+                                    .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
                             bookingDoc.getDouble("total_price"),
-                            bookingDoc.getString("add_info")
+                            bookingDoc.getString("add_info"),
+                            bookingDoc.getInteger("people_count")
                     );
                     bookings.add(booking);
                 }

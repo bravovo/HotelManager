@@ -62,8 +62,8 @@ public class AdminRoomsFormController  implements Initializable {
                 if (selectedRoom != null) {
                     roomHolder.setRoom(selectedRoom);
                     try{
-                        formBuilder.openDialog("admin-forms/edit-room-form.fxml", "Редагувати кімнати", 700, 500);
-                        resetTable();
+                        formBuilder.openDialog("admin-forms/edit-room-form.fxml", "Редагувати кімнату", 700, 500);
+                        setRoomsTable();
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -81,12 +81,12 @@ public class AdminRoomsFormController  implements Initializable {
     }
     public void deleteRoomButtonClick(ActionEvent event) throws IOException{
         formBuilder.openDialog("confirming-dialog-form.fxml", "Підтвердити видалення", 300, 200);
-        resetTable();
+        setRoomsTable();
         delete_room_btn.setDisable(true);
     }
     public void createRoomClick(ActionEvent event) throws IOException {
         formBuilder.openDialog("admin-forms/create-room-form.fxml", "Створення кімнати", 700, 500);
-        resetTable();
+        setRoomsTable();
     }
 
     public void findRoomButtonClick(ActionEvent event){
@@ -95,7 +95,7 @@ public class AdminRoomsFormController  implements Initializable {
             find_room_vbox.setVisible(true);
             room_table.setPrefHeight(541);
         }else {
-            resetTable();
+            setRoomsTable();
             AnchorPane.setTopAnchor(room_table, 0.0);
             find_room_vbox.setVisible(false);
             room_table.setPrefHeight(621);
@@ -104,8 +104,8 @@ public class AdminRoomsFormController  implements Initializable {
 
     public void findButtonClick(ActionEvent event){
         ObservableList<Room> roomList = FXCollections.observableArrayList();
-        String filter = "";
-        String value = "";
+        String filter;
+        String value;
         if (filter_choice.getValue().equals("Фільтр для пошуку")){
             formBuilder.errorValidation("Фільтр для пошуку повинен бути вибраний!");
             return;
@@ -198,14 +198,11 @@ public class AdminRoomsFormController  implements Initializable {
 
 
     public void resetTableButtonClick(ActionEvent event){
-        resetTable();
-    }
-    public void resetTable(){
-        find_input.setText("");
         setRoomsTable();
     }
 
     public void setRoomsTable(){
+        find_input.setText("");
         hotel = hotelHolder.getUser();
         room_number.setCellValueFactory(new PropertyValueFactory<>("room_number"));
         type_name.setCellValueFactory(new PropertyValueFactory<>("type_name"));

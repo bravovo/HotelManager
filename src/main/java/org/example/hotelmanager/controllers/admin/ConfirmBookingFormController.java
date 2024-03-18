@@ -12,7 +12,6 @@ import org.example.hotelmanager.model.BookingHolder;
 import org.example.hotelmanager.model.Room;
 import org.example.hotelmanager.model.RoomHolder;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -47,23 +46,38 @@ public class ConfirmBookingFormController implements Initializable {
         room = availableRoomList.get(0);
         setBookingFields();
     }
+
+    public void setBookingFields(){
+        room_type_name.setValue(room.getType_name());
+        room_name.setText(room.getRoom_name());
+        room_number.setText(String.valueOf(room.getRoom_number()));
+        booking_add_info.setWrapText(true);
+        booking_add_info.setText(booking.getAdditionalInfo());
+        guest_first_name.setText(booking.getGuestFirstName());
+        guest_second_name.setText(booking.getGuestSecondName());
+        checkIN_date.setValue(booking.getCheckIN_date());
+        checkOUT_date.setValue(booking.getCheckOUT_date());
+        people_count.setText(String.valueOf(booking.getPeopleCount()));
+        total_price.setText(String.valueOf(booking.getNightCount() * room.getPrice()));
+        if(roomID == 0){
+            previous_available_room_btn.setDisable(true);
+        }else{
+            previous_available_room_btn.setDisable(false);
+        }
+        if(roomID == availableRoomList.size() - 1){
+            next_available_room_btn.setDisable(true);
+        }else {
+            next_available_room_btn.setDisable(false);
+        }
+    }
+
     public void nextAvailableRoomButtonClick(javafx.event.ActionEvent e){
         roomID++;
-        if(roomID >= availableRoomList.size()){
-            formBuilder.errorValidation("Більше не залишилось доступних кімнат");
-            roomID--;
-            return;
-        }
         room = availableRoomList.get(roomID);
         setBookingFields();
     }
     public void previousAvailableRoomButtonClick(javafx.event.ActionEvent e){
         roomID--;
-        if(roomID >= availableRoomList.size() || roomID < 0){
-            formBuilder.errorValidation("Більше не залишилось доступних кімнат");
-            roomID++;
-            return;
-        }
         room = availableRoomList.get(roomID);
         setBookingFields();
     }
@@ -85,20 +99,7 @@ public class ConfirmBookingFormController implements Initializable {
         Stage stage = (Stage) go_back_btn.getScene().getWindow();
         stage.close();
     }
-    public void setBookingFields(){
-        room_type_name.setValue(room.getType_name());
-        room_name.setText(room.getRoom_name());
-        room_number.setText(String.valueOf(room.getRoom_number()));
-        booking_add_info.setWrapText(true);
-        booking_add_info.setText(booking.getAdditionalInfo());
-        guest_first_name.setText(booking.getGuestFirstName());
-        guest_second_name.setText(booking.getGuestSecondName());
-        checkIN_date.setValue(booking.getCheckIN_date());
-        checkOUT_date.setValue(booking.getCheckOUT_date());
-        people_count.setText(String.valueOf(booking.getPeopleCount()));
-        total_price.setText(String.valueOf(booking.getNightCount() * room.getPrice()));
-    }
-    public void goBackButtonClick(javafx.event.ActionEvent e) throws IOException {
+    public void goBackButtonClick(javafx.event.ActionEvent e) {
         Stage stage = (Stage) go_back_btn.getScene().getWindow();
         stage.close();
     }

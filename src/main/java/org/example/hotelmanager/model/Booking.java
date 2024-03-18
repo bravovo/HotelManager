@@ -38,10 +38,11 @@ public class Booking {
                    String guestEmail,
                    int roomNumber,
                    String roomType,
-                   Date checkIN_date,
-                   Date checkOUT_date,
+                   LocalDate checkIN_date,
+                   LocalDate checkOUT_date,
                    Double totalPrice,
-                   String additionalInfo) {
+                   String additionalInfo,
+                   int peopleCount) {
         this.bookingID = bookingID;
         this.hotelID = hotelID;
         this.guestID = guestID;
@@ -52,24 +53,19 @@ public class Booking {
         this.roomNumber = roomNumber;
         this.roomType = roomType;
 
-        Instant instant = checkIN_date.toInstant();
-        LocalDate checkIN = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-
-        instant = checkOUT_date.toInstant();
-        LocalDate checkOUT = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-
-        if (LocalDate.now().isBefore(checkIN)) {
+        if (LocalDate.now().isBefore(checkIN_date)) {
             this.bookingStatus = "Очікується";
-        } else if (LocalDate.now().isAfter(checkOUT)){
+        } else if (LocalDate.now().isAfter(checkOUT_date)){
             this.bookingStatus = "Виконано";
         } else {
             this.bookingStatus = "Виконується";
         }
 
-        this.checkIN_date = checkIN;
-        this.checkOUT_date = checkOUT;
+        this.checkIN_date = checkIN_date;
+        this.checkOUT_date = checkOUT_date;
         this.totalPrice = totalPrice;
         this.additionalInfo = additionalInfo;
+        this.peopleCount = peopleCount;
     }
 
     public Booking(String guestFirstName, String guestSecondName, String guestPhoneNumber, String guestEmail, LocalDate checkIN_date, LocalDate checkOUT_date, int peopleCount, long nightCount, String additionalInfo) {
@@ -121,6 +117,8 @@ public class Booking {
         this.totalPrice = totalPrice;
         this.additionalInfo = additionalInfo;
     }
+
+
 
     public String getGuestPhoneNumber() {
         return guestPhoneNumber;
