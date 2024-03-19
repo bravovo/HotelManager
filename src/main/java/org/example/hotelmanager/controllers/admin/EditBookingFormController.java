@@ -90,26 +90,30 @@ public class EditBookingFormController implements Initializable {
                 nightPeriod,
                 add_info.getText()
         );
-        bookingHolder.setBooking(booking);
-        mongoDatabaseConnection.deleteBooking();
-
-
-        /*TODO Також додати перевірку, що якщо дати чек-іну та чек-ауту не змінились,
-        *  то просто змінювати інші дані про бронювання. Тут і згодиться метод для редагування*/
-
-        ObservableList<Room> availableRooms = mongoDatabaseConnection.adminFindAvailableRoomsForBooking(bookingToEdit);
-        roomHolder.setRoomList(availableRooms);
-        if (availableRooms.size() == 0){
-            formBuilder.errorValidation("Не вдалось знайти вільних кімнат");
+        if (checkOUT.getValue().isBefore(checkIN.getValue())
+                || checkOUT.getValue().isEqual(checkIN.getValue())){
+            formBuilder.errorValidation("Дата заїзду повинна бути раніше дати виїзду");
             return;
         }
-        bookingHolder.setBooking(bookingToEdit);
-        formBuilder.openWindow(
-                "admin-forms/confirm-booking-form.fxml",
-                "Підтвердити бронювання",
-                900,
-                600
-        );
+        if((checkIN.getValue().isEqual(booking.getCheckIN_date())
+                && checkOUT.getValue().isEqual(booking.getCheckOUT_date())) &&
+        Integer.parseInt(people_count.getText()) == booking.getPeopleCount()){
+            mongoDatabaseConnection.editAdminBooking(bookingToEdit, false);
+        }
+        else {
+            mongoDatabaseConnection.editAdminBooking(bookingToEdit, true);
+            bookingHolder.setBooking(bookingToEdit);
+            if (roomHolder.getRoomsList().size() == 0){
+                formBuilder.errorValidation("Не вдалось знайти вільних кімнат");
+                return;
+            }
+            formBuilder.openWindow(
+                    "admin-forms/confirm-booking-form.fxml",
+                    "Підтвердити бронювання",
+                    900,
+                    600
+            );
+        }
         Stage stage = (Stage) cancel_btn.getScene().getWindow();
         stage.close();
     }

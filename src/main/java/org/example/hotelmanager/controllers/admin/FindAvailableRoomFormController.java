@@ -58,6 +58,11 @@ public class FindAvailableRoomFormController implements Initializable {
         stage.close();
     }
     public void findAvailableRoomClick(ActionEvent event) throws IOException {
+        if (checkOUT_date.getValue().isBefore(checkIN_date.getValue())
+                || checkOUT_date.getValue().isEqual(checkIN_date.getValue())){
+            formBuilder.errorValidation("Дата заїзду повинна бути раніше дати виїзду");
+            return;
+        }
         if (checkIN_date.getValue() == null || checkOUT_date.getValue() == null){
             formBuilder.errorValidation("Всі обов'язкові поля повинні бути заповненні");
             return;
