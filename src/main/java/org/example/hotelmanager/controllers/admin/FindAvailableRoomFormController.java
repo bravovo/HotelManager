@@ -52,19 +52,22 @@ public class FindAvailableRoomFormController implements Initializable {
             }
         });
     }
-
     public void cancelButtonClick(ActionEvent event) {
         Stage stage = (Stage) cancel_btn.getScene().getWindow();
         stage.close();
     }
     public void findAvailableRoomClick(ActionEvent event) throws IOException {
+        if (checkIN_date.getValue() == null || checkOUT_date.getValue() == null){
+            formBuilder.errorValidation("Всі обов'язкові поля повинні бути заповненні");
+            return;
+        }
         if (checkOUT_date.getValue().isBefore(checkIN_date.getValue())
                 || checkOUT_date.getValue().isEqual(checkIN_date.getValue())){
             formBuilder.errorValidation("Дата заїзду повинна бути раніше дати виїзду");
             return;
         }
-        if (checkIN_date.getValue() == null || checkOUT_date.getValue() == null){
-            formBuilder.errorValidation("Всі обов'язкові поля повинні бути заповненні");
+        if(guest_birthday.getValue().isAfter(LocalDate.now().minusYears(18))){
+            formBuilder.errorValidation("Лише повнолітні особи можуть створити бронювання");
             return;
         }
         TextField[] textFields = {
@@ -80,12 +83,16 @@ public class FindAvailableRoomFormController implements Initializable {
                 return;
             }
         }
-        /*TODO Перевірка на правильність введених дат
-        *  Дата чек-іну не може бути пізніше дати чек-ауту і не може йому дорівнювати
-        *  Обидві дати не можуть бути раніше сьогоднішньої дати
-        */
+        if (checkOUT_date.getValue().isBefore(checkIN_date.getValue())
+                || checkOUT_date.getValue().isEqual(checkIN_date.getValue())){
+            formBuilder.errorValidation("Дата заїзду повинна бути раніше дати виїзду");
+            return;
+        }
+        if (checkOUT_date.getValue().isBefore(LocalDate.now()) || checkIN_date.getValue().isBefore(LocalDate.now())){
+            formBuilder.errorValidation("Не можна вибирати дати, які раніше ніж сьогоднішня");
+            return;
+        }
         long nightPeriod = ChronoUnit.DAYS.between(checkIN_date.getValue(), checkOUT_date.getValue());
-        //System.out.println(nightPeriod);
         Booking newBooking = new Booking(
                 guest_first_name.getText(),
                 guest_second_name.getText(),

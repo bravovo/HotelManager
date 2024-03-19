@@ -16,6 +16,7 @@ import org.example.hotelmanager.model.RoomHolder;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
 
@@ -93,6 +94,10 @@ public class EditBookingFormController implements Initializable {
         if (checkOUT.getValue().isBefore(checkIN.getValue())
                 || checkOUT.getValue().isEqual(checkIN.getValue())){
             formBuilder.errorValidation("Дата заїзду повинна бути раніше дати виїзду");
+            return;
+        }
+        if(checkOUT.getValue().isBefore(LocalDate.now()) || checkIN.getValue().isBefore(LocalDate.now())){
+            formBuilder.errorValidation("Не можна вибирати дати, які раніше ніж сьогоднішня");
             return;
         }
         if((checkIN.getValue().isEqual(booking.getCheckIN_date())

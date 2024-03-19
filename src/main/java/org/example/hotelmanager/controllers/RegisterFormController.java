@@ -71,11 +71,12 @@ public class RegisterFormController implements Initializable {
                 client_phone_number.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
+        client_date_of_birth.setValue(LocalDate.now().minusYears(18));
     }
 
     /* Початок коду для створення акаунту ГОСТЕЙ (клієнт) -------------------------------------------------------- */
 
-    public void registerClientClick(ActionEvent event) throws IOException{ // TODO Перевірка на повноліття користувача
+    public void registerClientClick(ActionEvent event) throws IOException{
         TextField[] textFields = {
                 client_first_name,
                 client_last_name,
@@ -88,8 +89,8 @@ public class RegisterFormController implements Initializable {
                 return;
             }
         }
-        if(client_date_of_birth.getValue().equals(null)){
-            formBuilder.errorValidation("Поле з датою народження не заповнене");
+        if(client_date_of_birth.getValue().isAfter(LocalDate.now().minusYears(18))){
+            formBuilder.errorValidation("Лише повнолітні особи можуть створити клієнтський акаунт");
             return;
         }
         if(!client_password_field.getText().equals(client_password_field_confirm.getText())){
