@@ -12,6 +12,9 @@ public class Client {
     private String phoneNumber;
     private LocalDate dateOfBirth;
 
+    public Client() {
+
+    }
     public Client(int clientID, String firstName, String lastName, String email, String phoneNumber, LocalDate dateOfBirth) {
         this.clientID = clientID;
         this.firstName = firstName;
@@ -20,6 +23,7 @@ public class Client {
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
     }
+
 
     public int getClientID() {
         return clientID;

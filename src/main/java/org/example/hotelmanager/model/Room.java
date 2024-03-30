@@ -102,6 +102,9 @@ public class Room {
         return dateTo;
     }
     public Double getPrice() { return price; }
+    public int getCapacity() {
+        return capacity;
+    }
     public void setBookings(ObservableList<Booking> bookings) {
         this.bookings = bookings;
     }
@@ -114,4 +117,5 @@ public class Room {
     public void setDateTo(LocalDate dateTo) {
         this.dateTo = dateTo;
     }
+
 }

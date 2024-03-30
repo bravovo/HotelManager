@@ -83,11 +83,6 @@ public class FindAvailableRoomFormController implements Initializable {
                 return;
             }
         }
-        if (checkOUT_date.getValue().isBefore(checkIN_date.getValue())
-                || checkOUT_date.getValue().isEqual(checkIN_date.getValue())){
-            formBuilder.errorValidation("Дата заїзду повинна бути раніше дати виїзду");
-            return;
-        }
         if (checkOUT_date.getValue().isBefore(LocalDate.now()) || checkIN_date.getValue().isBefore(LocalDate.now())){
             formBuilder.errorValidation("Не можна вибирати дати, які раніше ніж сьогоднішня");
             return;

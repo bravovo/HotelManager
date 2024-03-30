@@ -1,6 +1,7 @@
 package org.example.hotelmanager.data;
 
 import com.mongodb.client.*;
+import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.Sorts;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,8 +13,11 @@ import org.example.hotelmanager.model.*;
 
 import javafx.event.ActionEvent;
 
+import javax.print.Doc;
 import java.time.*;
+import java.util.Collection;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 public class MongoDatabaseConnection {
     FormBuilder formBuilder = new FormBuilder();
@@ -127,7 +131,7 @@ public class MongoDatabaseConnection {
                 clientHolder.setUser(client);
                 Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                 formBuilder.openWindow(stage, "client-forms/client-form.fxml",
-                        "Версія для адміністратора | Система управління готелями", 1100, 750);
+                        "Версія для адміністратора | Система управління готелями", 1350, 750);
                 return;
             }
 
@@ -459,6 +463,57 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+    public ObservableList<Room> clientFindAvailableRoomsForBooking(LocalDate checkIN,
+                                                                   LocalDate checkOUT,
+                                                                   int peopleCount){
+        client = clientHolder.getUser();
+        ObservableList<Room> availableRooms = FXCollections.observableArrayList();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
+            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
+            FindIterable<Document> allRoomsInDataBase = roomCollection.find(
+                    new Document("capacity", new Document("$gte", peopleCount))
+            );
+            for(Document roomDoc : allRoomsInDataBase){
+                boolean isAvailable = true;
+                FindIterable<Document> roomBookings = bookingCollection.find(
+                        new Document("room_number", roomDoc.getInteger("room_number"))
+                );
+                for(Document roomBooking : roomBookings) {
+                    Date checkIn = roomBooking.getDate("checkIN_date");
+                    Date checkOut = roomBooking.getDate("checkOUT_date");
+                    LocalDate checkInDate = checkIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate checkOutDate = checkOut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    if (checkInDate.isBefore(checkOUT)
+                            && checkOutDate.isAfter(checkIN)) {
+                        isAvailable = false;
+                        break;
+                    }
+                }
+                if(isAvailable){
+                    Room availableRoom = new Room(
+                            roomDoc.getInteger("room_id"),
+                            roomDoc.getInteger("hotel_id"),
+                            roomDoc.getInteger("type_id"),
+                            roomDoc.getString("type_name"),
+                            roomDoc.getString("room_name"),
+                            roomDoc.getString("description"),
+                            roomDoc.getInteger("room_number"),
+                            roomDoc.getString("status"),
+                            roomDoc.getDate("from"),
+                            roomDoc.getDate("to"),
+                            roomDoc.getDouble("price"),
+                            roomDoc.getInteger("capacity")
+                    );
+                    availableRooms.add(availableRoom);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return availableRooms;
     }
     public void createBooking(LocalDate checkIN_date, LocalDate checkOUT_date){
         client = clientHolder.getUser();
