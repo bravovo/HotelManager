@@ -2,6 +2,7 @@ package org.example.hotelmanager.controllers.client;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -12,20 +13,23 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
-import org.example.hotelmanager.model.Room;
-import org.example.hotelmanager.model.RoomHolder;
+import org.example.hotelmanager.model.*;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static javafx.scene.control.PopupControl.USE_COMPUTED_SIZE;
 
 public class ClientCreateBookingFormController implements Initializable {
+    Client client = new Client();
+    ClientHolder clientHolder = ClientHolder.getInstance();
+    BookingHolder bookingHolder = BookingHolder.getInstance();
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
     RoomHolder roomHolder = RoomHolder.getInstance();
     FormBuilder formBuilder = new FormBuilder();
@@ -45,6 +49,7 @@ public class ClientCreateBookingFormController implements Initializable {
     public HBox available_rooms_hbox;
 
     public void initialize(URL url, ResourceBundle resourceBundle){
+        scroll_pane.setStyle("-fx-background-color: transparent; -fx-border-width: 0px;");
         notes_area.setWrapText(true);
         people_count_field.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*(\\d*)?")) {
@@ -54,6 +59,8 @@ public class ClientCreateBookingFormController implements Initializable {
     }
 
     public void createBookingButtonClick(javafx.event.ActionEvent e) throws IOException {
+        client = clientHolder.getUser();
+        bookingHolder.setBookingDone(false);
         available_rooms_hbox.getChildren().clear();
         if (checkIN_picker.getValue() == null
                 || checkOUT_picker.getValue() == null
@@ -72,21 +79,52 @@ public class ClientCreateBookingFormController implements Initializable {
             return;
         }
         int peopleCount = Integer.parseInt(people_count_field.getText());
+        long nightPeriod = ChronoUnit.DAYS.between(checkIN_picker.getValue(), checkOUT_picker.getValue());
+        Booking booking = new Booking(peopleCount,
+                nightPeriod,
+                notes_area.getText(),
+                checkIN_picker.getValue(),
+                checkOUT_picker.getValue());
+        bookingHolder.setBooking(booking);
         availableRooms = mongoDatabaseConnection.clientFindAvailableRoomsForBooking(
                 checkIN_picker.getValue(),
                 checkOUT_picker.getValue(),
                 peopleCount
         );
         Map<VBox, Room> roomVBoxMap = new HashMap<>();
-        scroll_pane.setStyle("-fx-background-color: transparent; -fx-border-width: 0px;");
+        ObservableList<Hotel> hotels = mongoDatabaseConnection.getHotels();
         for(Room room : availableRooms){
-            Label hotelName = new Label("Готель: ");
+            String hotelName = "";
+            for(Hotel hotel : hotels){
+                if(hotel.getHotel_id() == room.getHotel_id()){
+                    hotelName = hotel.getHotel_name();
+                    room.setHotel(hotel);
+                }
+            }
+            Label hotelNameLabel = new Label("Готель: " + hotelName);
             Label roomName = new Label("Кімната: " + room.getRoom_name());
             Label peopleCountLabel = new Label("Місткість: " + room.getCapacity());
             Label checkInLabel = new Label("Дата заїзду: " + checkIN_picker.getValue().toString());
             Label checkOutLabel = new Label("Дата виїзду: " + checkOUT_picker.getValue().toString());
             Button createBookingButton = new Button("Створити бронювання");
-
+            createBookingButton.setOnAction(click -> {
+                Booking clientBooking = new Booking(
+                        room.getHotel_id(),
+                        client.getFirstName(),
+                        client.getLastName(),
+                        client.getPhoneNumber(),
+                        client.getEmail(),
+                        room.getRoom_number(),
+                        room.getType_name(),
+                        Integer.parseInt(people_count_field.getText()),
+                        booking.getCheckIN_date(),
+                        booking.getCheckOUT_date(),
+                        booking.getNightCount() * room.getPrice(),
+                        notes_area.getText()
+                );
+                mongoDatabaseConnection.createClientBooking(clientBooking);
+                resetEverything();
+            });
             VBox vbox = new VBox();
             double prefWidth = 200;
             double prefHeight = 200;
@@ -95,14 +133,14 @@ public class ClientCreateBookingFormController implements Initializable {
             vbox.setPrefHeight(prefHeight);
             vbox.setMaxHeight(prefHeight);
             vbox.setSpacing(20);
-            vbox.getChildren().addAll(hotelName, roomName, peopleCountLabel, checkInLabel, checkOutLabel, createBookingButton);
+            vbox.getChildren().addAll(hotelNameLabel, roomName, peopleCountLabel, checkInLabel, checkOutLabel, createBookingButton);
             vbox.setStyle("" +
                     "-fx-background-color: white; " +
                     "-fx-padding: 10px; " +
                     "-fx-border-color: black; " +
                     "-fx-border-width: 2px; " +
                     "-fx-border-radius: 5px; " +
-                    "-fx-background-radius: 5px;"
+                    "-fx-background-radius: 10px;"
             );
 
             vbox.setOnMouseEntered(event -> vbox.setCursor(Cursor.HAND));
@@ -111,13 +149,30 @@ public class ClientCreateBookingFormController implements Initializable {
             }
             vbox.setOnMouseExited(event -> vbox.setCursor(Cursor.DEFAULT));
             vbox.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() >= 1) {
-                    Room newRoom = roomVBoxMap.get(vbox);
-                    System.out.println(newRoom.getPrice());
+                try{
+                    if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() >= 1) {
+                        Room availableRoom = roomVBoxMap.get(vbox);
+                        roomHolder.setRoom(availableRoom);
+                        formBuilder.openDialog("client-forms/watch-and-confirm-booking-form.fxml",
+                                "Створити бронювання",
+                                800, 600);
+                        if (bookingHolder.getBookingDone()){
+                            resetEverything();
+                        }
+                    }
+                }catch (Exception ex){
+                    ex.printStackTrace();
                 }
             });
             available_rooms_hbox.getChildren().add(vbox);
             roomVBoxMap.put(vbox, room);
         }
+    }
+    private void resetEverything() {
+        available_rooms_hbox.getChildren().clear();
+        checkIN_picker.setValue(null);
+        checkOUT_picker.setValue(null);
+        people_count_field.setText("");
+        notes_area.setText("");
     }
 }

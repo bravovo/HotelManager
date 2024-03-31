@@ -32,7 +32,7 @@
                   <padding>
                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                   </padding>
-                  <Label text="Створити бронювання" />
+                  <Label text="Знайти бронювання" />
                   <VBox fx:id="checkIN_date_vbox" prefWidth="200.0">
                      <Label text="Дата заїзду" />
                      <DatePicker fx:id="checkIN_picker" />
@@ -50,7 +50,7 @@
                      <TextArea fx:id="notes_area" prefHeight="200.0" prefWidth="200.0" />
                   </VBox>
                   <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" minHeight="50.0" prefHeight="50.0" prefWidth="200.0">
-                     <Button fx:id="create_booking_btn" mnemonicParsing="false" onAction="#createBookingButtonClick" text="Створити бронювання" />
+                     <Button fx:id="create_booking_btn" mnemonicParsing="false" onAction="#createBookingButtonClick" text="Знайти бронювання" />
                      <padding>
                         <Insets left="10.0" />
                      </padding>
@@ -61,11 +61,11 @@
                <Separator fx:id="separator" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="500.0" />
                <ScrollPane fx:id="scroll_pane" fitToHeight="true" fitToWidth="true" vbarPolicy="NEVER">
                   <content>
-                     <HBox fx:id="available_rooms_hbox" alignment="CENTER" prefHeight="300.0" prefWidth="1000.0" spacing="10.0" />
+                     <HBox fx:id="available_rooms_hbox" alignment="CENTER_LEFT" prefHeight="300.0" prefWidth="1000.0" spacing="10.0" />
                   </content>
                </ScrollPane>
                <padding>
-                  <Insets left="10.0" right="10.0" />
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
                </padding>
             </VBox>
          </VBox>

@@ -19,6 +19,14 @@ public class Hotel {
         this.hotel_name = "";
     }
 
+    public Hotel(int hotel_id, String hotel_name, String address, String email, String phone_number) {
+        this.hotel_id = hotel_id;
+        this.hotel_name = hotel_name;
+        this.address = address;
+        this.email = email;
+        this.phone_number = phone_number;
+    }
+
     public Hotel(int hotel_id, String hotel_name, String address, String login, String password, String email, int rooms_count, String phoneNumber) {
         this.hotel_id = hotel_id;
         this.hotel_name = hotel_name;
@@ -40,6 +48,9 @@ public class Hotel {
     }
     public String getEmail() {
         return email;
+    }
+    public String getPhone_number() {
+        return phone_number;
     }
     public int getRooms_count() {
         return rooms_count;

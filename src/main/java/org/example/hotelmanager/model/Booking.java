@@ -28,6 +28,16 @@ public class Booking {
         this.hotelID = -1;
         this.guestID = -1;
     }
+    public Booking(int peopleCount, long nightCount, String additionalInfo, LocalDate checkIN_date, LocalDate checkOUT_date){
+        this.bookingID = -1;
+        this.hotelID = -1;
+        this.guestID = -1;
+        this.peopleCount = peopleCount;
+        this.nightCount = nightCount;
+        this.additionalInfo = additionalInfo;
+        this.checkIN_date = checkIN_date;
+        this.checkOUT_date = checkOUT_date;
+    }
 
     public Booking(int bookingID,
                    int hotelID,
@@ -118,6 +128,22 @@ public class Booking {
         this.additionalInfo = additionalInfo;
     }
 
+    public Booking(int hotelId, String guestFirstName, String guestSecondName, String phoneNumber, String email, int roomNumber, String typeName, int peopleCount, LocalDate checkIN_date, LocalDate checkOUT_date, double totalPrice, String additionalInfo) {
+        this.hotelID = hotelId;
+        this.bookingID = -1;
+        this.guestID = -1;
+        this.guestFirstName = guestFirstName;
+        this.guestSecondName = guestSecondName;
+        this.guestPhoneNumber = phoneNumber;
+        this.guestEmail = email;
+        this.roomNumber = roomNumber;
+        this.roomType = typeName;
+        this.peopleCount = peopleCount;
+        this.checkIN_date = checkIN_date;
+        this.checkOUT_date = checkOUT_date;
+        this.totalPrice = totalPrice;
+        this.additionalInfo = additionalInfo;
+    }
 
 
     public String getGuestPhoneNumber() {

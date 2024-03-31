@@ -23,7 +23,9 @@ public class Room {
     private LocalDate dateTo;
     private double price;
     private int capacity;
+    private Hotel hotel;
     private ObservableList<Booking> bookings = FXCollections.observableArrayList();
+
 
     public Room() {
     }
@@ -117,5 +119,10 @@ public class Room {
     public void setDateTo(LocalDate dateTo) {
         this.dateTo = dateTo;
     }
-
+    public Hotel getHotel() {
+        return hotel;
+    }
+    public void setHotel(Hotel hotel) {
+        this.hotel = hotel;
+    }
 }

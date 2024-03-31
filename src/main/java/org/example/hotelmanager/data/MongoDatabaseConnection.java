@@ -5,6 +5,7 @@ import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.Sorts;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import org.bson.Document;
@@ -17,6 +18,7 @@ import javax.print.Doc;
 import java.time.*;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MongoDatabaseConnection {
@@ -729,5 +731,68 @@ public class MongoDatabaseConnection {
         }
         setBookingList();
         updateRoomList();
+    }
+
+    public void createClientBooking(Booking booking) {
+        client = clientHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
+            MongoCollection<Document> guestCollection = mongoDatabase.getCollection("guests");
+            Document sortedByIdGuest = guestCollection.find().sort(Sorts.descending("guest_id")).first();
+            Document sortedByIdBooking = bookingCollection.find().sort(Sorts.descending("booking_id")).first();
+            int bookingID = 0;
+            if (sortedByIdBooking != null){
+                bookingID = sortedByIdBooking.getInteger("booking_id");
+            }
+            int guestID = 0;
+            if (sortedByIdGuest != null){
+                guestID = sortedByIdBooking.getInteger("guest_id");
+            }
+            Document clientBooking = new Document("hotel_id", booking.getHotelID())
+                    .append("booking_id", bookingID + 1)
+                    .append("guest_id", guestID + 1)
+                    .append("guest_first_name", booking.getGuestFirstName())
+                    .append("guest_second_name", booking.getGuestSecondName())
+                    .append("guest_phone_number", booking.getGuestPhoneNumber())
+                    .append("guest_email", booking.getGuestEmail())
+                    .append("room_number", booking.getRoomNumber())
+                    .append("room_type", booking.getRoomType())
+                    .append("checkIN_date", Date.from(booking.getCheckIN_date()
+                            .atStartOfDay(ZoneId.systemDefault())
+                            .toInstant()))
+                    .append("checkOUT_date", Date.from(booking.getCheckOUT_date()
+                            .atStartOfDay(ZoneId.systemDefault())
+                            .toInstant()))
+                    .append("people_count", booking.getPeopleCount())
+                    .append("total_price", booking.getTotalPrice())
+                    .append("add_info", booking.getAdditionalInfo());
+            bookingCollection.insertOne(clientBooking);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public ObservableList<Hotel> getHotels() {
+        ObservableList<Hotel> hotels = FXCollections.observableArrayList();
+        client = clientHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
+            FindIterable<Document> hotelDocs = hotelCollection.find();
+            for(Document hotelDoc : hotelDocs){
+                Hotel hotel = new Hotel(
+                        hotelDoc.getInteger("hotel_id"),
+                        hotelDoc.getString("hotel_name"),
+                        hotelDoc.getString("address"),
+                        hotelDoc.getString("email"),
+                        hotelDoc.getString("phone_number")
+                );
+                hotels.add(hotel);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return hotels;
     }
 }
