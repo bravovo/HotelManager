@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.example.hotelmanager.FormBuilder;
@@ -34,6 +35,7 @@ public class ClientCreateBookingFormController implements Initializable {
     RoomHolder roomHolder = RoomHolder.getInstance();
     FormBuilder formBuilder = new FormBuilder();
     ObservableList<Room> availableRooms = FXCollections.observableArrayList();
+    public Text message_on_scroll;
     public ScrollPane scroll_pane;
     public VBox create_booking_vbox;
     public VBox checkIN_date_vbox;
@@ -49,6 +51,8 @@ public class ClientCreateBookingFormController implements Initializable {
     public HBox available_rooms_hbox;
 
     public void initialize(URL url, ResourceBundle resourceBundle){
+        message_on_scroll.toBack();
+        available_rooms_hbox.getChildren().clear();
         scroll_pane.setStyle("-fx-background-color: transparent; -fx-border-width: 0px;");
         notes_area.setWrapText(true);
         people_count_field.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -61,7 +65,6 @@ public class ClientCreateBookingFormController implements Initializable {
     public void createBookingButtonClick(javafx.event.ActionEvent e) throws IOException {
         client = clientHolder.getUser();
         bookingHolder.setBookingDone(false);
-        available_rooms_hbox.getChildren().clear();
         if (checkIN_picker.getValue() == null
                 || checkOUT_picker.getValue() == null
                 || people_count_field.getText().length() == 0){
@@ -93,19 +96,27 @@ public class ClientCreateBookingFormController implements Initializable {
         );
         Map<VBox, Room> roomVBoxMap = new HashMap<>();
         ObservableList<Hotel> hotels = mongoDatabaseConnection.getHotels();
+        ObservableList<RoomType> roomTypes = mongoDatabaseConnection.getRoomTypes();
         for(Room room : availableRooms){
             String hotelName = "";
+            String typeDescription = "";
             for(Hotel hotel : hotels){
                 if(hotel.getHotel_id() == room.getHotel_id()){
                     hotelName = hotel.getHotel_name();
                     room.setHotel(hotel);
                 }
             }
+            for(RoomType roomType : roomTypes){
+                if(room.getType_id() == roomType.getTypeID()){
+                    typeDescription = roomType.getTypeDescription();
+                }
+            }
             Label hotelNameLabel = new Label("Готель: " + hotelName);
             Label roomName = new Label("Кімната: " + room.getRoom_name());
             Label peopleCountLabel = new Label("Місткість: " + room.getCapacity());
-            Label checkInLabel = new Label("Дата заїзду: " + checkIN_picker.getValue().toString());
-            Label checkOutLabel = new Label("Дата виїзду: " + checkOUT_picker.getValue().toString());
+            Label price = new Label("Ціна за одну ніч: " + room.getPrice());
+            Label roomTypeDescription = new Label("Тип кімнати: " + typeDescription);
+            roomTypeDescription.setWrapText(true);
             Button createBookingButton = new Button("Створити бронювання");
             createBookingButton.setOnAction(click -> {
                 Booking clientBooking = new Booking(
@@ -126,14 +137,21 @@ public class ClientCreateBookingFormController implements Initializable {
                 resetEverything();
             });
             VBox vbox = new VBox();
-            double prefWidth = 200;
+            double prefWidth = 250;
             double prefHeight = 200;
             vbox.setPrefWidth(prefWidth);
             vbox.setMinWidth(prefWidth);
             vbox.setPrefHeight(prefHeight);
             vbox.setMaxHeight(prefHeight);
             vbox.setSpacing(20);
-            vbox.getChildren().addAll(hotelNameLabel, roomName, peopleCountLabel, checkInLabel, checkOutLabel, createBookingButton);
+            vbox.getChildren().addAll(
+                    hotelNameLabel,
+                    roomName,
+                    peopleCountLabel,
+                    price,
+                    roomTypeDescription,
+                    createBookingButton
+            );
             vbox.setStyle("" +
                     "-fx-background-color: white; " +
                     "-fx-padding: 10px; " +

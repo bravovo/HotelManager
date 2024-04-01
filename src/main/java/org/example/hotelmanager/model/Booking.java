@@ -1,9 +1,6 @@
 package org.example.hotelmanager.model;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 
 public class Booking {
     private final int bookingID;
@@ -28,7 +25,11 @@ public class Booking {
         this.hotelID = -1;
         this.guestID = -1;
     }
-    public Booking(int peopleCount, long nightCount, String additionalInfo, LocalDate checkIN_date, LocalDate checkOUT_date){
+    public Booking(int peopleCount,
+                   long nightCount,
+                   String additionalInfo,
+                   LocalDate checkIN_date,
+                   LocalDate checkOUT_date){
         this.bookingID = -1;
         this.hotelID = -1;
         this.guestID = -1;
@@ -78,7 +79,15 @@ public class Booking {
         this.peopleCount = peopleCount;
     }
 
-    public Booking(String guestFirstName, String guestSecondName, String guestPhoneNumber, String guestEmail, LocalDate checkIN_date, LocalDate checkOUT_date, int peopleCount, long nightCount, String additionalInfo) {
+    public Booking(String guestFirstName,
+                   String guestSecondName,
+                   String guestPhoneNumber,
+                   String guestEmail,
+                   LocalDate checkIN_date,
+                   LocalDate checkOUT_date,
+                   int peopleCount,
+                   long nightCount,
+                   String additionalInfo) {
         this.bookingID = -1;
         this.hotelID = -1;
         this.guestID = -1;
@@ -102,7 +111,17 @@ public class Booking {
         this.additionalInfo = additionalInfo;
     }
 
-    public Booking(String guestFirstName, String guestSecondName, String guestPhoneNumber, String guestEmail, int roomNumber, String roomType, int peopleCount, LocalDate checkIN_date, LocalDate checkOUT_date, Double totalPrice, String additionalInfo) {
+    public Booking(String guestFirstName,
+                   String guestSecondName,
+                   String guestPhoneNumber,
+                   String guestEmail,
+                   int roomNumber,
+                   String roomType,
+                   int peopleCount,
+                   LocalDate checkIN_date,
+                   LocalDate checkOUT_date,
+                   Double totalPrice,
+                   String additionalInfo) {
         this.bookingID = -1;
         this.hotelID = -1;
         this.guestID = -1;
@@ -128,7 +147,18 @@ public class Booking {
         this.additionalInfo = additionalInfo;
     }
 
-    public Booking(int hotelId, String guestFirstName, String guestSecondName, String phoneNumber, String email, int roomNumber, String typeName, int peopleCount, LocalDate checkIN_date, LocalDate checkOUT_date, double totalPrice, String additionalInfo) {
+    public Booking(int hotelId,
+                   String guestFirstName,
+                   String guestSecondName,
+                   String phoneNumber,
+                   String email,
+                   int roomNumber,
+                   String typeName,
+                   int peopleCount,
+                   LocalDate checkIN_date,
+                   LocalDate checkOUT_date,
+                   double totalPrice,
+                   String additionalInfo) {
         this.hotelID = hotelId;
         this.bookingID = -1;
         this.guestID = -1;

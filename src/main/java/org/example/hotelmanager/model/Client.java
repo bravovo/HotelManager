@@ -15,7 +15,12 @@ public class Client {
     public Client() {
 
     }
-    public Client(int clientID, String firstName, String lastName, String email, String phoneNumber, LocalDate dateOfBirth) {
+    public Client(int clientID,
+                  String firstName,
+                  String lastName,
+                  String email,
+                  String phoneNumber,
+                  LocalDate dateOfBirth) {
         this.clientID = clientID;
         this.firstName = firstName;
         this.lastName = lastName;

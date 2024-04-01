@@ -22,6 +22,7 @@ public class ConfirmingBookingDialogFormController {
     @FXML
     void confirmButtonClick(ActionEvent event) {
         mongoDatabaseConnection.deleteBooking(BookingHolder.getInstance().getBooking());
+        BookingHolder.getInstance().setBookingDone(true);
         Stage stage = (Stage) confirm_btn.getScene().getWindow();
         stage.close();
     }

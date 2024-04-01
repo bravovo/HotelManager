@@ -11,64 +11,67 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.ClientCreateBookingFormController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.ClientCreateBookingFormController">
    <HBox>
-      <children>
+      <VBox alignment="CENTER">
+         <Separator orientation="VERTICAL" prefHeight="500.0" />
+      </VBox>
+      <VBox prefHeight="750.0" prefWidth="1000.0" spacing="20.0">
+         <padding>
+            <Insets top="30.0" />
+         </padding>
          <VBox alignment="CENTER">
-            <children>
-               <Separator orientation="VERTICAL" prefHeight="500.0" />
-            </children>
-         </VBox>
-         <VBox prefHeight="750.0" prefWidth="1000.0" spacing="20.0">
-            <padding>
-               <Insets top="30.0" />
-            </padding>
-            <VBox alignment="CENTER">
-               <VBox fx:id="create_booking_vbox" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" spacing="15.0" style="-fx-background-color: Grey;">
-                  <VBox.margin>
-                     <Insets />
-                  </VBox.margin>
-                  <padding>
-                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                  </padding>
-                  <Label text="Знайти бронювання" />
-                  <VBox fx:id="checkIN_date_vbox" prefWidth="200.0">
-                     <Label text="Дата заїзду" />
-                     <DatePicker fx:id="checkIN_picker" />
-                  </VBox>
-                  <VBox fx:id="checkOUT_date_vbox">
-                     <Label text="Дата виїзду" />
-                     <DatePicker fx:id="checkOUT_picker" />
-                  </VBox>
-                  <VBox fx:id="people_count_vbox">
-                     <Label text="Кількість людей" />
-                     <TextField fx:id="people_count_field" />
-                  </VBox>
-                  <VBox fx:id="notes_vbox">
-                     <Label text="Примітки" />
-                     <TextArea fx:id="notes_area" prefHeight="200.0" prefWidth="200.0" />
-                  </VBox>
-                  <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" minHeight="50.0" prefHeight="50.0" prefWidth="200.0">
-                     <Button fx:id="create_booking_btn" mnemonicParsing="false" onAction="#createBookingButtonClick" text="Знайти бронювання" />
-                     <padding>
-                        <Insets left="10.0" />
-                     </padding>
-                  </HBox>
+            <VBox fx:id="create_booking_vbox" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" spacing="15.0" style="-fx-background-color: Grey;">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <Label text="Знайти бронювання" />
+               <VBox fx:id="checkIN_date_vbox" prefWidth="200.0">
+                  <Label text="Дата заїзду" />
+                  <DatePicker fx:id="checkIN_picker" />
                </VBox>
+               <VBox fx:id="checkOUT_date_vbox">
+                  <Label text="Дата виїзду" />
+                  <DatePicker fx:id="checkOUT_picker" />
+               </VBox>
+               <VBox fx:id="people_count_vbox">
+                  <Label text="Кількість людей" />
+                  <TextField fx:id="people_count_field" />
+               </VBox>
+               <VBox fx:id="notes_vbox">
+                  <Label text="Примітки" />
+                  <TextArea fx:id="notes_area" prefHeight="200.0" prefWidth="200.0" />
+               </VBox>
+               <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" minHeight="50.0" prefHeight="50.0" prefWidth="200.0">
+                  <Button fx:id="create_booking_btn" mnemonicParsing="false" onAction="#createBookingButtonClick" text="Знайти бронювання" />
+                  <padding>
+                     <Insets left="10.0" />
+                  </padding>
+               </HBox>
             </VBox>
-            <VBox alignment="CENTER" spacing="5.0">
-               <Separator fx:id="separator" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="500.0" />
-               <ScrollPane fx:id="scroll_pane" fitToHeight="true" fitToWidth="true" vbarPolicy="NEVER">
+         </VBox>
+         <VBox alignment="CENTER" spacing="5.0">
+            <Separator fx:id="separator" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="500.0" />
+            <AnchorPane>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <Text fx:id="message_on_scroll" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="500.0" AnchorPane.rightAnchor="500.0" />
+               <ScrollPane fx:id="scroll_pane" fitToHeight="true" fitToWidth="true" vbarPolicy="NEVER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                   <content>
                      <HBox fx:id="available_rooms_hbox" alignment="CENTER_LEFT" prefHeight="300.0" prefWidth="1000.0" spacing="10.0" />
                   </content>
                </ScrollPane>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" />
-               </padding>
-            </VBox>
+            </AnchorPane>
+            <padding>
+               <Insets bottom="10.0" left="4.0" right="10.0" />
+            </padding>
          </VBox>
-      </children>
+      </VBox>
    </HBox>
 </AnchorPane>

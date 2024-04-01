@@ -1,11 +1,9 @@
 package org.example.hotelmanager.data;
 
 import com.mongodb.client.*;
-import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.Sorts;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import org.bson.Document;
@@ -14,12 +12,8 @@ import org.example.hotelmanager.model.*;
 
 import javafx.event.ActionEvent;
 
-import javax.print.Doc;
 import java.time.*;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MongoDatabaseConnection {
     FormBuilder formBuilder = new FormBuilder();
@@ -180,7 +174,6 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
     }
-
     public ObservableList<String> getRoomTypesNames(){
         ObservableList<String> typeNameList = FXCollections.observableArrayList();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
@@ -735,13 +728,13 @@ public class MongoDatabaseConnection {
 
     public void createClientBooking(Booking booking) {
         client = clientHolder.getUser();
+        int bookingID = 0;
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
             MongoCollection<Document> guestCollection = mongoDatabase.getCollection("guests");
             Document sortedByIdGuest = guestCollection.find().sort(Sorts.descending("guest_id")).first();
             Document sortedByIdBooking = bookingCollection.find().sort(Sorts.descending("booking_id")).first();
-            int bookingID = 0;
             if (sortedByIdBooking != null){
                 bookingID = sortedByIdBooking.getInteger("booking_id");
             }
@@ -771,7 +764,46 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             e.printStackTrace();
         }
+        //createGuest(boo);
     }
+
+//    public void createGuest(){
+//        client = clientHolder.getUser();
+//        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+//            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+//            MongoCollection<Document> guestCollection = mongoDatabase.getCollection("guests");
+//            Document sortedByIdGuest = guestCollection.find().sort(Sorts.descending("guest_id")).first();
+//            int bookingID = 0;
+//            if (sortedByIdBooking != null){
+//                bookingID = sortedByIdBooking.getInteger("booking_id");
+//            }
+//            int guestID = 0;
+//            if (sortedByIdGuest != null){
+//                guestID = sortedByIdBooking.getInteger("guest_id");
+//            }
+//            Document clientBooking = new Document("hotel_id", booking.getHotelID())
+//                    .append("booking_id", bookingID + 1)
+//                    .append("guest_id", guestID + 1)
+//                    .append("guest_first_name", booking.getGuestFirstName())
+//                    .append("guest_second_name", booking.getGuestSecondName())
+//                    .append("guest_phone_number", booking.getGuestPhoneNumber())
+//                    .append("guest_email", booking.getGuestEmail())
+//                    .append("room_number", booking.getRoomNumber())
+//                    .append("room_type", booking.getRoomType())
+//                    .append("checkIN_date", Date.from(booking.getCheckIN_date()
+//                            .atStartOfDay(ZoneId.systemDefault())
+//                            .toInstant()))
+//                    .append("checkOUT_date", Date.from(booking.getCheckOUT_date()
+//                            .atStartOfDay(ZoneId.systemDefault())
+//                            .toInstant()))
+//                    .append("people_count", booking.getPeopleCount())
+//                    .append("total_price", booking.getTotalPrice())
+//                    .append("add_info", booking.getAdditionalInfo());
+//            bookingCollection.insertOne(clientBooking);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
     public ObservableList<Hotel> getHotels() {
         ObservableList<Hotel> hotels = FXCollections.observableArrayList();
@@ -794,5 +826,39 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
         return hotels;
+    }
+
+    public ObservableList<Booking> getClientBookings() {
+        ObservableList<Booking> bookings = FXCollections.observableArrayList();
+        client = clientHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("bookings");
+            FindIterable<Document> bookingDocs = hotelCollection.find(new Document("guest_id", client.getClientID()));
+            for(Document bookingDoc : bookingDocs){
+                Booking booking = new Booking(
+                        bookingDoc.getInteger("booking_id"),
+                        bookingDoc.getInteger("hotel_id"),
+                        bookingDoc.getInteger("guest_id"),
+                        bookingDoc.getString("guest_first_name"),
+                        bookingDoc.getString("guest_second_name"),
+                        bookingDoc.getString("guest_phone_number"),
+                        bookingDoc.getString("guest_email"),
+                        bookingDoc.getInteger("room_number"),
+                        bookingDoc.getString("room_type"),
+                        bookingDoc.getDate("checkIN_date")
+                                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        bookingDoc.getDate("checkOUT_date")
+                                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        bookingDoc.getDouble("total_price"),
+                        bookingDoc.getString("add_info"),
+                        bookingDoc.getInteger("people_count")
+                );
+                bookings.add(booking);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return bookings;
     }
 }
