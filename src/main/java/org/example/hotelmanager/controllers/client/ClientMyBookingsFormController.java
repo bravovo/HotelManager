@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ClientMyBookingsFormController implements Initializable {
@@ -28,8 +29,6 @@ public class ClientMyBookingsFormController implements Initializable {
     public VBox edit_booking_1;
     public VBox hotel_name_vbox;
     public Text hotel_name;
-    public VBox room_name_vbox;
-    public Text room_name;
     public VBox room_number_vbox;
     public Text room_number;
     public VBox notes_vbox;
@@ -50,12 +49,9 @@ public class ClientMyBookingsFormController implements Initializable {
     public HBox bookings_hbox;
     FormBuilder formBuilder = new FormBuilder();
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
-    Client client = new Client();
-    ClientHolder clientHolder = ClientHolder.getInstance();
+    Booking bookingToEdit = new Booking();
     Booking chosenBooking = new Booking();
     BookingHolder bookingHolder = BookingHolder.getInstance();
-    Room room = new Room();
-    RoomHolder roomHolder = RoomHolder.getInstance();
     ObservableList<Booking> bookings;
     ObservableList<Hotel> hotels;
     Map<VBox, Booking> bookingVBoxMap = new HashMap<>();
@@ -68,10 +64,10 @@ public class ClientMyBookingsFormController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         scroll_pane.setStyle("-fx-background-color: transparent; -fx-border-width: 0px;");
         changeListener = (observable, oldValue, newValue) -> {
-            if(addInfoFirst.equals(notes_area.getText())
-                    && peopleCountFirst.equals(people_count_field.getText())
-                    && checkINFirst.isEqual(checkIN_picker.getValue())
-                    && checkOUTFirst.isEqual(checkOUT_picker.getValue())){
+            if (Objects.equals(addInfoFirst, notes_area.getText())
+                    && Objects.equals(peopleCountFirst, people_count_field.getText())
+                    && Objects.equals(checkINFirst, checkIN_picker.getValue())
+                    && Objects.equals(checkOUTFirst, checkOUT_picker.getValue())) {
                 edit_booking_btn.setDisable(true);
             }
             else {
@@ -79,10 +75,10 @@ public class ClientMyBookingsFormController implements Initializable {
             }
         };
         changeListenerForDate = (observable, oldValue, newValue) -> {
-            if(addInfoFirst.equals(notes_area.getText())
-                    && peopleCountFirst.equals(people_count_field.getText())
-                    && checkINFirst.isEqual(checkIN_picker.getValue())
-                    && checkOUTFirst.isEqual(checkOUT_picker.getValue())){
+            if (Objects.equals(addInfoFirst, notes_area.getText())
+                    && Objects.equals(peopleCountFirst, people_count_field.getText())
+                    && Objects.equals(checkINFirst, checkIN_picker.getValue())
+                    && Objects.equals(checkOUTFirst, checkOUT_picker.getValue())) {
                 edit_booking_btn.setDisable(true);
             }
             else {
@@ -96,7 +92,28 @@ public class ClientMyBookingsFormController implements Initializable {
         });
         setPage();
     }
-    public void editBookingButtonClick(ActionEvent event) {
+    public void editBookingButtonClick(ActionEvent event) throws IOException{
+        bookingToEdit = chosenBooking;
+        bookingToEdit.setAdditionalInfo(notes_area.getText());
+        bookingToEdit.setCheckIN_date(checkIN_picker.getValue());
+        bookingToEdit.setCheckOUT_date(checkOUT_picker.getValue());
+        bookingToEdit.setPeopleCount(Integer.parseInt(people_count_field.getText()));
+        long nightPeriod = ChronoUnit.DAYS.between(checkIN_picker.getValue(), checkOUT_picker.getValue());
+        bookingToEdit.setNightCount(nightPeriod);
+        bookingHolder.setBooking(bookingToEdit);
+        if(peopleCountFirst.equals(people_count_field.getText())
+                && checkINFirst.isEqual(checkIN_picker.getValue())
+                && checkOUTFirst.isEqual(checkOUT_picker.getValue())){
+            mongoDatabaseConnection.editClientBooking(bookingToEdit, false);
+            bookingHolder.setBookingDone(true);
+        }
+        else {
+            formBuilder.openDialog("confirming-booking-editing-form.fxml", "Редагування бронювання", 400, 250);
+        }
+        if(bookingHolder.getBookingDone()){
+            setPage();
+            bookingHolder.setBookingDone(false);
+        }
     }
 
     public void deleteBookingButtonClick(ActionEvent event) throws IOException {
@@ -115,7 +132,6 @@ public class ClientMyBookingsFormController implements Initializable {
         bookings_hbox.getChildren().clear();
 
         hotel_name.setText("");
-        room_name.setText("");
         room_number.setText("");
         total_price.setText("");
         checkIN_picker.setValue(null);
@@ -126,76 +142,84 @@ public class ClientMyBookingsFormController implements Initializable {
         bookings = mongoDatabaseConnection.getClientBookings();
         hotels = mongoDatabaseConnection.getHotels();
 
-        for(Booking booking : bookings){
-            String hotelName = "";
-            String roomName = "";
-            for(Hotel hotel : hotels){
-                if(hotel.getHotel_id() == booking.getHotelID()){
-                    hotelName = hotel.getHotel_name();
-                }
-            }
-            Label hotelNameLabel = new Label("Готель: " + hotelName);
-            Label checkIN = new Label("Дата заїзду: " + booking.getCheckIN_date());
-            Label checkOUT = new Label("Дата заїзду: " + booking.getCheckOUT_date());
-            Label peopleCountLabel = new Label("Кількість людей: " + booking.getPeopleCount());
-            Label totalPrice = new Label("Загальна вартість проживання: " + booking.getTotalPrice());
-
-            VBox vbox = new VBox();
-            double prefWidth = 250;
-            double prefHeight = 200;
-            vbox.setPrefWidth(prefWidth);
-            vbox.setMinWidth(prefWidth);
-            vbox.setPrefHeight(prefHeight);
-            vbox.setMaxHeight(prefHeight);
-            vbox.setSpacing(20);
-            vbox.getChildren().addAll(
-                    hotelNameLabel,
-                    checkIN,
-                    checkOUT,
-                    peopleCountLabel,
-                    totalPrice
-            );
-            vbox.setStyle("" +
-                    "-fx-background-color: white; " +
-                    "-fx-padding: 10px; " +
-                    "-fx-border-color: black; " +
-                    "-fx-border-width: 2px; " +
-                    "-fx-border-radius: 5px; " +
-                    "-fx-background-radius: 10px;"
-            );
-
-            vbox.setOnMouseEntered(event -> vbox.setCursor(Cursor.HAND));
-            if(bookingVBoxMap.size() >= 4){
-                scroll_pane.setFitToHeight(false);
-            }
-            vbox.setOnMouseExited(event -> vbox.setCursor(Cursor.DEFAULT));
-            String finalHotelName = hotelName;
-            vbox.setOnMouseClicked(event -> {
-                try{
-                    if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() >= 1) {
-                        chosenBooking = bookingVBoxMap.get(vbox);
-                        hotel_name.setText(finalHotelName);
-                        room_name.setText("ПІДГРУЖАТИ НАЗВИ КІМНАТ");
-                        room_number.setText(String.valueOf(booking.getRoomNumber()));
-                        notes_area.setWrapText(true);
-                        notes_area.setText(booking.getAdditionalInfo());
-                        checkIN_picker.setValue(booking.getCheckIN_date());
-                        checkOUT_picker.setValue(booking.getCheckOUT_date());
-                        people_count_field.setText(String.valueOf(booking.getPeopleCount()));
-                        total_price.setText(String.valueOf(booking.getTotalPrice()));
-                        addInfoFirst = booking.getAdditionalInfo();
-                        peopleCountFirst = String.valueOf(booking.getPeopleCount());
-                        checkINFirst = booking.getCheckIN_date();
-                        checkOUTFirst = booking.getCheckOUT_date();
+        if(bookings.size() != 0){
+            for(Booking booking : bookings){
+                String hotelName = "";
+                for(Hotel hotel : hotels){
+                    if(hotel.getHotel_id() == booking.getHotelID()){
+                        hotelName = hotel.getHotel_name();
                     }
-                }catch (Exception ex){
-                    ex.printStackTrace();
                 }
-                edit_booking_btn.setDisable(true);
-                delete_booking_btn.setDisable(false);
-            });
-            bookings_hbox.getChildren().add(vbox);
-            bookingVBoxMap.put(vbox, booking);
+                Label hotelNameLabel = new Label("Готель: " + hotelName);
+                Label checkIN = new Label("Дата заїзду: " + booking.getCheckIN_date());
+                Label checkOUT = new Label("Дата заїзду: " + booking.getCheckOUT_date());
+                Label peopleCountLabel = new Label("Кількість людей: " + booking.getPeopleCount());
+                Label totalPrice = new Label("Загальна вартість проживання: " + booking.getTotalPrice());
+
+                VBox vbox = new VBox();
+                double prefWidth = 250;
+                double prefHeight = 200;
+                vbox.setPrefWidth(prefWidth);
+                vbox.setMinWidth(prefWidth);
+                vbox.setPrefHeight(prefHeight);
+                vbox.setMaxHeight(prefHeight);
+                vbox.setSpacing(20);
+                vbox.getChildren().addAll(
+                        hotelNameLabel,
+                        checkIN,
+                        checkOUT,
+                        peopleCountLabel,
+                        totalPrice
+                );
+                vbox.setStyle("" +
+                        "-fx-background-color: white; " +
+                        "-fx-padding: 10px; " +
+                        "-fx-border-color: black; " +
+                        "-fx-border-width: 2px; " +
+                        "-fx-border-radius: 5px; " +
+                        "-fx-background-radius: 10px;"
+                );
+
+                vbox.setOnMouseEntered(event -> vbox.setCursor(Cursor.HAND));
+                if(bookingVBoxMap.size() >= 4){
+                    scroll_pane.setFitToHeight(false);
+                }
+                vbox.setOnMouseExited(event -> vbox.setCursor(Cursor.DEFAULT));
+                String finalHotelName = hotelName;
+                vbox.setOnMouseClicked(event -> {
+                    try{
+                        if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() >= 1) {
+                            chosenBooking = bookingVBoxMap.get(vbox);
+                            hotel_name.setText(finalHotelName);
+                            room_number.setText(String.valueOf(booking.getRoomNumber()));
+                            notes_area.setWrapText(true);
+                            notes_area.setText(booking.getAdditionalInfo());
+                            checkIN_picker.setValue(booking.getCheckIN_date());
+                            checkOUT_picker.setValue(booking.getCheckOUT_date());
+                            people_count_field.setText(String.valueOf(booking.getPeopleCount()));
+                            total_price.setText(String.valueOf(booking.getTotalPrice()));
+                            addInfoFirst = booking.getAdditionalInfo();
+                            peopleCountFirst = String.valueOf(booking.getPeopleCount());
+                            checkINFirst = booking.getCheckIN_date();
+                            checkOUTFirst = booking.getCheckOUT_date();
+                        }
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+                    edit_booking_btn.setDisable(true);
+                    delete_booking_btn.setDisable(false);
+                });
+                bookings_hbox.getChildren().add(vbox);
+                bookingVBoxMap.put(vbox, booking);
+            }
+        }
+        else {
+            edit_booking_btn.setDisable(true);
+            delete_booking_btn.setDisable(true);
+            notes_area.setDisable(true);
+            people_count_field.setDisable(true);
+            checkIN_picker.setDisable(true);
+            checkOUT_picker.setDisable(true);
         }
     }
 }

@@ -226,4 +226,28 @@ public class Booking {
     public double getTotalPrice() {
         return totalPrice;
     }
+
+    public void setPeopleCount(int peopleCount) {
+        this.peopleCount = peopleCount;
+    }
+
+    public void setCheckIN_date(LocalDate checkIN_date) {
+        this.checkIN_date = checkIN_date;
+    }
+
+    public void setCheckOUT_date(LocalDate checkOUT_date) {
+        this.checkOUT_date = checkOUT_date;
+    }
+
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
+
+    public void setNightCount(long nightCount) {
+        this.nightCount = nightCount;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 }

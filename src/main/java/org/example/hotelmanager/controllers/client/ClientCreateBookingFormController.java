@@ -63,6 +63,7 @@ public class ClientCreateBookingFormController implements Initializable {
     }
 
     public void createBookingButtonClick(javafx.event.ActionEvent e) throws IOException {
+        available_rooms_hbox.getChildren().clear();
         client = clientHolder.getUser();
         bookingHolder.setBookingDone(false);
         if (checkIN_picker.getValue() == null
@@ -87,7 +88,8 @@ public class ClientCreateBookingFormController implements Initializable {
                 nightPeriod,
                 notes_area.getText(),
                 checkIN_picker.getValue(),
-                checkOUT_picker.getValue());
+                checkOUT_picker.getValue()
+        );
         bookingHolder.setBooking(booking);
         availableRooms = mongoDatabaseConnection.clientFindAvailableRoomsForBooking(
                 checkIN_picker.getValue(),

@@ -119,6 +119,7 @@ public class Room {
     public void setDateTo(LocalDate dateTo) {
         this.dateTo = dateTo;
     }
+    public void setPrice(double price) { this.price = price; }
     public Hotel getHotel() {
         return hotel;
     }
