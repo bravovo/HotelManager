@@ -43,9 +43,6 @@ public class AdminBookingsFormController implements Initializable {
     @FXML private TableColumn<Booking, Double> total_price;
 
     public void initialize(URL url, ResourceBundle resourceBundle){
-
-        //TODO Якщо статус бронювання "Виконується", то редагувати не можна, просто переглядати
-
         hotel = hotelHolder.getUser();
         setBookingsTable();
         ObservableList<String> items = FXCollections.observableArrayList(

@@ -2,10 +2,7 @@ package org.example.hotelmanager.controllers.admin;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
@@ -19,6 +16,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 public class EditBookingFormController implements Initializable {
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
@@ -27,6 +25,7 @@ public class EditBookingFormController implements Initializable {
     RoomHolder roomHolder = RoomHolder.getInstance();
     Booking booking = new Booking();
     Room room = new Room();
+    public ProgressBar email_valid_bar;
     public TextField guest_first_name;
     public TextField guest_second_name;
     public TextField guest_phone_number;
@@ -63,6 +62,25 @@ public class EditBookingFormController implements Initializable {
                 people_count.setText(oldValue);
             }
         });
+
+        //Валідація електронної пошти
+        guest_email.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkEmail(guest_email.getText(), email_valid_bar, save_btn);
+        });
+    }
+
+    public void checkEmail(String text, ProgressBar progressBar, Button button){
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        if (pattern.matcher(text).matches()) {
+            progressBar.setVisible(true);
+            progressBar.setStyle("-fx-control-inner-background: green; -fx-accent: green;");
+            button.setDisable(false);
+        } else {
+            progressBar.setVisible(true);
+            progressBar.setStyle("-fx-control-inner-background: red; -fx-accent: red;");
+            button.setDisable(true);
+        }
     }
 
     public void saveButtonClick(javafx.event.ActionEvent event) throws IOException {

@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
@@ -37,12 +38,12 @@
             <TextField fx:id="people_count" />
          </VBox>
          <VBox>
-            <Label text="Чек-ін дата*"/>
-            <DatePicker fx:id="checkIN_date"/>
+            <Label text="Чек-ін дата*" />
+            <DatePicker fx:id="checkIN_date" />
          </VBox>
          <VBox>
-            <Label text="Чек-аут дата*"/>
-            <DatePicker fx:id="checkOUT_date"/>
+            <Label text="Чек-аут дата*" />
+            <DatePicker fx:id="checkOUT_date" />
          </VBox>
       </VBox>
       <VBox minHeight="-Infinity" minWidth="-Infinity" prefWidth="300.0" spacing="20.0">
@@ -56,10 +57,11 @@
          <VBox>
             <Label text="Електронна пошта гостя*" />
             <TextField fx:id="guest_email" />
+            <ProgressBar fx:id="email_valid_bar" minHeight="-Infinity" prefHeight="5.0" prefWidth="100.0" progress="1.0" visible="false" />
          </VBox>
          <VBox>
-            <Label text="Дата народження гостя*"/>
-            <DatePicker fx:id="guest_birthday"/>
+            <Label text="Дата народження гостя*" />
+            <DatePicker fx:id="guest_birthday" />
          </VBox>
          <VBox>
             <Label text="Додаткові побажання" />
