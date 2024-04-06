@@ -13,262 +13,193 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.RegisterFormController">
-   <children>
-      <TabPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-          <Tab text="Постоялець">
-            <content>
-              <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="700.0">
-                     <children>
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="60.0" AnchorPane.bottomAnchor="92.77310626973684" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <HBox alignment="CENTER" spacing="40.0">
-                                 <children>
-                                    <VBox spacing="10.0">
-                                       <children>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Ім'я" />
-                                                      <TextField fx:id="client_first_name" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Прізвище" />
-                                                      <TextField fx:id="client_last_name" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Електронна пошта" />
-                                                      <TextField fx:id="client_email" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Номер телефону" />
-                                                      <TextField fx:id="client_phone_number" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                       </children>
-                                    </VBox>
-                                    <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
-                                       <children>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label prefWidth="200.0" text="Дата народження" />
-                                                      <DatePicker fx:id="client_date_of_birth" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Пароль" />
-                                                      <AnchorPane>
-                                                         <children>
-                                                            <PasswordField fx:id="client_password_field" prefHeight="30.0" prefWidth="200.0" />
-                                                            <TextField fx:id="client_password_text" onMouseClicked="#editClientPassword" prefHeight="30.0" prefWidth="200.0" />
-                                                         </children>
-                                                      </AnchorPane>
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Підтвердити пароль" />
-                                                      <PasswordField fx:id="client_password_field_confirm" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <CheckBox fx:id="client_show_password_check" mnemonicParsing="false" onAction="#showClientsPasswordClick" text="Показати пароль" />
-                                             </children>
-                                          </AnchorPane>
-                                       </children>
-                                    </VBox>
-                                 </children>
-                                 <padding>
-                                    <Insets top="70.0" />
-                                 </padding>
-                              </HBox>
-                              <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="60.0">
-                                 <padding>
-                                    <Insets right="130.0" />
-                                 </padding>
-                                 <children>
-                                    <Button fx:id="create_client_acc_btn" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#registerClientClick" prefHeight="30.0" prefWidth="125.0" text="Створити акаунт" />
-                                    <Button fx:id="client_go_back_btn" alignment="CENTER" mnemonicParsing="false" onAction="#goBackClick" prefHeight="30.0" prefWidth="125.0" text="Назад" />
-                                 </children>
-                              </HBox>
-                           </children>
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0"
+            xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.hotelmanager.controllers.RegisterFormController">
+   <TabPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0"
+            tabClosingPolicy="UNAVAILABLE">
+      <Tab text="Користувач">
+         <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="700.0">
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="60.0"
+                  AnchorPane.bottomAnchor="92.77310626973684" AnchorPane.leftAnchor="0.0"
+                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <HBox alignment="CENTER" spacing="40.0">
+                  <padding>
+                     <Insets top="70.0"/>
+                  </padding>
+                  <VBox spacing="10.0">
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Ім'я"/>
+                           <TextField fx:id="client_first_name" prefHeight="30.0"
+                                      prefWidth="200.0"/>
                         </VBox>
-                     </children>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Прізвище"/>
+                           <TextField fx:id="client_last_name" prefHeight="30.0"
+                                      prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Електронна пошта"/>
+                           <TextField fx:id="client_email" prefHeight="30.0" prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Номер телефону"/>
+                           <TextField fx:id="client_phone_number" prefHeight="30.0"
+                                      prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                     <AnchorPane>
+                        <VBox>
+                           <Label prefWidth="200.0" text="Дата народження"/>
+                           <DatePicker fx:id="client_date_of_birth" prefHeight="30.0"
+                                       prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Пароль"/>
+                           <AnchorPane>
+                              <PasswordField fx:id="client_password_field" prefHeight="30.0"
+                                             prefWidth="200.0"/>
+                              <TextField fx:id="client_password_text"
+                                         onMouseClicked="#editClientPassword"
+                                         prefHeight="30.0" prefWidth="200.0"/>
+                           </AnchorPane>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Підтвердити пароль"/>
+                           <PasswordField fx:id="client_password_field_confirm"
+                                          prefHeight="30.0" prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <CheckBox fx:id="client_show_password_check" mnemonicParsing="false"
+                                  onAction="#showClientsPasswordClick" text="Показати пароль"/>
+                     </AnchorPane>
+                  </VBox>
+               </HBox>
+               <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="60.0">
+                  <padding>
+                     <Insets right="130.0"/>
+                  </padding>
+                  <Button fx:id="create_client_acc_btn" alignment="CENTER" minHeight="-Infinity"
+                          minWidth="-Infinity" mnemonicParsing="false" onAction="#registerClientClick"
+                          prefHeight="30.0" prefWidth="125.0" text="Створити акаунт"/>
+                  <Button fx:id="client_go_back_btn" alignment="CENTER" mnemonicParsing="false"
+                          onAction="#goBackClick" prefHeight="30.0" prefWidth="125.0" text="Назад"/>
+               </HBox>
+            </VBox>
+         </AnchorPane>
+      </Tab>
+      <Tab text="Адміністрація">
+         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="60.0"
+                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <HBox alignment="CENTER" minWidth="-Infinity" prefHeight="471.0" prefWidth="700.0"
+                     spacing="40.0">
+                  <padding>
+                     <Insets top="70.0"/>
+                  </padding>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Назва готелю"/>
+                           <TextField fx:id="hotel_name" prefHeight="30.0" prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Логін адміністратора"/>
+                           <TextField fx:id="admin_login" prefHeight="30.0" prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Адреса готелю"/>
+                           <TextField fx:id="hotel_address" prefHeight="30.0"
+                                      prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Електронна адреса готелю"/>
+                           <TextField fx:id="hotel_email_field" prefHeight="30.0"
+                                      prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                  </VBox>
+                  <VBox prefHeight="471.0" prefWidth="10.0" spacing="10.0">
+                     <AnchorPane>
+                        <VBox prefHeight="30.0" prefWidth="200.0">
+                           <Label text="Номер телефону готелю"/>
+                           <TextField fx:id="hotel_phone_number" minHeight="-Infinity"
+                                      minWidth="-Infinity" prefHeight="30.0" prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Кількість кімнат"/>
+                           <TextField fx:id="hotel_rooms_count_field" prefHeight="30.0"
+                                      prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Пароль"/>
+                           <AnchorPane>
+                              <PasswordField fx:id="hotel_password_field" prefHeight="30.0"
+                                             prefWidth="200.0"/>
+                              <TextField fx:id="hotel_password_text"
+                                         onMouseClicked="#editAdminPassword"
+                                         prefHeight="30.0" prefWidth="200.0"/>
+                           </AnchorPane>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <VBox>
+                           <Label text="Підтвердити пароль"/>
+                           <PasswordField fx:id="hotel_password_confirm_field" prefHeight="30.0"
+                                          prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                     <AnchorPane>
+                        <CheckBox fx:id="hotel_show_password_check" mnemonicParsing="false"
+                                  onAction="#showAdminPasswordClick" text="Показати пароль"/>
+                     </AnchorPane>
+                  </VBox>
+               </HBox>
+               <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="700.0" spacing="60.0">
+                  <padding>
+                     <Insets right="130.0"/>
+                  </padding>
+                  <AnchorPane>
+                     <opaqueInsets>
+                        <Insets/>
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets/>
+                     </HBox.margin>
+                     <Button fx:id="register_hotel_btn" mnemonicParsing="false"
+                             onAction="#registerHotelClick" prefHeight="30.0" prefWidth="125.0"
+                             text="Створити готель"/>
+                     <Button fx:id="admin_go_back_btn" layoutX="165.37811279296875"
+                             mnemonicParsing="false" onAction="#goBackClick" prefHeight="30.0"
+                             prefWidth="125.0" text="Назад"/>
                   </AnchorPane>
-            </content>
-          </Tab>
-          <Tab text="Адміністрація готелю">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <HBox alignment="CENTER" minWidth="-Infinity" prefHeight="471.0" prefWidth="700.0" spacing="40.0">
-                                 <children>
-                                    <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
-                                       <children>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Назва готелю" />
-                                                      <TextField fx:id="hotel_name" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Логін адміністратора" />
-                                                      <TextField fx:id="admin_login" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Адреса готелю" />
-                                                      <TextField fx:id="hotel_address" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Електронна адреса готелю" />
-                                                      <TextField fx:id="hotel_email_field" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                       </children>
-                                    </VBox>
-                                    <VBox prefHeight="471.0" prefWidth="10.0" spacing="10.0">
-                                       <children>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox prefHeight="30.0" prefWidth="200.0">
-                                                   <children>
-                                                      <Label text="Номер телефону готелю" />
-                                                      <TextField fx:id="hotel_phone_number" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Кількість кімнат" />
-                                                      <TextField fx:id="hotel_rooms_count_field" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Пароль" />
-                                                      <AnchorPane>
-                                                         <children>
-                                                            <PasswordField fx:id="hotel_password_field" prefHeight="30.0" prefWidth="200.0" />
-                                                            <TextField fx:id="hotel_password_text" onMouseClicked="#editAdminPassword" prefHeight="30.0" prefWidth="200.0" />
-                                                         </children>
-                                                      </AnchorPane>
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <VBox>
-                                                   <children>
-                                                      <Label text="Підтвердити пароль" />
-                                                      <PasswordField fx:id="hotel_password_confirm_field" prefHeight="30.0" prefWidth="200.0" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </AnchorPane>
-                                          <AnchorPane>
-                                             <children>
-                                                <CheckBox fx:id="hotel_show_password_check" mnemonicParsing="false" onAction="#showAdminPasswordClick" text="Показати пароль" />
-                                             </children>
-                                          </AnchorPane>
-                                       </children>
-                                    </VBox>
-                                 </children>
-                                 <padding>
-                                    <Insets top="70.0" />
-                                 </padding>
-                              </HBox>
-                              <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="700.0" spacing="60.0">
-                                 <children>
-                                    <AnchorPane>
-                                       <children>
-                                          <Button fx:id="register_hotel_btn" mnemonicParsing="false" onAction="#registerHotelClick" prefHeight="30.0" prefWidth="125.0" text="Створити готель" />
-                                          <Button fx:id="admin_go_back_btn" layoutX="165.37811279296875" mnemonicParsing="false" onAction="#goBackClick" prefHeight="30.0" prefWidth="125.0" text="Назад" />
-                                       </children>
-                                       <opaqueInsets>
-                                          <Insets />
-                                       </opaqueInsets>
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </AnchorPane>
-                                 </children>
-                                 <padding>
-                                    <Insets right="130.0" />
-                                 </padding>
-                              </HBox>
-                           </children>
-                        </VBox>
-                     </children></AnchorPane>
-            </content>
-          </Tab>
-        </tabs>
-      </TabPane>
-   </children>
+               </HBox>
+            </VBox>
+         </AnchorPane>
+      </Tab>
+   </TabPane>
 </AnchorPane>

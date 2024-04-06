@@ -11,10 +11,10 @@ import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.model.*;
 
 import javafx.event.ActionEvent;
-
-import java.awt.print.Book;
 import java.time.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MongoDatabaseConnection {
     FormBuilder formBuilder = new FormBuilder();
@@ -103,7 +103,7 @@ public class MongoDatabaseConnection {
                 setBookingList();
                 Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                 formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
-                        "Версія для адміністратора | Система управління готелями", 1350, 750);
+                        "Версія для адміністратора | Hotelis", 1350, 750);
                 return;
             }
 
@@ -128,7 +128,7 @@ public class MongoDatabaseConnection {
                 clientHolder.setUser(client);
                 Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                 formBuilder.openWindow(stage, "client-forms/client-form.fxml",
-                        "Версія для адміністратора | Система управління готелями", 1350, 750);
+                        "Версія для клієнта | Hotelis", 1350, 750);
                 return;
             }
 

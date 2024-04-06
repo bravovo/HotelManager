@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -14,15 +13,11 @@ import org.example.hotelmanager.data.MongoDatabaseConnection;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 public class RegisterFormController implements Initializable {
-
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
-
     private Stage stage;
-
     /* Елементи вкладки Гості */
     @FXML private DatePicker client_date_of_birth;
     @FXML private TextField client_email;
@@ -49,26 +44,25 @@ public class RegisterFormController implements Initializable {
     @FXML private CheckBox hotel_show_password_check;
     @FXML private Button register_hotel_btn;
     @FXML private Button admin_go_back_btn;
-
-    private FormBuilder formBuilder = new FormBuilder();
+    private final FormBuilder formBuilder = new FormBuilder();
 
     public void initialize(URL url, ResourceBundle resourceBundle){
         /* Форматування тексту для реєстрації готелю */
         hotel_rooms_count_field.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
-                hotel_rooms_count_field.setText(newValue.replaceAll("[^\\d]", ""));
+                hotel_rooms_count_field.setText(newValue.replaceAll("\\D", ""));
             }
         });
         hotel_phone_number.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
-                hotel_phone_number.setText(newValue.replaceAll("[^\\d]", ""));
+                hotel_phone_number.setText(newValue.replaceAll("\\D", ""));
             }
         });
 
         /* Форматування тексту для реєстрації клієнта */
         client_phone_number.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
-                client_phone_number.setText(newValue.replaceAll("[^\\d]", ""));
+                client_phone_number.setText(newValue.replaceAll("\\D", ""));
             }
         });
         client_date_of_birth.setValue(LocalDate.now().minusYears(18));
@@ -84,7 +78,7 @@ public class RegisterFormController implements Initializable {
                 client_phone_number,
         };
         for(TextField textField : textFields){
-            if (textField.getText().length() == 0){
+            if (textField.getText().isEmpty()){
                 formBuilder.errorValidation("Всі поля повинні бути заповнені");
                 return;
             }
@@ -111,7 +105,7 @@ public class RegisterFormController implements Initializable {
         ){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "client-forms/client-form.fxml",
-                    "Версія для гостя | Система управління готелями", 1100, 750);
+                    "Версія для гостя | Hotelis", 1100, 750);
         }
         else{
             formBuilder.errorValidation("Користувач з такою електронною поштою вже існує");
@@ -171,7 +165,7 @@ public class RegisterFormController implements Initializable {
                 hotel_rooms_count_field
         };
         for(TextField textField : textFields){
-            if (textField.getText().length() == 0){
+            if (textField.getText().isEmpty()){
                 formBuilder.errorValidation("Всі поля повинні бути заповнені");
                 return;
             }
@@ -197,10 +191,11 @@ public class RegisterFormController implements Initializable {
                 hotel_password_field.getText(),
                 hotel_email_field.getText(),
                 hotel_phone_number.getText(),
-                roomsCount)){
+                roomsCount)
+        ){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
-                    "Версія для адміністратора | Система управління готелями", 1100, 750);
+                    "Версія для адміністратора | Hotelis", 1100, 750);
         }
         else{
             formBuilder.errorValidation("Готель з такими даними вже існує");
@@ -212,7 +207,7 @@ public class RegisterFormController implements Initializable {
     public void goBackClick(ActionEvent event) throws IOException {
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         formBuilder.openWindow(stage, "login-form.fxml",
-                "Система управління готелями", 700, 500);
+                "Авторизація | Hotelis", 700, 500);
     }
 
 }

@@ -15,27 +15,16 @@ import java.util.ResourceBundle;
 public class CreateRoomFormController implements Initializable {
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
     FormBuilder formBuilder = new FormBuilder();
-
-    @FXML
-    private Button cancel_btn;
-
-    @FXML
-    private Button create_room_btn;
-
-    @FXML
-    private TextArea room_description;
-
-    @FXML
-    private TextField room_name;
-    @FXML
-    private TextField room_price;
-
-    @FXML
-    private ChoiceBox<String> type_choice;
+    @FXML private Button cancel_btn;
+    @FXML private Button create_room_btn;
+    @FXML private TextArea room_description;
+    @FXML private TextField room_name;
+    @FXML private TextField room_price;
+    @FXML private ChoiceBox<String> type_choice;
     public void initialize(URL url, ResourceBundle resourceBundle){
         room_description.setWrapText(true);
         ObservableList<String> typeNames = mongoDatabaseConnection.getRoomTypesNames();
-        ((ChoiceBox)type_choice).setItems(typeNames);
+        type_choice.setItems(typeNames);
         type_choice.setValue(typeNames.get(0));
 
         room_price.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -56,7 +45,7 @@ public class CreateRoomFormController implements Initializable {
                 room_price,
         };
         for(TextField textField : textFields){
-            if (textField.getText().length() == 0){
+            if (textField.getText().isEmpty()){
                 formBuilder.errorValidation("Всі обов'язкові поля повинні бути заповнені");
                 return;
             }

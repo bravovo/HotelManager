@@ -6,45 +6,63 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.LoginFormController">
-   <children>
-      <AnchorPane layoutX="400.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" styleClass="anchor">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="32.0" layoutY="75.0" prefHeight="36.0" prefWidth="235.0" text="Система управління готелями" textAlignment="CENTER" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="33.34453572042332" AnchorPane.topAnchor="75.0">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-            </Label>
-            <Text disable="true" layoutY="205.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Якийсь текст тут" textAlignment="CENTER" wrappingWidth="300.0" AnchorPane.topAnchor="178.0">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.LoginFormController">
+   <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0">
+      <opaqueInsets>
+         <Insets />
+      </opaqueInsets>
+      <padding>
+         <Insets top="75.0" />
+      </padding>
+      <VBox alignment="CENTER" layoutX="40.33613204956055" layoutY="75.02520751953125" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="235.0" text="Увійдіть у свій акаунт" />
+      </VBox>
+      <VBox layoutX="50.01680374145508" layoutY="136.0" spacing="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <padding>
+            <Insets left="40.0" right="150.0" />
+         </padding>
+         <VBox>
+            <Label text="Логін" />
+            <TextField fx:id="login_field" promptText="Введіть свій логін" />
+         </VBox>
+         <VBox>
+            <Label text="Пароль" />
+            <PasswordField fx:id="pass_field" promptText="Введіть свій пароль" />
+         </VBox>
+      </VBox>
+      <VBox alignment="CENTER" layoutX="143.0" layoutY="325.1092224121094" spacing="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <Button fx:id="login_btn" mnemonicParsing="false" onAction="#loginButtonClick" prefHeight="30.0" prefWidth="150.0" text="Увійти" />
+         <Button fx:id="cancel_exit_btn" mnemonicParsing="false" onAction="#cancelAndExit" prefHeight="30.0" prefWidth="150.0" text="Відмінити і вийти" />
+      </VBox>
+   </AnchorPane>
+   <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" styleClass="anchor">
+      <padding>
+         <Insets top="75.0" />
+      </padding>
+      <VBox alignment="CENTER" layoutY="75.02520751953125" spacing="99.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="235.0" text="Hotelis" textAlignment="CENTER">
+            <font>
+               <Font name="System Bold" size="15.0" />
+            </font>
+         </Label>
+         <Text disable="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Якийсь текст тут" textAlignment="CENTER" wrappingWidth="300.0">
+            <font>
+               <Font size="12.0" />
+            </font>
+         </Text>
+         <VBox alignment="CENTER" spacing="25.0">
+            <Text disable="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Не маєте акаунта?&#10;Створіть його!" textAlignment="CENTER" wrappingWidth="300.0">
                <font>
                   <Font size="12.0" />
                </font>
             </Text>
-            <Button alignment="CENTER" contentDisplay="CENTER" layoutX="90.0" layoutY="374.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#registerButtonClick" prefHeight="31.0" prefWidth="119.0" text="Створити акаунт" textAlignment="CENTER" AnchorPane.topAnchor="374.0" />
-            <Text disable="true" layoutY="327.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Не маєте акаунта?&#10;Створіть його!" textAlignment="CENTER" wrappingWidth="300.0">
-               <font>
-                  <Font size="12.0" />
-               </font>
-            </Text>
-         </children>
-      </AnchorPane>
-      <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0">
-         <children>
-            <Label layoutX="142.0" layoutY="73.0" text="Увійдіть у свій акаунт" AnchorPane.leftAnchor="140.0" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="75.0" />
-            <Label layoutX="50.01680511933639" layoutY="136.0" text="Логін" AnchorPane.leftAnchor="50.0" />
-            <Label layoutX="50.01680511933639" layoutY="227.0" text="Пароль" AnchorPane.leftAnchor="50.0" />
-            <TextField fx:id="login_field" layoutX="50.01680511933639" layoutY="178.0" promptText="Введіть свій логін" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="178.0" />
-            <PasswordField fx:id="pass_field" layoutX="50.01680511933639" layoutY="263.0" promptText="Введіть свій пароль" AnchorPane.leftAnchor="50.0" />
-            <Button fx:id="logibtn" layoutX="174.0" layoutY="349.0" mnemonicParsing="false" onAction="#loginButtonClick" text="Увійти" AnchorPane.topAnchor="325.0" />
-            <Button layoutX="143.0" layoutY="374.0" mnemonicParsing="false" onAction="#cancelAndExit" text="Відмінити і вийти" AnchorPane.topAnchor="374.0" />
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </AnchorPane>
-   </children>
-</Pane>
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#registerButtonClick" prefHeight="30.0" prefWidth="150.0" text="Створити акаунт" textAlignment="CENTER" />
+         </VBox>
+      </VBox>
+   </AnchorPane>
+</HBox>

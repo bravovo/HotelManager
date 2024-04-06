@@ -23,10 +23,7 @@ public class ClientFormController implements Initializable {
     public Button my_bookings_form_btn;
     public BorderPane client_border_pane;
     public Label hotel_label;
-    public ImageView image_view;
-    public Button guests_btn;
-    public Button rooms_btn;
-    public Button settings_btn;
+    public Button profile_btn;
     public Button logout_btn;
 
     @Override

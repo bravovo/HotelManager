@@ -12,7 +12,7 @@ public class ManagerApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FormBuilder formBuilder = new FormBuilder();
-        formBuilder.openWindow(stage, "login-form.fxml", "Система управління готелями", 700, 500);
+        formBuilder.openWindow(stage, "login-form.fxml", "Авторизація | Hotelis", 700, 500);
     }
     public static void main(String[] args) {launch();}
 }

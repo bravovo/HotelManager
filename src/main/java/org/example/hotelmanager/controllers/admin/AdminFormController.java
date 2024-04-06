@@ -16,14 +16,13 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class AdminFormController implements Initializable {
-    @FXML public BorderPane admin_board_pane;
     @FXML private Button bookings_btn;
     @FXML private Button guests_btn;
     @FXML private Label hotel_label;
     @FXML private Button logout_btn;
     @FXML private Button rooms_btn;
-    @FXML private Button settings_btn;
-    @FXML private Button staff_btn;
+    public Button profile_btn;
+    @FXML public BorderPane admin_board_pane;
     HotelHolder hotelHolder = HotelHolder.getInstance();
     private Hotel hotel = new Hotel();
     @Override

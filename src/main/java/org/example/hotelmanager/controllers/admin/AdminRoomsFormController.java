@@ -54,7 +54,7 @@ public class AdminRoomsFormController  implements Initializable {
         ObservableList<String> items = FXCollections.observableArrayList(
                 "Статус", "Тип кімнати", "Номер кімнати", "Назва кімнати", "Ціна"
         );
-        ((ChoiceBox)filter_choice).setItems(items);
+        filter_choice.setItems(items);
         filter_choice.setValue("Фільтр для пошуку");
         room_table.setOnMouseClicked(event -> {
             Room selectedRoom = room_table.getSelectionModel().getSelectedItem();
@@ -85,6 +85,11 @@ public class AdminRoomsFormController  implements Initializable {
         delete_room_btn.setDisable(true);
     }
     public void createRoomClick(ActionEvent event) throws IOException {
+        hotel = hotelHolder.getUser();
+        if (Integer.parseInt(rooms_count.getText()) + 1 > hotel.getRooms_count()){
+            formBuilder.errorValidation("Перевищено ліміт створення кімнат");
+            return;
+        }
         formBuilder.openDialog("admin-forms/create-room-form.fxml", "Створення кімнати", 700, 500);
         setRoomsTable();
     }
