@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="500.0" spacing="40.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.AdminProfileFormController">
+    <padding>
+        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+    </padding>
+    <VBox maxHeight="-Infinity" prefHeight="305.0" prefWidth="100.0" spacing="20.0">
+        <VBox fx:id="hotel_name_vbox" prefHeight="200.0" prefWidth="100.0">
+            <Label text="Назва готелю" />
+            <TextField fx:id="hotel_name_field" />
+        </VBox>
+        <VBox fx:id="login_vbox" prefHeight="200.0" prefWidth="100.0">
+            <Label text="Логін" />
+            <TextField fx:id="login_field" />
+        </VBox>
+        <VBox fx:id="address_vbox" prefHeight="200.0" prefWidth="100.0">
+            <Label text="Адреса готелю" />
+            <TextField fx:id="address_field" />
+        </VBox>
+        <VBox fx:id="room_number_vbox" prefHeight="200.0" prefWidth="100.0">
+            <Label text="Максимальна кількість кімнат готелю" />
+            <TextField fx:id="room_number_field" disable="true" />
+        </VBox>
+        <VBox fx:id="phone_number_vbox" prefHeight="200.0" prefWidth="100.0">
+            <Label text="Номер телефону готелю" />
+            <TextField fx:id="phone_number_field" />
+        </VBox>
+        <VBox fx:id="email_vbox" maxHeight="-Infinity" prefHeight="50.0" prefWidth="100.0">
+            <Label text="Електронна пошта готелю" />
+            <TextField fx:id="email_field">
+                <VBox.margin>
+                    <Insets />
+                </VBox.margin>
+            </TextField>
+            <ProgressBar fx:id="email_valid_bar" minHeight="-Infinity" prefHeight="5.0" prefWidth="100.0" progress="1.0" visible="false" />
+        </VBox>
+    </VBox>
+    <ButtonBar fx:id="btns_bar" prefHeight="40.0" prefWidth="250.0" visible="false">
+        <buttons>
+          <Button fx:id="save_btn" mnemonicParsing="false" onAction="#saveButtonClick" prefHeight="30.0" prefWidth="150.0" text="Зберегти" />
+          <Button fx:id="cancel_btn" mnemonicParsing="false" onAction="#cancelButtonClick" prefHeight="30.0" prefWidth="150.0" text="Скасувати" />
+        </buttons>
+    </ButtonBar>
+</VBox>

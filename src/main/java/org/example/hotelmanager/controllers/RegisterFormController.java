@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
@@ -14,11 +15,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 public class RegisterFormController implements Initializable {
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
     private Stage stage;
     /* Елементи вкладки Гості */
+    public ProgressBar email_valid_bar1;
     @FXML private DatePicker client_date_of_birth;
     @FXML private TextField client_email;
     @FXML private TextField client_first_name;
@@ -32,6 +35,7 @@ public class RegisterFormController implements Initializable {
     @FXML private Button client_go_back_btn;
 
     /* Елементи вкладки Адміністрація */
+    public ProgressBar email_valid_bar2;
     @FXML private TextField admin_login;
     @FXML private TextField hotel_address;
     @FXML private TextField hotel_email_field;
@@ -47,6 +51,14 @@ public class RegisterFormController implements Initializable {
     private final FormBuilder formBuilder = new FormBuilder();
 
     public void initialize(URL url, ResourceBundle resourceBundle){
+        //Валідація електронної пошти
+        hotel_email_field.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkEmail(hotel_email_field.getText(), email_valid_bar2, register_hotel_btn);
+        });
+        client_email.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkEmail(client_email.getText(), email_valid_bar1, create_client_acc_btn);
+        });
+
         /* Форматування тексту для реєстрації готелю */
         hotel_rooms_count_field.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
@@ -66,6 +78,22 @@ public class RegisterFormController implements Initializable {
             }
         });
         client_date_of_birth.setValue(LocalDate.now().minusYears(18));
+
+
+    }
+
+    public void checkEmail(String text, ProgressBar progressBar, Button button){
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        if (pattern.matcher(text).matches()) {
+            progressBar.setVisible(true);
+            progressBar.setStyle("-fx-control-inner-background: green; -fx-accent: green;");
+            button.setDisable(false);
+        } else {
+            progressBar.setVisible(true);
+            progressBar.setStyle("-fx-control-inner-background: red; -fx-accent: red;");
+            button.setDisable(true);
+        }
     }
 
     /* Початок коду для створення акаунту ГОСТЕЙ (клієнт) -------------------------------------------------------- */

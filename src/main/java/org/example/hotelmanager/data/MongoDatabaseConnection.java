@@ -13,6 +13,7 @@ import org.example.hotelmanager.model.*;
 import javafx.event.ActionEvent;
 import java.time.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -979,5 +980,43 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
         return bookings;
+    }
+
+    public void editClientProfile() {
+        client = clientHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
+            Document editedClient = new Document("$set", new Document("client_id", client.getClientID())
+                    .append("firstname", client.getFirstName())
+                    .append("lastname", client.getLastName())
+                    .append("client_email", client.getEmail())
+                    .append("client_phone", client.getPhoneNumber())
+                    .append("dateOfBirth", client.getDateOfBirth())
+            );
+            clientCollection.findOneAndUpdate(
+                    new Document("client_id", client.getClientID()), editedClient);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void editHotelProfile() {
+        hotel = hotelHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
+            Document editedHotel = new Document("$set", new Document("hotel_id", hotel.getHotel_id())
+                    .append("hotel_name", hotel.getHotel_name())
+                    .append("login", hotel.getLogin())
+                    .append("address", hotel.getAddress())
+                    .append("email", hotel.getEmail())
+                    .append("phone_number", hotel.getPhone_number())
+            );
+            hotelCollection.findOneAndUpdate(
+                    new Document("hotel_id", hotel.getHotel_id()), editedHotel);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

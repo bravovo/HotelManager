@@ -67,7 +67,8 @@ public class ClientMyBookingsFormController implements Initializable {
             if (Objects.equals(addInfoFirst, notes_area.getText())
                     && Objects.equals(peopleCountFirst, people_count_field.getText())
                     && Objects.equals(checkINFirst, checkIN_picker.getValue())
-                    && Objects.equals(checkOUTFirst, checkOUT_picker.getValue())) {
+                    && Objects.equals(checkOUTFirst, checkOUT_picker.getValue())
+            ) {
                 edit_booking_btn.setDisable(true);
             }
             else {

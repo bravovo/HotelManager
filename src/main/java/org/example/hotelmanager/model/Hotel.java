@@ -67,6 +67,9 @@ public class Hotel {
     public void setBookings(ObservableList<Booking> bookings) {
         this.bookings = bookings;
     }
+    public String getLogin() {
+        return this.login;
+    }
     public int countAvailableRooms(){
         int counter = 0;
         for(Room room : rooms){
@@ -75,5 +78,23 @@ public class Hotel {
             }
         }
         return counter;
+    }
+    public void setHotel_name(String hotel_name) {
+        this.hotel_name = hotel_name;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public void setLogin(String login) {
+        this.login = login;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setRooms_count(int rooms_count) {
+        this.rooms_count = rooms_count;
+    }
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
     }
 }
