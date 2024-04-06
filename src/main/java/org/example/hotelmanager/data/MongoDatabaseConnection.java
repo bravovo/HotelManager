@@ -733,54 +733,93 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
-            Document sortedByIdBooking = bookingCollection.find().sort(Sorts.descending("booking_id")).first();
-            int bookingID = 0;
-            if (sortedByIdBooking != null){
-                bookingID = sortedByIdBooking.getInteger("booking_id");
-            }
+            MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
             if(findNewAvailable){
                 deleteBooking(booking);
-                ObservableList<Room> availableRooms = clientFindAvailableRoomsForBooking(
-                        booking.getCheckIN_date(),
-                        booking.getCheckOUT_date(),
-                        booking.getPeopleCount()
+                boolean isAvailable = true;
+                Document roomForBookingEditing = roomsCollection.find(
+                        new Document("hotel_id", booking.getHotelID()).append("room_number", booking.getRoomNumber())
+                ).first();
+                FindIterable<Document> roomBookings = bookingCollection.find(
+                        new Document("hotel_id", booking.getHotelID()).append("room_number", booking.getRoomNumber())
                 );
-                if(availableRooms.size() != 0){
-                    Room roomToBook = new Room();
-                    roomToBook.setPrice(Integer.MAX_VALUE);
-                    for(Room room : availableRooms){
-                        roomToBook = room.getPrice() < roomToBook.getPrice() ? room : roomToBook;
+                for(Document roomBooking : roomBookings) {
+                    Date checkIn = roomBooking.getDate("checkIN_date");
+                    Date checkOut = roomBooking.getDate("checkOUT_date");
+                    LocalDate checkInDate = checkIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate checkOutDate = checkOut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    if (checkInDate.isBefore(booking.getCheckOUT_date())
+                            && checkOutDate.isAfter(booking.getCheckIN_date())) {
+                        isAvailable = false;
+                        break;
                     }
-                    System.out.println("Ціна " + roomToBook.getPrice());
-                    System.out.println("Ніч " + booking.getNightCount());
+                }
+                double totalPrice = 0;
+                int peopleCount = 0;
+                if(roomForBookingEditing != null){
+                    totalPrice = booking.getNightCount() * roomForBookingEditing.getDouble("price");
+                    peopleCount = roomForBookingEditing.getInteger("capacity");
+                }
+                if(isAvailable && booking.getPeopleCount() <= peopleCount){
                     Booking clientBooking = new Booking(
-                            roomToBook.getHotel_id(),
+                            booking.getHotelID(),
                             client.getFirstName(),
                             client.getLastName(),
                             client.getPhoneNumber(),
                             client.getEmail(),
-                            roomToBook.getRoom_number(),
-                            roomToBook.getType_name(),
+                            booking.getRoomNumber(),
+                            booking.getRoomType(),
                             booking.getPeopleCount(),
                             booking.getCheckIN_date(),
                             booking.getCheckOUT_date(),
-                            booking.getNightCount() * roomToBook.getPrice(),
+                            totalPrice,
                             booking.getAdditionalInfo()
                     );
                     createClientBooking(clientBooking);
                 }
-                else{
-                    formBuilder.errorValidation("Не вдалось знайти вільних кімнат за запитом");
+                else {
+                    ObservableList<Room> availableRooms = clientFindAvailableRoomsForBooking(
+                            booking.getCheckIN_date(),
+                            booking.getCheckOUT_date(),
+                            booking.getPeopleCount()
+                    );
+                    if(availableRooms.size() != 0){
+                        Room roomToBook = new Room();
+                        roomToBook.setPrice(Integer.MAX_VALUE);
+                        for(Room room : availableRooms){
+                            roomToBook = room.getPrice() < roomToBook.getPrice() ? room : roomToBook;
+                        }
+                        System.out.println("Ціна " + roomToBook.getPrice());
+                        System.out.println("Ніч " + booking.getNightCount());
+                        Booking clientBooking = new Booking(
+                                roomToBook.getHotel_id(),
+                                client.getFirstName(),
+                                client.getLastName(),
+                                client.getPhoneNumber(),
+                                client.getEmail(),
+                                roomToBook.getRoom_number(),
+                                roomToBook.getType_name(),
+                                booking.getPeopleCount(),
+                                booking.getCheckIN_date(),
+                                booking.getCheckOUT_date(),
+                                booking.getNightCount() * roomToBook.getPrice(),
+                                booking.getAdditionalInfo()
+                        );
+                        createClientBooking(clientBooking);
+                    }
+                    else{
+                        formBuilder.errorValidation("Не вдалось знайти вільних кімнат за запитом");
+                    }
                 }
             }else{
-                Document bookingToEdit = new Document("$set", new Document("booking_id", bookingID)
+                Document bookingToEdit = new Document("$set", new Document("booking_id", booking.getBookingID())
                         .append("guest_first_name", booking.getGuestFirstName())
                         .append("guest_second_name", booking.getGuestSecondName())
                         .append("guest_phone_number", booking.getGuestPhoneNumber())
                         .append("guest_email", booking.getGuestEmail())
                         .append("add_info", booking.getAdditionalInfo())
                 );
-                bookingCollection.updateOne(new Document("booking_id", bookingID), bookingToEdit);
+                bookingCollection.updateOne(new Document("booking_id", booking.getBookingID()), bookingToEdit);
             }
         }catch (Exception e){
             e.printStackTrace();

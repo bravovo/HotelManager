@@ -152,7 +152,7 @@ public class ClientMyBookingsFormController implements Initializable {
                 }
                 Label hotelNameLabel = new Label("Готель: " + hotelName);
                 Label checkIN = new Label("Дата заїзду: " + booking.getCheckIN_date());
-                Label checkOUT = new Label("Дата заїзду: " + booking.getCheckOUT_date());
+                Label checkOUT = new Label("Дата виїзду: " + booking.getCheckOUT_date());
                 Label peopleCountLabel = new Label("Кількість людей: " + booking.getPeopleCount());
                 Label totalPrice = new Label("Загальна вартість проживання: " + booking.getTotalPrice());
 
