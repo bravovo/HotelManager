@@ -215,12 +215,12 @@ public class ClientMyBookingsFormController implements Initializable {
             }
         }
         else {
-            edit_booking_btn.setDisable(true);
-            delete_booking_btn.setDisable(true);
             notes_area.setDisable(true);
             people_count_field.setDisable(true);
             checkIN_picker.setDisable(true);
             checkOUT_picker.setDisable(true);
         }
+        edit_booking_btn.setDisable(true);
+        delete_booking_btn.setDisable(true);
     }
 }

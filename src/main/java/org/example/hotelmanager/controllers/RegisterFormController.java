@@ -133,7 +133,7 @@ public class RegisterFormController implements Initializable {
         ){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "client-forms/client-form.fxml",
-                    "Версія для гостя | Hotelis", 1100, 750);
+                    "Версія для гостя | Hotelis", 1350, 750);
         }
         else{
             formBuilder.errorValidation("Користувач з такою електронною поштою вже існує");
