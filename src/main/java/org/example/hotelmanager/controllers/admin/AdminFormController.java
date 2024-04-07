@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.ManagerApplication;
 import org.example.hotelmanager.model.Hotel;
@@ -20,12 +21,12 @@ import java.util.ResourceBundle;
 
 public class AdminFormController implements Initializable {
     public VBox profile_vbox;
+    public Button settings_btn;
     @FXML private Button bookings_btn;
     @FXML private Button guests_btn;
     @FXML private Label hotel_label;
     @FXML private Button logout_btn;
     @FXML private Button rooms_btn;
-    public Button profile_btn;
     @FXML public BorderPane admin_board_pane;
     HotelHolder hotelHolder = HotelHolder.getInstance();
     private Hotel hotel = new Hotel();
@@ -64,15 +65,20 @@ public class AdminFormController implements Initializable {
     public void roomsButtonClick(javafx.event.ActionEvent event){
         changeCenter("admin-forms/admin-rooms-form.fxml");
     }
-    public void logoutButtonClick(javafx.event.ActionEvent event){
-        System.exit(0);
+    public void logoutButtonClick(javafx.event.ActionEvent event) throws IOException{
+        FormBuilder formBuilder = new FormBuilder();
+        formBuilder.openWindow((Stage)logout_btn.getScene().getWindow(),"login-form.fxml", "Авторизація | Hotelis", 700, 500);
     }
 
-    public void profileButtonClick(ActionEvent event) throws IOException{
+    public void settingsButtonClick(ActionEvent event) throws IOException {
+        hotelHolder.setUser(hotel);
         FormBuilder formBuilder = new FormBuilder();
-        formBuilder.openDialog("admin-forms/admin-profile-form.fxml",
-                "Профіль готелю | Hotelis",
-                450, 550);
-        hotel_label.setText(hotel.getHotel_name());
+        formBuilder.openWindow("admin-forms/admin-settings-form.fxml",
+                "Налаштування акаунта",
+                450, 500);
+        if(hotelHolder.isDone()){
+            hotelHolder.setDone(false);
+            formBuilder.openWindow((Stage)settings_btn.getScene().getWindow(),"login-form.fxml", "Авторизація | Hotelis", 700, 500);
+        }
     }
 }

@@ -26,8 +26,8 @@
                </padding>
               </VBox>
               <HBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                  <Button fx:id="profile_btn" mnemonicParsing="false" onAction="#profileButtonClick" prefHeight="30.0" prefWidth="150.0" text="Профіль" />
-                  <Button fx:id="logout_btn" alignment="CENTER" mnemonicParsing="false" onAction="#logoutButtonClick" prefHeight="30.0" prefWidth="150.0" text="Вийти на робочий стіл" />
+                  <Button fx:id="settings_btn" mnemonicParsing="false" onAction="#settingsButtonClick" prefHeight="30.0" prefWidth="150.0" text="Налаштування" />
+                  <Button fx:id="logout_btn" alignment="CENTER" mnemonicParsing="false" onAction="#logoutButtonClick" prefHeight="30.0" prefWidth="150.0" text="Вийти з акаунта" />
               </HBox>
           </AnchorPane>
       </VBox>

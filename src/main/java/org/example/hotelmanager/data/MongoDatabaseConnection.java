@@ -12,10 +12,7 @@ import org.example.hotelmanager.model.*;
 
 import javafx.event.ActionEvent;
 import java.time.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class MongoDatabaseConnection {
     FormBuilder formBuilder = new FormBuilder();
@@ -939,5 +936,29 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public void deleteClientAccount() {
+        client = clientHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
+            clientCollection.deleteOne(new Document("client_id", client.getClientID()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        client = null;
+    }
+
+    public void deleteAdminAccount() {
+        hotel = hotelHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
+            hotelCollection.deleteOne(new Document("hotel_id", hotel.getHotel_id()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        hotel = null;
     }
 }

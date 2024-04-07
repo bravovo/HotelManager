@@ -223,7 +223,7 @@ public class RegisterFormController implements Initializable {
         ){
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
-                    "Версія для адміністратора | Hotelis", 1100, 750);
+                    "Версія для адміністратора | Hotelis", 1350, 750);
         }
         else{
             formBuilder.errorValidation("Готель з такими даними вже існує");

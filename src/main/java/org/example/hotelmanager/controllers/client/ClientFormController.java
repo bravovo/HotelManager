@@ -6,9 +6,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.ManagerApplication;
 import org.example.hotelmanager.model.Client;
@@ -20,13 +20,13 @@ import java.util.ResourceBundle;
 
 public class ClientFormController implements Initializable {
     public VBox profile_vbox;
+    public Button settings_btn;
     ClientHolder clientHolder = ClientHolder.getInstance();
     Client client;
     public Button create_booking_form_btn;
     public Button my_bookings_form_btn;
     public BorderPane client_border_pane;
     public Label client_label;
-    public Button profile_btn;
     public Button logout_btn;
 
     @Override
@@ -58,8 +58,9 @@ public class ClientFormController implements Initializable {
             e.printStackTrace();
         }
     }
-    public void logoutButtonClick(javafx.event.ActionEvent event){
-        System.exit(0);
+    public void logoutButtonClick(javafx.event.ActionEvent event) throws IOException{
+        FormBuilder formBuilder = new FormBuilder();
+        formBuilder.openWindow((Stage)logout_btn.getScene().getWindow(),"login-form.fxml", "Авторизація | Hotelis", 700, 500);
     }
 
     public void createBookingFormButtonClick(ActionEvent event) {
@@ -73,11 +74,16 @@ public class ClientFormController implements Initializable {
         my_bookings_form_btn.setDisable(true);
     }
 
-    public void profileButtonClick(ActionEvent event) throws IOException {
+    public void settingsButtonClick(ActionEvent event) throws IOException {
+        clientHolder.setUser(client);
         FormBuilder formBuilder = new FormBuilder();
-        formBuilder.openDialog("client-forms/client-profile-form.fxml",
-                "Профіль користувача | Hotelis",
-                450, 500);
-        client_label.setText(client.getFirstName() + " " + client.getLastName());
+        formBuilder.openWindow("client-forms/client-settings-form.fxml",
+                "Налаштування акаунта",
+                450, 500
+        );
+        if (clientHolder.isDone()){
+            clientHolder.setDone(false);
+            formBuilder.openWindow((Stage)settings_btn.getScene().getWindow(), "login-form.fxml", "Авторизація | Hotelis", 700, 500);
+        }
     }
 }

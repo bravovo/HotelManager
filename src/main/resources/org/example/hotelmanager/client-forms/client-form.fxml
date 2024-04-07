@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="client_border_pane" prefHeight="750.0" prefWidth="1350.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.ClientFormController">
+<BorderPane fx:id="client_border_pane" prefHeight="750.0" prefWidth="1350.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.ClientFormController">
    <left>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="350.0" BorderPane.alignment="CENTER">
          <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="350.0">
@@ -25,8 +25,8 @@
                <Button fx:id="my_bookings_form_btn" mnemonicParsing="false" onAction="#myBookingsFormButtonClick" prefHeight="30.0" prefWidth="150.0" text="Мої бронювання" />
             </VBox>
             <HBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-               <Button fx:id="profile_btn" mnemonicParsing="false" onAction="#profileButtonClick" prefHeight="30.0" prefWidth="150.0" text="Профіль" />
-               <Button fx:id="logout_btn" alignment="CENTER" mnemonicParsing="false" onAction="#logoutButtonClick" prefHeight="30.0" prefWidth="150.0" text="Вийти на робочий стіл" />
+               <Button fx:id="settings_btn" mnemonicParsing="false" onAction="#settingsButtonClick" prefHeight="30.0" prefWidth="150.0" text="Налаштування" />
+               <Button fx:id="logout_btn" alignment="CENTER" mnemonicParsing="false" onAction="#logoutButtonClick" prefHeight="30.0" prefWidth="150.0" text="Вийти з акаунта" />
             </HBox>
          </AnchorPane>
       </VBox>
