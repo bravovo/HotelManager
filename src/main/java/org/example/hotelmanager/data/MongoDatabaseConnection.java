@@ -21,7 +21,6 @@ public class MongoDatabaseConnection {
     Booking bookingToDelete = new Booking();
     Hotel hotel = new Hotel();
     Client client;
-    Document foundHotel = new Document();
     Document clientDoc = new Document();
     HotelHolder hotelHolder = HotelHolder.getInstance();
     ClientHolder clientHolder = ClientHolder.getInstance();
@@ -79,7 +78,6 @@ public class MongoDatabaseConnection {
             newHotel.append("rooms_count", roomsCount);
             newHotel.append("phone_number", phoneNumber);
             collection.insertOne(newHotel);
-            foundHotel = newHotel;
             this.hotel = new Hotel(hotelCount, hotelName, address, login, adminPass, email, roomsCount, phoneNumber);
             hotelHolder.setUser(hotel);
             updateRoomList();
@@ -94,7 +92,6 @@ public class MongoDatabaseConnection {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = mongoDatabase.getCollection("hotels");
             Document findHotel = collection.find(document).first();
-            foundHotel = findHotel;
             if(findHotel != null){
                 this.hotel = new Hotel(findHotel.getInteger("hotel_id"), findHotel.getString("hotel_name"),
                         findHotel.getString("address"), findHotel.getString("login"),
@@ -534,13 +531,16 @@ public class MongoDatabaseConnection {
         }
         return roomTypes;
     }
-    public void deleteRoom() { //TODO Додати видалення бронювань пов'язаних з кімнатою
+    public void deleteRoom() {
         hotel = hotelHolder.getUser();
         Document roomDocument;
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            roomToDelete = roomHolder.getRoom();
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
-            roomToDelete = roomHolder.getRoom();
+            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
+            bookingCollection.deleteMany(new Document("hotel_id", roomToDelete.getHotel_id())
+                    .append("room_number", roomToDelete.getRoom_number()));
             roomDocument = roomsCollection.find(new Document("hotel_id", roomToDelete.getHotel_id())
                     .append("room_id", roomToDelete.getRoom_id())).first();
             if (roomDocument != null){
@@ -549,6 +549,7 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             e.printStackTrace();
         }
+        setBookingList();
         updateRoomList();
     }
     public void deleteBooking(Booking booking) {
@@ -943,6 +944,8 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
+            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
+            bookingCollection.deleteMany(new Document("client_id", client.getClientID()));
             clientCollection.deleteOne(new Document("client_id", client.getClientID()));
         }catch (Exception e){
             e.printStackTrace();
@@ -955,6 +958,10 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
+            MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
+            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
+            roomCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id()));
+            bookingCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id()));
             hotelCollection.deleteOne(new Document("hotel_id", hotel.getHotel_id()));
         }catch (Exception e){
             e.printStackTrace();
