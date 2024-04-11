@@ -52,7 +52,7 @@ public class CreateRoomFormController implements Initializable {
         }
         mongoDatabaseConnection.createRoom(type_choice.getValue(), room_name.getText(),
                 room_description.getText(), room_price.getText());
-        mongoDatabaseConnection.updateRoomList();
+        mongoDatabaseConnection.setRoomsList();
         Stage stage = (Stage) create_room_btn.getScene().getWindow();
         stage.close();
     }

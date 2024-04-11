@@ -48,7 +48,6 @@ public class AdminProfileFormController implements Initializable {
         changeListener = (observable, oldValue, newValue) -> {
             btns_bar.setVisible(!Objects.equals(hotel.getHotel_name(), hotel_name_field.getText())
                     || !Objects.equals(hotel.getLogin(), login_field.getText())
-                    || !Objects.equals(hotel.getAddress(), address_field.getText())
                     || !Objects.equals(hotel.getPhone_number(), phone_number_field.getText())
                     || !Objects.equals(hotel.getEmail(), email_field.getText()));
         };
@@ -65,7 +64,6 @@ public class AdminProfileFormController implements Initializable {
 
         hotel_name_field.textProperty().addListener(changeListener);
         login_field.textProperty().addListener(changeListener);
-        address_field.textProperty().addListener(changeListener);
         room_number_field.textProperty().addListener(changeListener);
         email_field.textProperty().addListener(changeListener);
         phone_number_field.textProperty().addListener(changeListener);
@@ -100,7 +98,6 @@ public class AdminProfileFormController implements Initializable {
     public void saveButtonClick(ActionEvent event) {
         hotel.setHotel_name(hotel_name_field.getText());
         hotel.setLogin(login_field.getText());
-        hotel.setAddress(address_field.getText());
         hotel.setPhone_number(phone_number_field.getText());
         hotel.setEmail(email_field.getText());
         hotelHolder.setUser(hotel);

@@ -23,7 +23,7 @@
         </VBox>
         <VBox fx:id="address_vbox" prefHeight="200.0" prefWidth="100.0">
             <Label text="Адреса готелю" />
-            <TextField fx:id="address_field" />
+            <TextField fx:id="address_field" disable="true" />
         </VBox>
         <VBox fx:id="room_number_vbox" prefHeight="200.0" prefWidth="100.0">
             <Label text="Максимальна кількість кімнат готелю" />

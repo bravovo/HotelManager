@@ -12,7 +12,6 @@ import org.example.hotelmanager.model.*;
 
 import javafx.event.ActionEvent;
 
-import javax.print.Doc;
 import java.time.*;
 import java.util.*;
 
@@ -100,8 +99,8 @@ public class MongoDatabaseConnection {
                         findHotel.getInteger("rooms_count"),
                         findHotel.getString("phone_number"));
                 hotelHolder.setUser(hotel);
-                updateRoomList();
-                setBookingList();
+                setRoomsList();
+                setBookingsList();
                 setGuestsList();
                 Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                 formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
@@ -143,7 +142,7 @@ public class MongoDatabaseConnection {
         }
     }
 
-    private void setBookingList() {
+    private void setBookingsList() {
         ObservableList<Booking> bookings = FXCollections.observableArrayList();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
@@ -310,11 +309,11 @@ public class MongoDatabaseConnection {
         } catch(Exception exception){
             exception.printStackTrace();
         }
-        setBookingList();
+        setBookingsList();
         setGuestsList();
-        updateRoomList();
+        setRoomsList();
     }
-    public void updateRoomList(){
+    public void setRoomsList(){
         hotel = hotelHolder.getUser();
         int id = hotel.getHotel_id();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
@@ -552,9 +551,9 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             e.printStackTrace();
         }
-        setBookingList();
+        setBookingsList();
         setGuestsList();
-        updateRoomList();
+        setRoomsList();
     }
     public void deleteBooking(Booking booking) {
         hotel = hotelHolder.getUser();
@@ -572,9 +571,9 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
         if(hotel != null){
-            setBookingList();
+            setBookingsList();
             setGuestsList();
-            updateRoomList();
+            setRoomsList();
         }
     }
 
@@ -665,9 +664,9 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             e.printStackTrace();
         }
-        setBookingList();
+        setBookingsList();
         setGuestsList();
-        updateRoomList();
+        setRoomsList();
     }
 
     public void editAdminBooking(Booking booking, boolean findNewAvailable){
@@ -697,9 +696,9 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             e.printStackTrace();
         }
-        setBookingList();
+        setBookingsList();
         setGuestsList();
-        updateRoomList();
+        setRoomsList();
     }
 
     public void editClientBooking(Booking booking, boolean findNewAvailable){
@@ -982,7 +981,15 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
-            FindIterable<Document> bookingDocs = bookingCollection.find(new Document("hotel_id", hotel.getHotel_id()));
+            LocalDate localDateNow = LocalDate.now();
+            Date dateNow = Date.from(localDateNow
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant()
+            );
+            FindIterable<Document> bookingDocs = bookingCollection.find(new Document("hotel_id", hotel.getHotel_id())
+                    .append("checkIN_date", new Document("$lte", dateNow))
+                    .append("checkOUT_date", new Document("$gte", dateNow))
+            );
             for(Document bookingDoc : bookingDocs){
                 boolean foundEqual = false;
                 Guest guest = new Guest(
@@ -998,9 +1005,11 @@ public class MongoDatabaseConnection {
                 for(Guest guestFromList : guests){
                     if(guest.getEmail().equals(guestFromList.getEmail())){
                         foundEqual = true;
+                        guestFromList.setTotalPrice(guestFromList.getTotalPrice() + guest.getTotalPrice());
                         break;
                     }
                 }
+
                 if(!foundEqual){
                     guests.add(guest);
                 }
@@ -1022,7 +1031,8 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             e.printStackTrace();
         }
-        setBookingList();
+        setBookingsList();
         setGuestsList();
+        setRoomsList();
     }
 }

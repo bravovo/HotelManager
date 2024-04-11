@@ -59,4 +59,8 @@ public class Guest {
     public double getTotalPrice() {
         return totalPrice;
     }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 }

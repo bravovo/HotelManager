@@ -48,17 +48,7 @@ public class AdminGuestsFormController implements Initializable {
         filter_choice.setValue("Фільтр для пошуку");
         guest_table.setOnMouseClicked(event -> {
             Guest selectedGuest = (Guest) guest_table.getSelectionModel().getSelectedItem();
-            if (event.getClickCount() == 2) { // Перевіряємо, чи було зроблено подвійне клацання
-                if (selectedGuest != null) {
-                    guestHolder.setUser(selectedGuest);
-                    try{
-                        //formBuilder.openDialog("admin-forms/edit-room-form.fxml", "Редагувати кімнату", 700, 500);
-                        setGuestTable();
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            } else if (event.getClickCount() == 1) { // Одинарне клацання
+            if (event.getClickCount() == 1) { // Перевірка на одинарне клацання
                 if (selectedGuest != null) {
                     delete_guest_btn.setDisable(false);
                     guestHolder.setUser(selectedGuest);
