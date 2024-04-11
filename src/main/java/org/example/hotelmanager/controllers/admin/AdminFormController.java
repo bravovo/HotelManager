@@ -65,6 +65,9 @@ public class AdminFormController implements Initializable {
     public void roomsButtonClick(javafx.event.ActionEvent event){
         changeCenter("admin-forms/admin-rooms-form.fxml");
     }
+    public void guestsButtonClick(ActionEvent event) {
+        changeCenter("admin-forms/admin-guests-form.fxml");
+    }
     public void logoutButtonClick(javafx.event.ActionEvent event) throws IOException{
         FormBuilder formBuilder = new FormBuilder();
         formBuilder.openWindow((Stage)logout_btn.getScene().getWindow(),"login-form.fxml", "Авторизація | Hotelis", 700, 500);

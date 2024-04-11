@@ -120,13 +120,13 @@ public class AdminRoomsFormController  implements Initializable {
                 String status = find_input.getText();
                 filter = "Статус";
                 value = status;
-                roomList = findBookingsByFilterAndValue(filter, value);
+                roomList = findRoomsByFilterAndValue(filter, value);
             }
             case "Тип кімнати" -> {
                 String room_type = find_input.getText();
                 filter = "Тип кімнати";
                 value = room_type;
-                roomList = findBookingsByFilterAndValue(filter, value);
+                roomList = findRoomsByFilterAndValue(filter, value);
             }
             case "Номер кімнати" -> {
                 int room_number = 0;
@@ -140,13 +140,13 @@ public class AdminRoomsFormController  implements Initializable {
                     find_input.setText("");
                     return;
                 }
-                roomList = findBookingsByFilterAndValue(filter, value);
+                roomList = findRoomsByFilterAndValue(filter, value);
             }
             case "Назва кімнати" -> {
                 String room_name = find_input.getText();
                 filter = "Назва кімнати";
                 value = room_name;
-                roomList = findBookingsByFilterAndValue(filter, value);
+                roomList = findRoomsByFilterAndValue(filter, value);
             }
             case "Ціна" -> {
                 double price = 0;
@@ -160,12 +160,12 @@ public class AdminRoomsFormController  implements Initializable {
                     find_input.setText("");
                     return;
                 }
-                roomList = findBookingsByFilterAndValue(filter, value);
+                roomList = findRoomsByFilterAndValue(filter, value);
             }
         }
         setRoomsTable(roomList);
     }
-    public ObservableList<Room> findBookingsByFilterAndValue(String filter, String value){
+    public ObservableList<Room> findRoomsByFilterAndValue(String filter, String value){
         ObservableList<Room> rooms = FXCollections.observableArrayList();
         for(Room room : hotel.getRoomsForList()){
             switch (filter){

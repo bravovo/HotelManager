@@ -14,6 +14,7 @@ public class Hotel {
     private String phone_number;
     private ObservableList<Room> rooms = FXCollections.observableArrayList();
     private ObservableList<Booking> bookings = FXCollections.observableArrayList();
+    private ObservableList<Guest> guests = FXCollections.observableArrayList();
 
     public Hotel() {
         this.hotel_name = "";
@@ -61,6 +62,12 @@ public class Hotel {
     public ObservableList<Booking> getBookingsForList() {
         return bookings;
     }
+    public ObservableList<Guest> getGuests() {
+        return guests;
+    }
+    public void setGuests(ObservableList<Guest> guests) {
+        this.guests = guests;
+    }
     public void setRooms(ObservableList<Room> rooms) {
         this.rooms = rooms;
     }
@@ -97,4 +104,7 @@ public class Hotel {
     public void setPhone_number(String phone_number) {
         this.phone_number = phone_number;
     }
+
+
+
 }

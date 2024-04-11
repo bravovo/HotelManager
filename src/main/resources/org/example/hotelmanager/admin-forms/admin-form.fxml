@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="admin_board_pane" prefHeight="750.0" prefWidth="1350.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.AdminFormController">
+<BorderPane fx:id="admin_board_pane" prefHeight="750.0" prefWidth="1350.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.AdminFormController">
    <left>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="350.0" BorderPane.alignment="CENTER">
           <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="350.0">
@@ -20,7 +20,7 @@
               <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="100.0" spacing="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="150.0">
                   <Button fx:id="rooms_btn" mnemonicParsing="false" onAction="#roomsButtonClick" prefHeight="30.0" prefWidth="150.0" text="Кімнати" />
                   <Button fx:id="bookings_btn" mnemonicParsing="false" onAction="#bookingsButtonClick" prefHeight="30.0" prefWidth="150.0" text="Бронювання" />
-                  <Button fx:id="guests_btn" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Гості" />
+                  <Button fx:id="guests_btn" mnemonicParsing="false" onAction="#guestsButtonClick" prefHeight="30.0" prefWidth="150.0" text="Гості" />
                <padding>
                   <Insets top="40.0" />
                </padding>
