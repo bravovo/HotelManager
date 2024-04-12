@@ -98,7 +98,7 @@ public class ClientCreateBookingFormController implements Initializable {
         );
         Map<VBox, Room> roomVBoxMap = new HashMap<>();
         ObservableList<Hotel> hotels = mongoDatabaseConnection.getHotels();
-        ObservableList<RoomType> roomTypes = mongoDatabaseConnection.getRoomTypes();
+        ObservableList<RoomType> roomTypes = client.getRoomTypes();
         for(Room room : availableRooms){
             String hotelName = "";
             String typeDescription = "";

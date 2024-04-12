@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.Client;
 import org.example.hotelmanager.model.ClientHolder;
@@ -85,12 +86,17 @@ public class ClientProfileFormController implements Initializable {
     }
 
     public void saveButtonClick(ActionEvent event) {
-        client.setFirstName(first_name_field.getText());
-        client.setLastName(second_name_field.getText());
-        client.setEmail(email_field.getText());
-        client.setPhoneNumber(phone_number_field.getText());
-        clientHolder.setUser(client);
-        mongoDatabaseConnection.editClientProfile();
+        Client editedClient = client;
+        editedClient.setFirstName(first_name_field.getText());
+        editedClient.setLastName(second_name_field.getText());
+        editedClient.setEmail(email_field.getText());
+        editedClient.setPhoneNumber(phone_number_field.getText());
+        //clientHolder.setUser(editedClient);
+        if(!mongoDatabaseConnection.editClientProfile(editedClient)){
+            FormBuilder formBuilder = new FormBuilder();
+            formBuilder.errorValidation("Вибрана електронна пошта вже зайнята");
+            return;
+        }
         Stage stage = (Stage) save_btn.getScene().getWindow();
         stage.close();
     }

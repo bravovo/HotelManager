@@ -1,5 +1,8 @@
 package org.example.hotelmanager.model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import javax.swing.*;
 import java.time.LocalDate;
 import java.util.Date;
@@ -11,6 +14,7 @@ public class Client {
     private String email;
     private String phoneNumber;
     private LocalDate dateOfBirth;
+    private ObservableList<RoomType> roomTypes = FXCollections.observableArrayList();
 
     public Client() {
 
@@ -52,6 +56,14 @@ public class Client {
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
+    }
+
+    public ObservableList<RoomType> getRoomTypes() {
+        return roomTypes;
+    }
+
+    public void setRoomTypes(ObservableList<RoomType> roomTypes) {
+        this.roomTypes = roomTypes;
     }
 
     public void setFirstName(String firstName) {

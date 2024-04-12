@@ -6,6 +6,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
+import org.example.hotelmanager.model.Hotel;
+import org.example.hotelmanager.model.HotelHolder;
 import org.example.hotelmanager.model.RoomType;
 
 import java.net.URL;
@@ -18,16 +20,18 @@ public class RoomTypesFormController implements Initializable {
     @FXML private TableColumn<RoomType, Integer> type_id_col;
     @FXML private TableColumn<RoomType, String> type_name_col;
     @FXML private TableView<RoomType> types_table;
-
+    Hotel hotel = new Hotel();
+    HotelHolder hotelHolder = HotelHolder.getInstance();
     public void initialize(URL url, ResourceBundle resourceBundle){
         setTable();
     }
 
     public void setTable(){ //TODO Змінити опис типів кімнат в базі даних
+        hotel = hotelHolder.getUser();
         type_id_col.setCellValueFactory(new PropertyValueFactory<>("typeID"));
         type_name_col.setCellValueFactory(new PropertyValueFactory<>("typeName"));
         type_description_col.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
         type_capacity_col.setCellValueFactory(new PropertyValueFactory<>("typeCapacity"));
-        types_table.setItems(mongoDatabaseConnection.getRoomTypes());
+        types_table.setItems(hotel.getRoomTypes());
     }
 }

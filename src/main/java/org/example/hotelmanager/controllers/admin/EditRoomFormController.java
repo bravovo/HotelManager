@@ -12,8 +12,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
-import org.example.hotelmanager.model.Room;
-import org.example.hotelmanager.model.RoomHolder;
+import org.example.hotelmanager.model.*;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -30,17 +29,22 @@ public class EditRoomFormController implements Initializable {
     @FXML private Button save_btn;
     @FXML private ChoiceBox<Integer> type_id;
     @FXML private ChoiceBox<String> type_name;
+    Hotel hotel = HotelHolder.getInstance().getUser();
     RoomHolder roomHolder = RoomHolder.getInstance();
     Room room = new Room();
 
     public void initialize(URL url, ResourceBundle resourceBundle){
         room_description.setWrapText(true);
         room = roomHolder.getRoom();
-        ObservableList<Integer> roomTypesIDs = mongoDatabaseConnection.getRoomTypesIDs();
-        ObservableList<String> roomTypesNames = mongoDatabaseConnection.getRoomTypesNames();
+        ObservableList<Integer> roomTypesIDs = FXCollections.observableArrayList();
+        ObservableList<String> roomTypesNames = FXCollections.observableArrayList();
         ObservableList<Pair<Integer, String>> roomTypes = FXCollections.observableArrayList();
+        for(RoomType roomType : hotel.getRoomTypes()){
+            roomTypesIDs.add(roomType.getTypeID());
+            roomTypesNames.add(roomType.getTypeName());
+            roomTypes.add(new Pair<>(roomType.getTypeID(), roomType.getTypeName()));
+        }
         for (int i = 0; i < roomTypesIDs.size(); i++){
-            roomTypes.add(new Pair<>(i, roomTypesNames.get(i)));
         }
         type_id.setItems(roomTypesIDs);
         type_id.setValue(room.getType_id());

@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import org.bson.Document;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.model.*;
@@ -21,7 +22,7 @@ public class MongoDatabaseConnection {
     Room roomToDelete = new Room();
     Booking bookingToDelete = new Booking();
     Hotel hotel = new Hotel();
-    Client client;
+    Client client = new Client();
     Document clientDoc = new Document();
     HotelHolder hotelHolder = HotelHolder.getInstance();
     ClientHolder clientHolder = ClientHolder.getInstance();
@@ -53,6 +54,7 @@ public class MongoDatabaseConnection {
             clientCollection.insertOne(newClient);
             clientDoc = newClient;
             this.client = new Client(clientID, firstName, lastName, clientEmail, clientPhoneNumber, dateOfBirth);
+            setRoomTypes();
             clientHolder.setUser(client);
         }catch(Exception e){
             e.printStackTrace();
@@ -80,6 +82,7 @@ public class MongoDatabaseConnection {
             newHotel.append("phone_number", phoneNumber);
             collection.insertOne(newHotel);
             this.hotel = new Hotel(hotelCount, hotelName, address, login, adminPass, email, roomsCount, phoneNumber);
+            setRoomTypes();
             hotelHolder.setUser(hotel);
             return true;
         } catch(Exception exception){
@@ -102,6 +105,7 @@ public class MongoDatabaseConnection {
                 setRoomsList();
                 setBookingsList();
                 setGuestsList();
+                setRoomTypes();
                 Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                 formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                         "Версія для адміністратора | Hotelis", 1350, 750);
@@ -126,7 +130,7 @@ public class MongoDatabaseConnection {
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
                 );
-                clientHolder.setUser(client);
+                setRoomTypes();
                 Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                 formBuilder.openWindow(stage, "client-forms/client-form.fxml",
                         "Версія для клієнта | Hotelis", 1350, 750);
@@ -176,49 +180,7 @@ public class MongoDatabaseConnection {
             e.printStackTrace();
         }
     }
-    public ObservableList<String> getRoomTypesNames(){
-        ObservableList<String> typeNameList = FXCollections.observableArrayList();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = mongoDatabase.getCollection("room_types");
-            FindIterable<Document> documents = collection.find();
-            for(Document coll : documents){
-                typeNameList.add(coll.getString("type_name"));
-            }
-        } catch(Exception exception){
-            exception.printStackTrace();
-        }
-        return typeNameList;
-    }
-    public ObservableList<Integer> getRoomTypesIDs() {
-        ObservableList<Integer> typeIDsList = FXCollections.observableArrayList();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = mongoDatabase.getCollection("room_types");
-            FindIterable<Document> documents = collection.find();
-            for(Document coll : documents){
-                typeIDsList.add(coll.getInteger("type_id"));
-            }
-        } catch(Exception exception){
-            exception.printStackTrace();
-        }
-        return typeIDsList;
-    }
-    private int getRoomTypeId(String typeName) {
-        Document docToFind = new Document();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = mongoDatabase.getCollection("room_types");
-            docToFind = collection.find(new Document("type_name", typeName)).first();
-            if (docToFind == null){
-                docToFind = new Document("type_id", 0);
-            }
-        } catch(Exception exception){
-            exception.printStackTrace();
-        }
-        return docToFind.getInteger("type_id");
-    }
-    public void createRoom(String typeName, String roomName, String roomDescription, String roomPrice){
+    public void createRoom(String typeName, int typeID, String roomName, String roomDescription, String roomPrice){
         hotel = hotelHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
@@ -236,7 +198,7 @@ public class MongoDatabaseConnection {
             }
             Document room = new Document("room_id", roomID);
             room.append("hotel_id", hotel.getHotel_id());
-            room.append("type_id", getRoomTypeId(typeName));
+            room.append("type_id", typeID);
             room.append("type_name", typeName);
             room.append("room_name", roomName);
             room.append("description", roomDescription);
@@ -257,6 +219,7 @@ public class MongoDatabaseConnection {
             room.append("capacity", capacity);
 
             roomsCollection.insertOne(room);
+            setRoomsList();
             hotelHolder.setUser(hotel);
         } catch(Exception exception){
             exception.printStackTrace();
@@ -513,7 +476,7 @@ public class MongoDatabaseConnection {
         }
         return availableRooms;
     }
-    public ObservableList<RoomType> getRoomTypes(){
+    public void setRoomTypes(){
         ObservableList<RoomType> roomTypes = FXCollections.observableArrayList();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
@@ -531,7 +494,10 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             e.printStackTrace();
         }
-        return roomTypes;
+        hotel.setRoomTypes(roomTypes);
+        client.setRoomTypes(roomTypes);
+        hotelHolder.setUser(hotel);
+        clientHolder.setUser(client);
     }
     public void deleteRoom() {
         hotel = hotelHolder.getUser();
@@ -907,23 +873,32 @@ public class MongoDatabaseConnection {
         return bookings;
     }
 
-    public void editClientProfile() {
-        client = clientHolder.getUser();
+    public boolean editClientProfile(Client editedClient) {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
-            Document editedClient = new Document("$set", new Document("client_id", client.getClientID())
-                    .append("firstname", client.getFirstName())
-                    .append("lastname", client.getLastName())
-                    .append("client_email", client.getEmail())
-                    .append("client_phone", client.getPhoneNumber())
-                    .append("dateOfBirth", client.getDateOfBirth())
+            FindIterable<Document> findEqualEmails = clientCollection.find(new Document("client_email", editedClient.getEmail()));
+            for (Document document : findEqualEmails) {
+                if(document.getString("client_email").equals(editedClient.getEmail())
+                        && document.getInteger("client_id") != editedClient.getClientID()){
+                    return false;
+                }
+            }
+            Document editedClientDoc = new Document("$set", new Document("client_id", editedClient.getClientID())
+                    .append("firstname", editedClient.getFirstName())
+                    .append("lastname", editedClient.getLastName())
+                    .append("client_email", editedClient.getEmail())
+                    .append("client_phone", editedClient.getPhoneNumber())
+                    .append("dateOfBirth", editedClient.getDateOfBirth())
             );
             clientCollection.findOneAndUpdate(
-                    new Document("client_id", client.getClientID()), editedClient);
+                    new Document("client_id", editedClient.getClientID()), editedClientDoc);
+            client = editedClient;
+            clientHolder.setUser(client);
         }catch (Exception e){
             e.printStackTrace();
         }
+        return true;
     }
 
     public void editHotelProfile() {
