@@ -1,0 +1,125 @@
+.container-right{
+    /*-fx-background-color: #C5EAF7; -------- Синій*/
+    /*-fx-background-color: #D4DF90; -------- Зелений*/
+    /*-fx-background-color: #CAB6B1; -------- Кавовий*/
+    /*-fx-background-color: #FFCAAB; -------- Пустельний*/
+
+    /* Мінімалізм */
+    -fx-background-color: #E7E7E7FF;
+}
+.button {
+    /*-fx-background-color: #2183A6;*/
+    /*-fx-text-fill: #FFFFFF; ----- Синій*/
+    /*#E5F8FF*/
+
+    /*-fx-background-color: #87933C; ----- Зелений*/
+    /*-fx-text-fill: #ffffff;
+     #F1F6D1*/
+
+    /*-fx-background-color: #AB8077; ----- Кавовий*/
+    /*-fx-text-fill: #FFFFFF;*/
+    /*#F4EDEB*/
+
+    /*-fx-background-color: #8A3C0E; ----- Пустельний*/
+    /*-fx-text-fill: #FFFFFF;*/
+    /*#FEEEE5*/
+
+    /* Мінімалізм */
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #646464;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+    -fx-background-radius: 20px;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 0);
+}
+.button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 0);
+}
+
+.label {
+    -fx-text-fill: #646464;
+    -fx-font-size: 14px;
+}
+.text {
+    -fx-text-fill: #646464;
+    -fx-font-size: 14px;
+}
+
+
+.text-field{
+    -fx-background-color: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+    -fx-background-radius: 15px;
+    -fx-padding: 7px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 0);
+}
+
+
+.password-field{
+    -fx-background-color: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 15px;
+    -fx-padding: 7px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 0);
+}
+
+
+.check-box{
+    -fx-text-fill: #646464;
+}
+.check-box .box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-background-radius: 15px;
+    -fx-padding: 7px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 0);
+}
+
+
+.date-picker {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.date-picker .text-field {
+    -fx-text-fill: #646464;
+    -fx-font-size: 14px;
+}
+.date-picker .arrow-button {
+    -fx-background-color: transparent;
+}
+.date-picker .button{
+    -fx-text-fill: #646464;
+    -fx-font-size: 10px;
+    -fx-border-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0), 10, 0, 0, 0);
+}
+.date-picker .button:hover{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 0);
+}
+
+
+.tab-pane {
+    -fx-border-width: 0;
+    -fx-focus-color: transparent;
+    -fx-background-color: #FFFFFF;
+}
+.tab {
+    -fx-focus-color: transparent;
+    -fx-background-color: #F0F0F0;
+    -fx-background-radius: 10px;
+    -fx-padding: 7px;
+}
+.tab:selected {
+    -fx-focus-color: transparent;
+    -fx-background-color: #FFFFFF;
+}
+.tab-label {
+    -fx-text-fill: #646464;
+    -fx-font-size: 14px;
+}
+
+
+
