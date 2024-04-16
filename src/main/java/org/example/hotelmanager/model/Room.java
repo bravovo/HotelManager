@@ -107,6 +107,7 @@ public class Room {
     public int getCapacity() {
         return capacity;
     }
+
     public void setBookings(ObservableList<Booking> bookings) {
         this.bookings = bookings;
     }

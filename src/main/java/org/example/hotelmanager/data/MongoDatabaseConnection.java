@@ -313,7 +313,7 @@ public class MongoDatabaseConnection {
                         dateTO = bookingDoc.getDate("checkOUT_date");
                         toUpdate = true;
                     } else if (LocalDateTime.now().isBefore(LocalDateTime.of(checkOUT_date, LocalTime.of(11, 30))) &&
-                    LocalDateTime.now().isAfter(LocalDateTime.of(checkOUT_date, LocalTime.of(0, 0)))) {
+                            LocalDateTime.now().isAfter(LocalDateTime.of(checkOUT_date, LocalTime.of(0, 0)))) {
                         LocalDateTime localDateTime = LocalDateTime.now();
                         instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
                         dateFROM = Date.from(instant);

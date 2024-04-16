@@ -53,10 +53,10 @@ public class RegisterFormController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle){
         //Валідація електронної пошти
         hotel_email_field.textProperty().addListener((observable, oldValue, newValue) -> {
-            checkEmail(hotel_email_field.getText(), email_valid_bar2, register_hotel_btn);
+            checkEmail(hotel_email_field.getText(), hotel_email_field, register_hotel_btn);
         });
         client_email.textProperty().addListener((observable, oldValue, newValue) -> {
-            checkEmail(client_email.getText(), email_valid_bar1, create_client_acc_btn);
+            checkEmail(client_email.getText(), client_email, create_client_acc_btn);
         });
 
         /* Форматування тексту для реєстрації готелю */
@@ -82,16 +82,26 @@ public class RegisterFormController implements Initializable {
 
     }
 
-    public void checkEmail(String text, ProgressBar progressBar, Button button){
+    public void checkEmail(String text, TextField email, Button button){
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         Pattern pattern = Pattern.compile(emailRegex);
         if (pattern.matcher(text).matches()) {
-            progressBar.setVisible(true);
-            progressBar.setStyle("-fx-control-inner-background: green; -fx-accent: green;");
+            email.setStyle("-fx-background-color: #FFFFFF;\n" +
+                    "    -fx-font-size: 14px;\n" +
+                    "    -fx-border-color: transparent;\n" +
+                    "    -fx-background-radius: 15px;\n" +
+                    "    -fx-padding: 7px;\n" +
+                    "    -fx-effect: dropshadow(gaussian, rgba(0, 255, 0, 1), 10, 0, 0, 0);"
+            );
             button.setDisable(false);
         } else {
-            progressBar.setVisible(true);
-            progressBar.setStyle("-fx-control-inner-background: red; -fx-accent: red;");
+            email.setStyle("-fx-background-color: #FFFFFF;\n" +
+                    "    -fx-font-size: 14px;\n" +
+                    "    -fx-border-color: transparent;\n" +
+                    "    -fx-background-radius: 15px;\n" +
+                    "    -fx-padding: 7px;\n" +
+                    "    -fx-effect: dropshadow(gaussian, rgba(255, 0, 0, 1), 10, 0, 0, 0);"
+            );
             button.setDisable(true);
         }
     }

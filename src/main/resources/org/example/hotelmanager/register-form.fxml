@@ -6,7 +6,6 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -14,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.RegisterFormController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" stylesheets="@../../../styles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.RegisterFormController">
    <TabPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" tabClosingPolicy="UNAVAILABLE">
       <Tab text="Користувач">
          <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="700.0">
@@ -46,7 +45,6 @@
                         <VBox>
                            <Label text="Електронна пошта" />
                            <TextField fx:id="client_email" prefHeight="30.0" prefWidth="200.0" />
-                           <ProgressBar fx:id="email_valid_bar1" prefHeight="5.0" prefWidth="100.0" progress="1.0" visible="false" />
                         </VBox>
                      </AnchorPane>
                   </VBox>
@@ -54,7 +52,7 @@
                      <AnchorPane>
                         <VBox>
                            <Label prefWidth="200.0" text="Дата народження" />
-                           <DatePicker fx:id="client_date_of_birth" prefHeight="30.0" prefWidth="200.0" />
+                           <DatePicker fx:id="client_date_of_birth" prefHeight="30.0" prefWidth="200.0" styleClass="date-picker" />
                         </VBox>
                      </AnchorPane>
                      <AnchorPane>
@@ -69,7 +67,7 @@
                      <AnchorPane>
                         <VBox>
                            <Label text="Підтвердити пароль" />
-                           <PasswordField fx:id="client_password_field_confirm" prefHeight="30.0" prefWidth="200.0" />
+                           <PasswordField fx:id="client_password_field_confirm" prefHeight="30.0" prefWidth="200.0" styleClass="password-field" />
                         </VBox>
                      </AnchorPane>
                      <AnchorPane>
@@ -81,7 +79,7 @@
                   <padding>
                      <Insets right="130.0" />
                   </padding>
-                  <Button fx:id="create_client_acc_btn" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#registerClientClick" prefHeight="30.0" prefWidth="125.0" text="Створити акаунт" />
+                  <Button fx:id="create_client_acc_btn" alignment="CENTER" mnemonicParsing="false" onAction="#registerClientClick" prefHeight="43.0" prefWidth="140.0" text="Створити акаунт" />
                   <Button fx:id="client_go_back_btn" alignment="CENTER" mnemonicParsing="false" onAction="#goBackClick" prefHeight="30.0" prefWidth="125.0" text="Назад" />
                </HBox>
             </VBox>
@@ -89,10 +87,10 @@
       </Tab>
       <Tab text="Адміністрація">
          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <HBox alignment="CENTER" minWidth="-Infinity" prefHeight="471.0" prefWidth="700.0" spacing="40.0">
                   <padding>
-                     <Insets top="70.0" />
+                     <Insets top="40.0" />
                   </padding>
                   <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                      <AnchorPane>
@@ -117,7 +115,6 @@
                         <VBox>
                            <Label text="Електронна адреса готелю" />
                            <TextField fx:id="hotel_email_field" prefHeight="30.0" prefWidth="200.0" />
-                           <ProgressBar fx:id="email_valid_bar2" prefHeight="5.0" prefWidth="100.0" progress="1.0" visible="false" />
                         </VBox>
                      </AnchorPane>
                   </VBox>
@@ -125,7 +122,7 @@
                      <AnchorPane>
                         <VBox prefHeight="30.0" prefWidth="200.0">
                            <Label text="Номер телефону готелю" />
-                           <TextField fx:id="hotel_phone_number" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="200.0" />
+                           <TextField fx:id="hotel_phone_number" prefHeight="30.0" prefWidth="200.0" />
                         </VBox>
                      </AnchorPane>
                      <AnchorPane>
@@ -146,7 +143,7 @@
                      <AnchorPane>
                         <VBox>
                            <Label text="Підтвердити пароль" />
-                           <PasswordField fx:id="hotel_password_confirm_field" prefHeight="30.0" prefWidth="200.0" />
+                           <PasswordField fx:id="hotel_password_confirm_field" prefHeight="30.0" prefWidth="200.0" styleClass="password-field" />
                         </VBox>
                      </AnchorPane>
                      <AnchorPane>
@@ -158,16 +155,8 @@
                   <padding>
                      <Insets right="130.0" />
                   </padding>
-                  <AnchorPane>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                     <Button fx:id="register_hotel_btn" mnemonicParsing="false" onAction="#registerHotelClick" prefHeight="30.0" prefWidth="125.0" text="Створити готель" />
-                     <Button fx:id="admin_go_back_btn" layoutX="165.37811279296875" mnemonicParsing="false" onAction="#goBackClick" prefHeight="30.0" prefWidth="125.0" text="Назад" />
-                  </AnchorPane>
+                  <Button fx:id="register_hotel_btn" mnemonicParsing="false" onAction="#registerHotelClick" prefHeight="43.0" prefWidth="136.0" text="Створити готель" />
+                  <Button fx:id="admin_go_back_btn" mnemonicParsing="false" onAction="#goBackClick" prefHeight="30.0" prefWidth="125.0" text="Назад" />
                </HBox>
             </VBox>
          </AnchorPane>

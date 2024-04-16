@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.ConfirmBookingFormController">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.ConfirmBookingFormController">
     <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="60.0">
             <VBox prefHeight="362.0" prefWidth="312.0" spacing="20.0">
@@ -35,7 +35,7 @@
                 </VBox>
                 <VBox prefHeight="200.0" prefWidth="100.0">
                     <Label text="Додаткові відомості " />
-                    <TextArea fx:id="booking_add_info" editable="false" />
+                    <TextArea fx:id="booking_add_info" />
                 </VBox>
             </VBox>
             <VBox prefHeight="362.0" prefWidth="302.0" spacing="20.0">

@@ -2,20 +2,13 @@ package org.example.hotelmanager.controllers.client;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.util.Pair;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.*;
@@ -173,6 +166,7 @@ public class ClientCreateBookingFormController implements Initializable {
                     if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() >= 1) {
                         Room availableRoom = roomVBoxMap.get(vbox);
                         roomHolder.setRoom(availableRoom);
+                        bookingHolder.getBooking().setAdditionalInfo(notes_area.getText());
                         formBuilder.openDialog("client-forms/watch-and-confirm-booking-form.fxml",
                                 "Створити бронювання",
                                 800, 600);

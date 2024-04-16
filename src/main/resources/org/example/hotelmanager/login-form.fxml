@@ -11,8 +11,8 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.LoginFormController">
-   <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #FFFFFF;" stylesheets="@../../../styles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.LoginFormController">
+   <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" styleClass="container" stylesheets="@../../../styles/style.css">
       <opaqueInsets>
          <Insets />
       </opaqueInsets>
@@ -27,36 +27,37 @@
             <Insets left="40.0" right="150.0" />
          </padding>
          <VBox>
-            <Label text="Логін" />
-            <TextField fx:id="login_field" promptText="Введіть свій логін" />
+            <TextField fx:id="login_field" promptText="Введіть свій логін" styleClass="text-field" />
+            <VBox.margin>
+               <Insets top="30.0" />
+            </VBox.margin>
          </VBox>
          <VBox>
-            <Label text="Пароль" />
-            <PasswordField fx:id="pass_field" promptText="Введіть свій пароль" />
+            <PasswordField fx:id="pass_field" promptText="Введіть свій пароль" styleClass="password-field" />
          </VBox>
       </VBox>
       <VBox alignment="CENTER" layoutX="143.0" layoutY="325.1092224121094" spacing="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-         <Button fx:id="login_btn" mnemonicParsing="false" onAction="#loginButtonClick" prefHeight="30.0" prefWidth="150.0" text="Увійти" />
+         <Button fx:id="login_btn" mnemonicParsing="false" onAction="#loginButtonClick" prefHeight="30.0" prefWidth="150.0" styleClass="button-text" text="Увійти" />
          <Button fx:id="cancel_exit_btn" mnemonicParsing="false" onAction="#cancelAndExit" prefHeight="30.0" prefWidth="150.0" text="Відмінити і вийти" />
       </VBox>
    </AnchorPane>
-   <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" styleClass="anchor">
+   <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" styleClass="container-right" stylesheets="@../../../styles/style.css">
       <padding>
          <Insets top="75.0" />
       </padding>
-      <VBox alignment="CENTER" layoutY="75.02520751953125" spacing="99.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="235.0" text="Hotelis" textAlignment="CENTER">
+      <VBox alignment="CENTER" layoutY="75.02520751953125" spacing="87.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="235.0" styleClass="text-field" text="Hotelis" textAlignment="CENTER">
             <font>
                <Font name="System Bold" size="15.0" />
             </font>
          </Label>
-         <Text disable="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Якийсь текст тут" textAlignment="CENTER" wrappingWidth="300.0">
+         <Text disable="true" fill="#646464" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Зручне управління &#10;вашими бронюваннями" textAlignment="CENTER" wrappingWidth="300.0">
             <font>
                <Font size="12.0" />
             </font>
          </Text>
          <VBox alignment="CENTER" spacing="25.0">
-            <Text disable="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Не маєте акаунта?&#10;Створіть його!" textAlignment="CENTER" wrappingWidth="300.0">
+            <Text disable="true" fill="#646464" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Не маєте акаунта?&#10;Створіть його!" textAlignment="CENTER" wrappingWidth="300.0">
                <font>
                   <Font size="12.0" />
                </font>
