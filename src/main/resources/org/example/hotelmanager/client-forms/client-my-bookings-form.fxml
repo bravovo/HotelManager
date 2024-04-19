@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="750.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.ClientMyBookingsFormController">
+<AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="750.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.ClientMyBookingsFormController">
    <VBox>
       <HBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="200.0" spacing="20.0">
          <padding>
@@ -23,9 +23,6 @@
          <Separator minWidth="700.0" />
       </HBox>
       <HBox>
-         <VBox alignment="CENTER">
-            <Separator orientation="VERTICAL" prefHeight="500.0" />
-         </VBox>
          <VBox prefWidth="1000.0" spacing="20.0">
             <padding>
                <Insets top="15.0" />

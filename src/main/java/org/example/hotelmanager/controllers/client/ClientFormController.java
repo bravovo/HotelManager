@@ -3,6 +3,7 @@ package org.example.hotelmanager.controllers.client;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -35,6 +36,7 @@ public class ClientFormController implements Initializable {
         client_label.setText(client.getFirstName() + " " + client.getLastName());
         changeCenter("client-forms/client-create-booking-form.fxml");
         create_booking_form_btn.setDisable(true);
+        profile_vbox.setCursor(Cursor.HAND);
         profile_vbox.setOnMouseClicked(event -> {
             if(event.getClickCount() == 2){
                 FormBuilder formBuilder = new FormBuilder();

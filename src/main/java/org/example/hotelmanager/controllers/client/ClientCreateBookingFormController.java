@@ -55,7 +55,7 @@ public class ClientCreateBookingFormController implements Initializable {
         });
     }
 
-    public void createBookingButtonClick(javafx.event.ActionEvent e) throws IOException {
+    public void createBookingButtonClick(javafx.event.ActionEvent e){
         available_rooms_hbox.getChildren().clear();
         client = clientHolder.getUser();
         bookingHolder.setBookingDone(false);
@@ -110,7 +110,7 @@ public class ClientCreateBookingFormController implements Initializable {
             Label roomName = new Label("Кімната: " + room.getRoom_name());
             Label peopleCountLabel = new Label("Місткість: " + room.getCapacity());
             Label price = new Label("Ціна за одну ніч: " + room.getPrice());
-            Label roomTypeDescription = new Label("Тип кімнати: " + typeDescription);
+            Label roomTypeDescription = new Label("Тип кімнати:\n" + typeDescription);
             roomTypeDescription.setWrapText(true);
             Button createBookingButton = new Button("Створити бронювання");
             createBookingButton.setOnAction(click -> {
@@ -133,12 +133,12 @@ public class ClientCreateBookingFormController implements Initializable {
             });
             VBox vbox = new VBox();
             double prefWidth = 250;
-            double prefHeight = 200;
+            double prefHeight = 250;
             vbox.setPrefWidth(prefWidth);
             vbox.setMinWidth(prefWidth);
             vbox.setPrefHeight(prefHeight);
             vbox.setMaxHeight(prefHeight);
-            vbox.setSpacing(20);
+            vbox.setSpacing(12.5);
             vbox.getChildren().addAll(
                     hotelNameLabel,
                     roomName,
@@ -147,15 +147,14 @@ public class ClientCreateBookingFormController implements Initializable {
                     roomTypeDescription,
                     createBookingButton
             );
-            vbox.setStyle("" +
-                    "-fx-background-color: white; " +
-                    "-fx-padding: 10px; " +
-                    "-fx-border-color: black; " +
-                    "-fx-border-width: 2px; " +
-                    "-fx-border-radius: 5px; " +
-                    "-fx-background-radius: 10px;"
-            );
-
+            createBookingButton.setCursor(Cursor.HAND);
+            vbox.getStyleClass().add("room-form");
+            hotelNameLabel.getStyleClass().add("room-form-label");
+            roomName.getStyleClass().add("room-form-label");
+            peopleCountLabel.getStyleClass().add("room-form-label");
+            price.getStyleClass().add("room-form-label");
+            roomTypeDescription.getStyleClass().add("room-form-label");
+            createBookingButton.getStyleClass().add("room-form-button");
             vbox.setOnMouseEntered(event -> vbox.setCursor(Cursor.HAND));
             if(roomVBoxMap.size() >= 4){
                 scroll_pane.setFitToHeight(false);
