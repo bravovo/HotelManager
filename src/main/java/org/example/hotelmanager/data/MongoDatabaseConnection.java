@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 import org.bson.Document;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.model.*;
@@ -93,8 +92,46 @@ public class MongoDatabaseConnection {
     public void loginAccount(Document document, ActionEvent event){
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> collection = mongoDatabase.getCollection("hotels");
-            Document findHotel = collection.find(document).first();
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
+            if (document.getString("login").equals("Obi-wan_Kenobi")
+                    && document.getString("password").equals("maytheforcebewithyou")
+            ){
+                MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
+                ObservableList<Hotel> hotels = FXCollections.observableArrayList();
+                ObservableList<Client> clients = FXCollections.observableArrayList();
+                FindIterable<Document> clientFindIterable = clientCollection.find();
+                FindIterable<Document> allHotels = hotelCollection.find();
+                for(Document hotelFromDB : allHotels){
+                    Hotel hotelToList = new Hotel(hotelFromDB.getInteger("hotel_id"), hotelFromDB.getString("hotel_name"),
+                            hotelFromDB.getString("address"), hotelFromDB.getString("login"),
+                            hotelFromDB.getString("email"),
+                            hotelFromDB.getInteger("rooms_count"),
+                            hotelFromDB.getString("phone_number"));
+                    hotels.add(hotelToList);
+                }
+
+                for(Document clientFromDB : clientFindIterable){
+                    Client clientToList = new Client(
+                            clientFromDB.getInteger("client_id"),
+                            clientFromDB.getString("firstname"),
+                            clientFromDB.getString("lastname"),
+                            clientFromDB.getString("client_email"),
+                            clientFromDB.getString("client_phone"),
+                            clientFromDB.getDate("dateOfBirth")
+                                    .toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                    );
+                    clients.add(clientToList);
+                }
+                SuperAdmin superAdmin = new SuperAdmin(hotels, clients);
+                SuperAdminHolder.getInstance().setSuper(superAdmin);
+                Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                formBuilder.openWindow(stage, "super-admin-forms/super-form.fxml",
+                        "Супер адміністратор | Hotelis", 1150, 750);
+                return;
+            }
+            Document findHotel = hotelCollection.find(document).first();
             if(findHotel != null){
                 this.hotel = new Hotel(findHotel.getInteger("hotel_id"), findHotel.getString("hotel_name"),
                         findHotel.getString("address"), findHotel.getString("login"),
@@ -114,10 +151,10 @@ public class MongoDatabaseConnection {
 
             // Якщо не знайдено акаунт готелю, то шукати акаунт користувача ----------------------
 
-            collection = mongoDatabase.getCollection("clients");
+            hotelCollection = mongoDatabase.getCollection("clients");
             Document clientDocument = new Document("client_email", document.getString("login"))
                     .append("password", document.getString("password"));
-            Document findClient = collection.find(clientDocument).first();
+            Document findClient = hotelCollection.find(clientDocument).first();
             if(findClient != null){
                 this.client = new Client(
                         findClient.getInteger("client_id"),

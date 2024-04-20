@@ -39,6 +39,24 @@ public class Hotel {
         this.rooms_count = rooms_count;
         this.phone_number = phoneNumber;
     }
+
+    public Hotel(Integer hotelId,
+                 String hotelName,
+                 String address,
+                 String login,
+                 String email,
+                 Integer roomsCount,
+                 String phoneNumber
+    ) {
+        this.hotel_id = hotelId;
+        this.hotel_name = hotelName;
+        this.email = email;
+        this.phone_number = phoneNumber;
+        this.login = login;
+        this.address = address;
+        this.rooms_count = roomsCount;
+    }
+
     public int getHotel_id() {
         return hotel_id;
     }

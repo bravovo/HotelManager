@@ -62,7 +62,8 @@ public class ClientFormController implements Initializable {
     }
     public void logoutButtonClick(javafx.event.ActionEvent event) throws IOException{
         FormBuilder formBuilder = new FormBuilder();
-        formBuilder.openWindow((Stage)logout_btn.getScene().getWindow(),"login-form.fxml", "Авторизація | Hotelis", 700, 500);
+        formBuilder.openWindow((Stage)logout_btn.getScene().getWindow(),
+                "login-form.fxml", "Авторизація | Hotelis", 700, 500);
     }
 
     public void createBookingFormButtonClick(ActionEvent event) {

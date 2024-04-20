@@ -36,7 +36,7 @@
             <PasswordField fx:id="pass_field" promptText="Введіть свій пароль" styleClass="password-field" />
          </VBox>
       </VBox>
-      <VBox alignment="CENTER" layoutX="143.0" layoutY="325.1092224121094" spacing="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <VBox alignment="CENTER" layoutX="143.0" layoutY="325.1092224121094" spacing="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <Button fx:id="login_btn" mnemonicParsing="false" onAction="#loginButtonClick" prefHeight="30.0" prefWidth="150.0" styleClass="button-text" text="Увійти" />
          <Button fx:id="cancel_exit_btn" mnemonicParsing="false" onAction="#cancelAndExit" prefHeight="30.0" prefWidth="150.0" text="Відмінити і вийти" />
       </VBox>
