@@ -22,7 +22,6 @@ public class MongoDatabaseConnection {
     Booking bookingToDelete = new Booking();
     Hotel hotel = new Hotel();
     Client client = new Client();
-    Document clientDoc = new Document();
     HotelHolder hotelHolder = HotelHolder.getInstance();
     ClientHolder clientHolder = ClientHolder.getInstance();
     RoomHolder roomHolder = RoomHolder.getInstance();
@@ -45,13 +44,12 @@ public class MongoDatabaseConnection {
             }
             newClient.append("client_id", clientID);
             newClient.append("firstname", firstName);
-            newClient.append("lastname", firstName);
+            newClient.append("lastname", lastName);
             newClient.append("client_email", clientEmail);
             newClient.append("client_phone", clientPhoneNumber);
             newClient.append("dateOfBirth", dateOfBirth);
             newClient.append("password", clientPassword);
             clientCollection.insertOne(newClient);
-            clientDoc = newClient;
             this.client = new Client(clientID, firstName, lastName, clientEmail, clientPhoneNumber, dateOfBirth);
             setRoomTypes();
             clientHolder.setUser(client);

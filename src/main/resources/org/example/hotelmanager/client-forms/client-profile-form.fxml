@@ -3,13 +3,11 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="450.0" spacing="40.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.ClientProfileFormController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="450.0" spacing="40.0" style="-fx-background-color: white;" stylesheets="@../../../../styles/client-profile-styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.ClientProfileFormController">
    <padding>
       <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
    </padding>
@@ -28,7 +26,7 @@
       </VBox>
       <VBox fx:id="date_of_birth_vbox" prefHeight="200.0" prefWidth="100.0">
          <Label text="Дата народження" />
-         <DatePicker fx:id="date_of_birth_field" disable="true" />
+         <TextField fx:id="date_of_birth_field" editable="false" />
       </VBox>
       <VBox fx:id="email_vbox" maxHeight="-Infinity" prefHeight="50.0" prefWidth="100.0">
          <Label text="Електронна пошта" />
@@ -37,7 +35,6 @@
                <Insets />
             </VBox.margin>
          </TextField>
-         <ProgressBar fx:id="email_valid_bar" minHeight="-Infinity" prefHeight="5.0" prefWidth="100.0" progress="1.0" visible="false" />
       </VBox>
    </VBox>
    <ButtonBar fx:id="btns_bar" prefHeight="40.0" prefWidth="250.0" visible="false">

@@ -43,7 +43,7 @@ public class ClientFormController implements Initializable {
                 try{
                     formBuilder.openDialog("client-forms/client-profile-form.fxml",
                             "Профіль користувача | Hotelis",
-                            450, 500);
+                            450, 600);
                 }catch (Exception e){
                     e.printStackTrace();
                 }

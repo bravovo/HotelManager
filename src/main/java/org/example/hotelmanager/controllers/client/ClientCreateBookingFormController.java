@@ -168,7 +168,7 @@ public class ClientCreateBookingFormController implements Initializable {
                         bookingHolder.getBooking().setAdditionalInfo(notes_area.getText());
                         formBuilder.openDialog("client-forms/watch-and-confirm-booking-form.fxml",
                                 "Створити бронювання",
-                                800, 600);
+                                800, 650);
                         if (bookingHolder.getBookingDone()){
                             resetEverything();
                         }

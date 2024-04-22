@@ -4,69 +4,66 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="100.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.WatchAndConfirmBookingFormController">
-   <padding>
-      <Insets bottom="30.0" top="30.0" />
-   </padding>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="650.0" prefWidth="800.0" spacing="25.0" style="-fx-background-color: white;" stylesheets="@../../../../styles/client-watch-and-confirm-styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.WatchAndConfirmBookingFormController">
    <HBox alignment="TOP_CENTER" spacing="100.0">
       <VBox fx:id="hotel_info_vbox" maxHeight="-Infinity" prefWidth="200.0" spacing="10.0">
          <VBox>
             <Label text="Назва готелю" />
-            <Text fx:id="hotel_name" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="hotel_name" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Номер телефону адміністрації" />
-            <Text fx:id="admin_mobile_phone" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="admin_mobile_phone" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Назва кімнати" />
-            <Text fx:id="room_name" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="room_name" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Місткість кімнати" />
-            <Text fx:id="room_capacity" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="room_capacity" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Дата заїзду" />
-            <Text fx:id="checkIN" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="checkIN" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Дата виїзду" />
-            <Text fx:id="checkOUT" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="checkOUT" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Опис кімнати" />
-            <Text fx:id="room_desc" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextArea fx:id="room_desc" editable="false" focusTraversable="false" maxHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" />
          </VBox>
       </VBox>
       <VBox fx:id="booking_info_vbox" prefWidth="200.0" spacing="10.0">
          <VBox>
             <Label text="Ім'я гостя" />
-            <Text fx:id="guest_firstname" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="guest_firstname" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Прізвище гостя" />
-            <Text fx:id="guest_secondname" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="guest_secondname" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Номер телефону гостя" />
-            <Text fx:id="guest_mobile_phone" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="guest_mobile_phone" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Кількість людей" />
-            <Text fx:id="people_count" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="people_count" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Загальна вартість проживання" />
-            <Text fx:id="total_price" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <TextField fx:id="total_price" editable="false" focusTraversable="false" />
          </VBox>
          <VBox>
             <Label text="Примітки" />
-            <TextArea fx:id="notes" prefHeight="85.0" prefWidth="200.0" />
+            <TextArea fx:id="notes" focusTraversable="false" maxHeight="-Infinity" prefHeight="85.0" prefWidth="200.0" />
          </VBox>
       </VBox>
    </HBox>
@@ -74,7 +71,10 @@
       <VBox.margin>
          <Insets right="50.0" />
       </VBox.margin>
-      <Button fx:id="create_booking_btn" mnemonicParsing="false" onAction="#createBookingButtonClick" prefHeight="30.0" prefWidth="150.0" text="Створити бронювання" />
+      <Button fx:id="create_booking_btn" mnemonicParsing="false" onAction="#createBookingButtonClick" prefHeight="46.0" prefWidth="183.0" text="Створити бронювання" />
       <Button fx:id="cancel_btn" mnemonicParsing="false" onAction="#cancelButtonClick" prefHeight="30.0" prefWidth="150.0" text="Скасувати" />
    </HBox>
+   <padding>
+      <Insets bottom="50.0" top="30.0" />
+   </padding>
 </VBox>

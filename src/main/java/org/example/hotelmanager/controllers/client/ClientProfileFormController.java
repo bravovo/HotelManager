@@ -26,10 +26,9 @@ public class ClientProfileFormController implements Initializable {
     public VBox phone_number_vbox;
     public TextField phone_number_field;
     public VBox date_of_birth_vbox;
-    public DatePicker date_of_birth_field;
+    public TextField date_of_birth_field;
     public Button save_btn;
     public Button cancel_btn;
-    public ProgressBar email_valid_bar;
     public ButtonBar btns_bar;
 
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
@@ -40,7 +39,6 @@ public class ClientProfileFormController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle){
         client = clientHolder.getUser();
         cancel_btn.setCancelButton(true);
-        email_valid_bar.setVisible(false);
         changeListener = (observable, oldValue, newValue) -> {
             btns_bar.setVisible(!Objects.equals(client.getFirstName(), first_name_field.getText())
                     || !Objects.equals(client.getLastName(), second_name_field.getText())
@@ -52,7 +50,7 @@ public class ClientProfileFormController implements Initializable {
         second_name_field.setText(client.getLastName());
         email_field.setText(client.getEmail());
         phone_number_field.setText(client.getPhoneNumber());
-        date_of_birth_field.setValue(client.getDateOfBirth());
+        date_of_birth_field.setText(client.getDateOfBirth().toString());
 
         first_name_field.textProperty().addListener(changeListener);
         second_name_field.textProperty().addListener(changeListener);
@@ -61,7 +59,7 @@ public class ClientProfileFormController implements Initializable {
 
         //Валідація електронної пошти
         email_field.textProperty().addListener((observable, oldValue, newValue) -> {
-            checkEmail(email_field.getText(), email_valid_bar, save_btn);
+            checkEmail(email_field.getText(), email_field, save_btn);
         });
 
         phone_number_field.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -71,16 +69,26 @@ public class ClientProfileFormController implements Initializable {
         });
     }
 
-    public void checkEmail(String text, ProgressBar progressBar, Button button){
+    public void checkEmail(String text, TextField email, Button button){
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         Pattern pattern = Pattern.compile(emailRegex);
         if (pattern.matcher(text).matches()) {
-            progressBar.setVisible(true);
-            progressBar.setStyle("-fx-control-inner-background: green; -fx-accent: green;");
+            email.setStyle("    -fx-background-color: #FFFFFF;\n" +
+                    "    -fx-font-size: 14px;\n" +
+                    "    -fx-border-color: transparent;\n" +
+                    "    -fx-background-radius: 15px;\n" +
+                    "    -fx-padding: 12px;\n" +
+                    "    -fx-effect: dropshadow(gaussian, rgba(0, 255, 0, 1), 10, 0, 0, 0);"
+            );
             button.setDisable(false);
         } else {
-            progressBar.setVisible(true);
-            progressBar.setStyle("-fx-control-inner-background: red; -fx-accent: red;");
+            email.setStyle("-fx-background-color: #FFFFFF;\n" +
+                    "    -fx-font-size: 14px;\n" +
+                    "    -fx-border-color: transparent;\n" +
+                    "    -fx-background-radius: 15px;\n" +
+                    "    -fx-padding: 12px;\n" +
+                    "    -fx-effect: dropshadow(gaussian, rgba(255, 0, 0, 1), 10, 0, 0, 0);"
+            );
             button.setDisable(true);
         }
     }
