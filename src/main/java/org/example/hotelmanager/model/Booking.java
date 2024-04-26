@@ -1,11 +1,14 @@
 package org.example.hotelmanager.model;
 
+import org.bson.types.ObjectId;
+
 import java.time.LocalDate;
 
 public class Booking {
-    private final int bookingID;
-    private final int hotelID;
-    private final int guestID;
+    private ObjectId bookingID;
+    private ObjectId hotelID;
+    private ObjectId roomID;
+    private int guestID;
     private String guestFirstName;
     private String guestSecondName;
     private String guestPhoneNumber;
@@ -21,18 +24,12 @@ public class Booking {
     private String additionalInfo;
 
     public Booking(){
-        this.bookingID = -1;
-        this.hotelID = -1;
-        this.guestID = -1;
     }
     public Booking(int peopleCount,
                    long nightCount,
                    String additionalInfo,
                    LocalDate checkIN_date,
                    LocalDate checkOUT_date){
-        this.bookingID = -1;
-        this.hotelID = -1;
-        this.guestID = -1;
         this.peopleCount = peopleCount;
         this.nightCount = nightCount;
         this.additionalInfo = additionalInfo;
@@ -40,8 +37,9 @@ public class Booking {
         this.checkOUT_date = checkOUT_date;
     }
 
-    public Booking(int bookingID,
-                   int hotelID,
+    public Booking(ObjectId bookingID,
+                   ObjectId hotelID,
+                   ObjectId roomID,
                    int guestID,
                    String guestFirstName,
                    String guestSecondName,
@@ -56,6 +54,7 @@ public class Booking {
                    int peopleCount) {
         this.bookingID = bookingID;
         this.hotelID = hotelID;
+        this.roomID = roomID;
         this.guestID = guestID;
         this.guestFirstName = guestFirstName;
         this.guestSecondName = guestSecondName;
@@ -88,9 +87,6 @@ public class Booking {
                    int peopleCount,
                    long nightCount,
                    String additionalInfo) {
-        this.bookingID = -1;
-        this.hotelID = -1;
-        this.guestID = -1;
         this.guestFirstName = guestFirstName;
         this.guestSecondName = guestSecondName;
         this.guestPhoneNumber = guestPhoneNumber;
@@ -111,7 +107,8 @@ public class Booking {
         this.additionalInfo = additionalInfo;
     }
 
-    public Booking(String guestFirstName,
+    public Booking(ObjectId roomID,
+                   String guestFirstName,
                    String guestSecondName,
                    String guestPhoneNumber,
                    String guestEmail,
@@ -122,9 +119,7 @@ public class Booking {
                    LocalDate checkOUT_date,
                    Double totalPrice,
                    String additionalInfo) {
-        this.bookingID = -1;
-        this.hotelID = -1;
-        this.guestID = -1;
+        this.roomID = roomID;
         this.guestFirstName = guestFirstName;
         this.guestSecondName = guestSecondName;
         this.guestPhoneNumber = guestPhoneNumber;
@@ -147,7 +142,7 @@ public class Booking {
         this.additionalInfo = additionalInfo;
     }
 
-    public Booking(int hotelId,
+    public Booking(ObjectId roomID,
                    String guestFirstName,
                    String guestSecondName,
                    String phoneNumber,
@@ -159,9 +154,7 @@ public class Booking {
                    LocalDate checkOUT_date,
                    double totalPrice,
                    String additionalInfo) {
-        this.hotelID = hotelId;
-        this.bookingID = -1;
-        this.guestID = -1;
+        this.roomID = roomID;
         this.guestFirstName = guestFirstName;
         this.guestSecondName = guestSecondName;
         this.guestPhoneNumber = phoneNumber;
@@ -175,15 +168,68 @@ public class Booking {
         this.additionalInfo = additionalInfo;
     }
 
+    public Booking(ObjectId hotelID,
+                   ObjectId roomID,
+                   String guestFirstName,
+                   String guestSecondName,
+                   String phoneNumber,
+                   String email,
+                   int roomNumber,
+                   String typeName,
+                   int peopleCount,
+                   LocalDate checkIN_date,
+                   LocalDate checkOUT_date,
+                   double totalPrice,
+                   String additionalInfo) {
+        this.hotelID = hotelID;
+        this.roomID = roomID;
+        this.guestFirstName = guestFirstName;
+        this.guestSecondName = guestSecondName;
+        this.guestPhoneNumber = phoneNumber;
+        this.guestEmail = email;
+        this.roomNumber = roomNumber;
+        this.roomType = typeName;
+        this.peopleCount = peopleCount;
+        this.checkIN_date = checkIN_date;
+        this.checkOUT_date = checkOUT_date;
+        this.totalPrice = totalPrice;
+        this.additionalInfo = additionalInfo;
+    }
+
+    public Booking(ObjectId bookingID,
+                   ObjectId hotelID,
+                   ObjectId roomID,
+                   String guestFirstName,
+                   String guestSecondName,
+                   String phoneNumber,
+                   String email,
+                   LocalDate checkIN_date,
+                   LocalDate checkOUT_date,
+                   int peopleCount,
+                   long nightPeriod,
+                   String additionalInfo
+    ) {
+        this.bookingID = bookingID;
+        this.hotelID = hotelID;
+        this.roomID = roomID;
+        this.guestFirstName = guestFirstName;
+        this.guestSecondName = guestSecondName;
+        this.guestPhoneNumber = phoneNumber;
+        this.guestEmail = email;
+        this.peopleCount = peopleCount;
+        this.checkIN_date = checkIN_date;
+        this.checkOUT_date = checkOUT_date;
+        this.nightCount = nightPeriod;
+        this.additionalInfo = additionalInfo;
+    }
+
 
     public String getGuestPhoneNumber() {
         return guestPhoneNumber;
     }
-
     public String getGuestEmail() {
         return guestEmail;
     }
-
     public String getRoomType() {
         return roomType;
     }
@@ -205,11 +251,14 @@ public class Booking {
     public String getBookingStatus() {
         return bookingStatus;
     }
-    public int getBookingID() {
+    public ObjectId getBookingID() {
         return bookingID;
     }
-    public int getHotelID() {
+    public ObjectId getHotelID() {
         return hotelID;
+    }
+    public ObjectId getRoomID() {
+        return roomID;
     }
     public int getGuestID() {
         return guestID;

@@ -1,10 +1,8 @@
 package org.example.hotelmanager.model;
 
-import java.time.LocalDate;
-
 public class Guest {
     private int guestID;
-    private int hotelID;
+    private String hotelID;
     private int roomNumber;
     private String firstName;
     private String secondName;
@@ -13,7 +11,7 @@ public class Guest {
     private double totalPrice;
 
     public Guest(int guestID,
-                 int hotelID,
+                 String hotelID,
                  int roomNumber,
                  String firstName,
                  String secondName,
@@ -38,7 +36,7 @@ public class Guest {
     public int getGuestID() {
         return guestID;
     }
-    public int getHotelID() {
+    public String getHotelID() {
         return hotelID;
     }
     public int getRoomNumber() {

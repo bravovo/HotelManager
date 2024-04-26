@@ -2,9 +2,10 @@ package org.example.hotelmanager.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.bson.types.ObjectId;
 
 public class Hotel {
-    private int hotel_id;
+    private ObjectId hotel_id;
     private String hotel_name;
     private String address;
     private String login;
@@ -21,7 +22,7 @@ public class Hotel {
         this.hotel_name = "";
     }
 
-    public Hotel(int hotel_id, String hotel_name, String address, String email, String phone_number) {
+    public Hotel(ObjectId hotel_id, String hotel_name, String address, String email, String phone_number) {
         this.hotel_id = hotel_id;
         this.hotel_name = hotel_name;
         this.address = address;
@@ -29,7 +30,7 @@ public class Hotel {
         this.phone_number = phone_number;
     }
 
-    public Hotel(int hotel_id, String hotel_name, String address, String login, String password, String email, int rooms_count, String phoneNumber) {
+    public Hotel(ObjectId hotel_id, String hotel_name, String address, String login, String password, String email, int rooms_count, String phoneNumber) {
         this.hotel_id = hotel_id;
         this.hotel_name = hotel_name;
         this.address = address;
@@ -40,7 +41,7 @@ public class Hotel {
         this.phone_number = phoneNumber;
     }
 
-    public Hotel(Integer hotelId,
+    public Hotel(ObjectId hotelId,
                  String hotelName,
                  String address,
                  String login,
@@ -57,7 +58,7 @@ public class Hotel {
         this.rooms_count = roomsCount;
     }
 
-    public int getHotel_id() {
+    public ObjectId getHotel_id() {
         return hotel_id;
     }
     public String getHotel_name() {
@@ -84,15 +85,12 @@ public class Hotel {
     public ObservableList<Guest> getGuests() {
         return guests;
     }
-
     public ObservableList<RoomType> getRoomTypes() {
         return roomTypes;
     }
-
     public void setRoomTypes(ObservableList<RoomType> roomTypes) {
         this.roomTypes = roomTypes;
     }
-
     public void setGuests(ObservableList<Guest> guests) {
         this.guests = guests;
     }

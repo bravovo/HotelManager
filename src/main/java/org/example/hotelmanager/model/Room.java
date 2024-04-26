@@ -2,6 +2,7 @@ package org.example.hotelmanager.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.bson.types.ObjectId;
 
 import java.awt.print.Book;
 import java.text.SimpleDateFormat;
@@ -11,8 +12,8 @@ import java.time.ZoneId;
 import java.util.Date;
 
 public class Room {
-    private int room_id;
-    private int hotel_id;
+    private ObjectId room_id;
+    private ObjectId hotel_id;
     private int type_id;
     private String type_name;
     private String room_name;
@@ -30,7 +31,7 @@ public class Room {
     public Room() {
     }
 
-    public Room(int room_id, int hotel_id,
+    public Room(ObjectId room_id, ObjectId hotel_id,
                 int type_id, String type_name,
                 String room_name, String room_description, int room_number,
                 String status, Date dateFrom, Date dateTo, Double price, int capacity) {
@@ -53,7 +54,7 @@ public class Room {
         this.price = price;
         this.capacity = capacity;
     }
-    public Room(int room_id, int hotel_id,
+    public Room(ObjectId room_id, ObjectId hotel_id,
                 int type_id, String type_name,
                 String room_name, String room_description, int room_number,
                 String status, LocalDate dateFrom, LocalDate dateTo, Double price) {
@@ -70,10 +71,10 @@ public class Room {
         this.price = price;
     }
 
-    public int getRoom_id() {
+    public ObjectId getRoom_id() {
         return room_id;
     }
-    public int getHotel_id() {
+    public ObjectId getHotel_id() {
         return hotel_id;
     }
     public ObservableList<Booking> getBookings() {
