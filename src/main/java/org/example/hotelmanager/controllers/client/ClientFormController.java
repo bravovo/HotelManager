@@ -47,6 +47,7 @@ public class ClientFormController implements Initializable {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+                client = clientHolder.getUser();
                 client_label.setText(client.getFirstName() + " " + client.getLastName());
             }
         });

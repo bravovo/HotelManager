@@ -46,20 +46,16 @@ public class ClientProfileFormController implements Initializable {
                     || !Objects.equals(client.getPhoneNumber(), phone_number_field.getText()));
         };
 
-        first_name_field.setText(client.getFirstName());
-        second_name_field.setText(client.getLastName());
-        email_field.setText(client.getEmail());
-        phone_number_field.setText(client.getPhoneNumber());
-        date_of_birth_field.setText(client.getDateOfBirth().toString());
+        setProfile(client);
 
-        first_name_field.textProperty().addListener(changeListener);
-        second_name_field.textProperty().addListener(changeListener);
-        email_field.textProperty().addListener(changeListener);
-        phone_number_field.textProperty().addListener(changeListener);
-
-        //Валідація електронної пошти
+        // Валідація електронної пошти
         email_field.textProperty().addListener((observable, oldValue, newValue) -> {
             checkEmail(email_field.getText(), email_field, save_btn);
+        });
+
+        // Валідація номера телефону
+        phone_number_field.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkPhoneNumber(phone_number_field.getText(), phone_number_field, save_btn);
         });
 
         phone_number_field.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -93,13 +89,40 @@ public class ClientProfileFormController implements Initializable {
         }
     }
 
+    public void checkPhoneNumber(String phone, TextField phoneNumber, Button button){
+        String phoneRegex = "((\\d{3} ?)|(\\d{3}-))?\\d{3}\\d{4}";
+        Pattern pattern = Pattern.compile(phoneRegex);
+        if (pattern.matcher(phone).matches()) {
+            phoneNumber.setStyle("    -fx-background-color: #FFFFFF;\n" +
+                    "    -fx-font-size: 14px;\n" +
+                    "    -fx-border-color: transparent;\n" +
+                    "    -fx-background-radius: 15px;\n" +
+                    "    -fx-padding: 12px;\n" +
+                    "    -fx-effect: dropshadow(gaussian, rgba(0, 255, 0, 1), 10, 0, 0, 0);"
+            );
+            button.setDisable(false);
+        } else {
+            phoneNumber.setStyle("-fx-background-color: #FFFFFF;\n" +
+                    "    -fx-font-size: 14px;\n" +
+                    "    -fx-border-color: transparent;\n" +
+                    "    -fx-background-radius: 15px;\n" +
+                    "    -fx-padding: 12px;\n" +
+                    "    -fx-effect: dropshadow(gaussian, rgba(255, 0, 0, 1), 10, 0, 0, 0);"
+            );
+            button.setDisable(true);
+        }
+    }
+
+
     public void saveButtonClick(ActionEvent event) {
-        Client editedClient = client;
-        editedClient.setFirstName(first_name_field.getText());
-        editedClient.setLastName(second_name_field.getText());
-        editedClient.setEmail(email_field.getText());
-        editedClient.setPhoneNumber(phone_number_field.getText());
-        //clientHolder.setUser(editedClient);
+        Client editedClient = new Client(
+                client.getClientID(),
+                first_name_field.getText(),
+                second_name_field.getText(),
+                email_field.getText(),
+                phone_number_field.getText(),
+                client.getDateOfBirth()
+        );
         if(!mongoDatabaseConnection.editClientProfile(editedClient)){
             FormBuilder formBuilder = new FormBuilder();
             formBuilder.errorValidation("Вибрана електронна пошта вже зайнята");
@@ -112,5 +135,18 @@ public class ClientProfileFormController implements Initializable {
     public void cancelButtonClick(ActionEvent event) {
         Stage stage = (Stage) cancel_btn.getScene().getWindow();
         stage.close();
+    }
+
+    public void setProfile(Client client){
+        first_name_field.setText(client.getFirstName());
+        second_name_field.setText(client.getLastName());
+        email_field.setText(client.getEmail());
+        phone_number_field.setText(client.getPhoneNumber());
+        date_of_birth_field.setText(client.getDateOfBirth().toString());
+
+        first_name_field.textProperty().addListener(changeListener);
+        second_name_field.textProperty().addListener(changeListener);
+        email_field.textProperty().addListener(changeListener);
+        phone_number_field.textProperty().addListener(changeListener);
     }
 }

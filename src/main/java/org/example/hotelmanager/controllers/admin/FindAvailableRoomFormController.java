@@ -25,6 +25,7 @@ public class FindAvailableRoomFormController implements Initializable {
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
     FormBuilder formBuilder = new FormBuilder();
     public ProgressBar email_valid_bar;
+    public ProgressBar phone_valid_bar;
     public Button cancel_btn;
     public TextField guest_first_name;
     public TextField guest_second_name;
@@ -54,6 +55,11 @@ public class FindAvailableRoomFormController implements Initializable {
         //Валідація електронної пошти
         guest_email.textProperty().addListener((observable, oldValue, newValue) -> {
             checkEmail(guest_email.getText(), email_valid_bar, find_available_room);
+        });
+
+        //Валідація номера телефону
+        guest_phone_number.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkPhoneNumber(guest_phone_number.getText(), phone_valid_bar, find_available_room);
         });
     }
     public void cancelButtonClick(ActionEvent event) {
@@ -122,6 +128,20 @@ public class FindAvailableRoomFormController implements Initializable {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         Pattern pattern = Pattern.compile(emailRegex);
         if (pattern.matcher(text).matches()) {
+            progressBar.setVisible(true);
+            progressBar.setStyle("-fx-control-inner-background: green; -fx-accent: green;");
+            button.setDisable(false);
+        } else {
+            progressBar.setVisible(true);
+            progressBar.setStyle("-fx-control-inner-background: red; -fx-accent: red;");
+            button.setDisable(true);
+        }
+    }
+
+    public void checkPhoneNumber(String phone, ProgressBar progressBar, Button button){
+        String phoneRegex = "((\\d{3} ?)|(\\d{3}-))?\\d{3}\\d{4}";
+        Pattern pattern = Pattern.compile(phoneRegex);
+        if(pattern.matcher(phone).matches()){
             progressBar.setVisible(true);
             progressBar.setStyle("-fx-control-inner-background: green; -fx-accent: green;");
             button.setDisable(false);

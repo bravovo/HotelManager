@@ -13,6 +13,7 @@ import org.example.hotelmanager.model.*;
 
 import javafx.event.ActionEvent;
 
+import javax.print.Doc;
 import java.time.*;
 import java.util.*;
 
@@ -91,7 +92,7 @@ public class MongoDatabaseConnection {
     public void loginAccount(Document document, ActionEvent event){
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("hotels");
             if (document.getString("login").equals("Obi-wan_Kenobi")
                     && document.getString("password").equals("maytheforcebewithyou")
             ){
@@ -99,7 +100,7 @@ public class MongoDatabaseConnection {
                 ObservableList<Hotel> hotels = FXCollections.observableArrayList();
                 ObservableList<Client> clients = FXCollections.observableArrayList();
                 FindIterable<Document> clientFindIterable = clientCollection.find();
-                FindIterable<Document> allHotels = hotelCollection.find();
+                FindIterable<Document> allHotels = collection.find();
                 for(Document hotelFromDB : allHotels){
                     Hotel hotelToList = new Hotel(hotelFromDB.getObjectId("_id"), hotelFromDB.getString("hotel_name"),
                             hotelFromDB.getString("address"), hotelFromDB.getString("login"),
@@ -130,7 +131,7 @@ public class MongoDatabaseConnection {
                         "Супер адміністратор | Hotelis", 1150, 750);
                 return;
             }
-            Document findHotel = hotelCollection.find(document).first();
+            Document findHotel = collection.find(document).first();
             if(findHotel != null){
                 this.hotel = new Hotel(findHotel.getObjectId("_id"), findHotel.getString("hotel_name"),
                         findHotel.getString("address"), findHotel.getString("login"),
@@ -150,10 +151,10 @@ public class MongoDatabaseConnection {
 
             // Якщо не знайдено акаунт готелю, то шукати акаунт користувача ----------------------
 
-            hotelCollection = mongoDatabase.getCollection("clients");
+            collection = mongoDatabase.getCollection("clients");
             Document clientDocument = new Document("client_email", document.getString("login"))
                     .append("password", document.getString("password"));
-            Document findClient = hotelCollection.find(clientDocument).first();
+            Document findClient = collection.find(clientDocument).first();
             if(findClient != null){
                 this.client = new Client(
                         findClient.getInteger("client_id"),
@@ -908,6 +909,7 @@ public class MongoDatabaseConnection {
     }
 
     public boolean editClientProfile(Client editedClient) {
+        client = clientHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
@@ -918,8 +920,7 @@ public class MongoDatabaseConnection {
                     return false;
                 }
             }
-            Document editedClientDoc = new Document("$set", new Document("client_id", editedClient.getClientID())
-                    .append("firstname", editedClient.getFirstName())
+            Document editedClientDoc = new Document("$set", new Document("firstname", editedClient.getFirstName())
                     .append("lastname", editedClient.getLastName())
                     .append("client_email", editedClient.getEmail())
                     .append("client_phone", editedClient.getPhoneNumber())
@@ -927,30 +928,41 @@ public class MongoDatabaseConnection {
             );
             clientCollection.findOneAndUpdate(
                     new Document("client_id", editedClient.getClientID()), editedClientDoc);
-            client = editedClient;
-            clientHolder.setUser(client);
+            editedClient.setRoomTypes(client.getRoomTypes());
+            clientHolder.setUser(editedClient);
         }catch (Exception e){
             e.printStackTrace();
         }
         return true;
     }
 
-    public void editHotelProfile() {
+    public boolean editHotelProfile(Hotel editedHotel) {
         hotel = hotelHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
-            Document editedHotel = new Document("$set", new Document("hotel_name", hotel.getHotel_name())
-                    .append("login", hotel.getLogin())
-                    .append("address", hotel.getAddress())
-                    .append("email", hotel.getEmail())
-                    .append("phone_number", hotel.getPhone_number())
+            FindIterable<Document> findEqualLogins = hotelCollection.find(new Document("_id", new Document("$ne", hotel.getHotel_id())));
+            for (Document document : findEqualLogins) {
+                if(document.getString("login").equals(editedHotel.getLogin())){
+                    return false;
+                }
+            }
+            Document editedHotelDoc = new Document("$set", new Document("hotel_name", editedHotel.getHotel_name())
+                    .append("login", editedHotel.getLogin())
+                    .append("address", editedHotel.getAddress())
+                    .append("email", editedHotel.getEmail())
+                    .append("phone_number", editedHotel.getPhone_number())
             );
             hotelCollection.findOneAndUpdate(
-                    new Document("_id", hotel.getHotel_id()), editedHotel);
+                    new Document("_id", hotel.getHotel_id()), editedHotelDoc);
+            editedHotel.setRooms(hotel.getRoomsForList());
+            editedHotel.setBookings(hotel.getBookingsForList());
+            editedHotel.setGuests(hotel.getGuests());
+            hotelHolder.setUser(editedHotel);
         }catch (Exception e){
             e.printStackTrace();
         }
+        return true;
     }
 
     public void deleteClientAccount() {

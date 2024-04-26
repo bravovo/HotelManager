@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="500.0" spacing="40.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.AdminProfileFormController">
+<VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="500.0" spacing="40.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.AdminProfileFormController">
     <padding>
         <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
     </padding>
@@ -32,6 +32,7 @@
         <VBox fx:id="phone_number_vbox" prefHeight="200.0" prefWidth="100.0">
             <Label text="Номер телефону готелю" />
             <TextField fx:id="phone_number_field" />
+         <ProgressBar fx:id="phone_valid_bar" minHeight="-Infinity" prefHeight="5.0" prefWidth="100.0" progress="1.0" visible="false" />
         </VBox>
         <VBox fx:id="email_vbox" maxHeight="-Infinity" prefHeight="50.0" prefWidth="100.0">
             <Label text="Електронна пошта готелю" />

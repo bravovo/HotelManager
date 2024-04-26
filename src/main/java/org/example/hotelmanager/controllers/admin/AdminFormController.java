@@ -45,6 +45,7 @@ public class AdminFormController implements Initializable {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+                hotel = hotelHolder.getUser();
                 hotel_label.setText(hotel.getHotel_name());
             }
         });

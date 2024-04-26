@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="500.0" prefWidth="800.0" spacing="50.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.FindAvailableRoomFormController">
+<VBox prefHeight="500.0" prefWidth="800.0" spacing="50.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.admin.FindAvailableRoomFormController">
    <padding>
       <Insets top="20.0" />
    </padding>
@@ -46,13 +46,14 @@
             <DatePicker fx:id="checkOUT_date" />
          </VBox>
       </VBox>
-      <VBox minHeight="-Infinity" minWidth="-Infinity" prefWidth="300.0" spacing="20.0">
+      <VBox minHeight="-Infinity" minWidth="-Infinity" prefWidth="300.0" spacing="17.0">
          <padding>
             <Insets top="40.0" />
          </padding>
          <VBox>
             <Label text="Номер телефону гостя*" />
             <TextField fx:id="guest_phone_number" />
+            <ProgressBar fx:id="phone_valid_bar" minHeight="-Infinity" prefHeight="5.0" prefWidth="100.0" progress="1.0" visible="false" />
          </VBox>
          <VBox>
             <Label text="Електронна пошта гостя*" />

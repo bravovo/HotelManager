@@ -51,11 +51,11 @@ public class Hotel {
     ) {
         this.hotel_id = hotelId;
         this.hotel_name = hotelName;
-        this.email = email;
-        this.phone_number = phoneNumber;
-        this.login = login;
         this.address = address;
+        this.login = login;
+        this.email = email;
         this.rooms_count = roomsCount;
+        this.phone_number = phoneNumber;
     }
 
     public ObjectId getHotel_id() {

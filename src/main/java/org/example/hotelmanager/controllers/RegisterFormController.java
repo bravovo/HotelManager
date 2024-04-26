@@ -59,6 +59,14 @@ public class RegisterFormController implements Initializable {
             checkEmail(client_email.getText(), client_email, create_client_acc_btn);
         });
 
+        //Валідація номера телефону
+        hotel_phone_number.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkPhoneNumber(hotel_phone_number.getText(), hotel_phone_number, register_hotel_btn);
+        });
+        client_phone_number.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkPhoneNumber(client_phone_number.getText(), client_phone_number, create_client_acc_btn);
+        });
+
         /* Форматування тексту для реєстрації готелю */
         hotel_rooms_count_field.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
@@ -96,6 +104,29 @@ public class RegisterFormController implements Initializable {
             button.setDisable(false);
         } else {
             email.setStyle("-fx-background-color: #FFFFFF;\n" +
+                    "    -fx-font-size: 14px;\n" +
+                    "    -fx-border-color: transparent;\n" +
+                    "    -fx-background-radius: 15px;\n" +
+                    "    -fx-padding: 7px;\n" +
+                    "    -fx-effect: dropshadow(gaussian, rgba(255, 0, 0, 1), 10, 0, 0, 0);"
+            );
+            button.setDisable(true);
+        }
+    }
+    public void checkPhoneNumber(String number, TextField phoneNumber, Button button){
+        String phoneRegex = "((\\d{3} ?)|(\\d{3}-))?\\d{3}\\d{4}";
+        Pattern pattern = Pattern.compile(phoneRegex);
+        if (pattern.matcher(number).matches()) {
+            phoneNumber.setStyle("-fx-background-color: #FFFFFF;\n" +
+                    "    -fx-font-size: 14px;\n" +
+                    "    -fx-border-color: transparent;\n" +
+                    "    -fx-background-radius: 15px;\n" +
+                    "    -fx-padding: 7px;\n" +
+                    "    -fx-effect: dropshadow(gaussian, rgba(0, 255, 0, 1), 10, 0, 0, 0);"
+            );
+            button.setDisable(false);
+        } else {
+            phoneNumber.setStyle("-fx-background-color: #FFFFFF;\n" +
                     "    -fx-font-size: 14px;\n" +
                     "    -fx-border-color: transparent;\n" +
                     "    -fx-background-radius: 15px;\n" +
@@ -191,7 +222,6 @@ public class RegisterFormController implements Initializable {
         hotel_show_password_check.setSelected(false);
         hotel_password_field.requestFocus();
     }
-
 
     public void registerHotelClick(ActionEvent event) throws IOException{
         TextField[] textFields = {
