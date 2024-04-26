@@ -148,6 +148,8 @@ public class ClientCreateBookingFormController implements Initializable {
                     roomTypeDescription,
                     createBookingButton
             );
+
+            // Стилі маленьких форм вільних кімнат
             createBookingButton.setCursor(Cursor.HAND);
             vbox.getStyleClass().add("room-form");
             hotelNameLabel.getStyleClass().add("room-form-label");
@@ -157,6 +159,7 @@ public class ClientCreateBookingFormController implements Initializable {
             roomTypeDescription.getStyleClass().add("room-form-label");
             createBookingButton.getStyleClass().add("room-form-button");
             vbox.setOnMouseEntered(event -> vbox.setCursor(Cursor.HAND));
+
             if(roomVBoxMap.size() >= 4){
                 scroll_pane.setFitToHeight(false);
             }

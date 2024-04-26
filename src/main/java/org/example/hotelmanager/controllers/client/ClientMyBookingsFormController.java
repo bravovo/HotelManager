@@ -154,7 +154,7 @@ public class ClientMyBookingsFormController implements Initializable {
                 Label checkIN = new Label("Дата заїзду: " + booking.getCheckIN_date());
                 Label checkOUT = new Label("Дата виїзду: " + booking.getCheckOUT_date());
                 Label peopleCountLabel = new Label("Кількість людей: " + booking.getPeopleCount());
-                Label totalPrice = new Label("Загальна вартість проживання: " + booking.getTotalPrice());
+                Label totalPrice = new Label("Загальна вартість проживання:\n" + booking.getTotalPrice());
 
                 VBox vbox = new VBox();
                 double prefWidth = 250;
@@ -163,7 +163,7 @@ public class ClientMyBookingsFormController implements Initializable {
                 vbox.setMinWidth(prefWidth);
                 vbox.setPrefHeight(prefHeight);
                 vbox.setMaxHeight(prefHeight);
-                vbox.setSpacing(20);
+                vbox.setSpacing(12.5);
                 vbox.getChildren().addAll(
                         hotelNameLabel,
                         checkIN,
@@ -171,14 +171,14 @@ public class ClientMyBookingsFormController implements Initializable {
                         peopleCountLabel,
                         totalPrice
                 );
-                vbox.setStyle("" +
-                        "-fx-background-color: white; " +
-                        "-fx-padding: 10px; " +
-                        "-fx-border-color: black; " +
-                        "-fx-border-width: 2px; " +
-                        "-fx-border-radius: 5px; " +
-                        "-fx-background-radius: 10px;"
-                );
+
+                // Стилі маленьких форм бронювань
+                vbox.getStyleClass().add("booking-form");
+                hotelNameLabel.getStyleClass().add("booking-form-label");
+                checkIN.getStyleClass().add("booking-form-label");
+                checkOUT.getStyleClass().add("booking-form-label");
+                peopleCountLabel.getStyleClass().add("booking-form-label");
+                totalPrice.getStyleClass().add("total-price-label");
 
                 vbox.setOnMouseEntered(event -> vbox.setCursor(Cursor.HAND));
                 if(bookingVBoxMap.size() >= 4){
