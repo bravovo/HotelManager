@@ -1,5 +1,6 @@
 package org.example.hotelmanager.data;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Sorts;
 import javafx.collections.FXCollections;
@@ -7,17 +8,13 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.model.*;
 
 import javafx.event.ActionEvent;
 
-import javax.print.Doc;
 import java.time.*;
 import java.util.*;
-
-import static com.mongodb.client.model.Projections.include;
 
 public class MongoDatabaseConnection {
     FormBuilder formBuilder = new FormBuilder();
@@ -52,7 +49,7 @@ public class MongoDatabaseConnection {
             newClient.append("client_email", clientEmail);
             newClient.append("client_phone", clientPhoneNumber);
             newClient.append("dateOfBirth", dateOfBirth);
-            newClient.append("password", clientPassword);
+            newClient.append("password", passwordHashing(clientPassword));
             clientCollection.insertOne(newClient);
             this.client = new Client(clientID, firstName, lastName, clientEmail, clientPhoneNumber, dateOfBirth);
             setRoomTypes();
@@ -74,7 +71,7 @@ public class MongoDatabaseConnection {
             }
             newHotel.append("hotel_name", hotelName);
             newHotel.append("login", login);
-            newHotel.append("password", adminPass);
+            newHotel.append("password", passwordHashing(adminPass));
             newHotel.append("address", address);
             newHotel.append("email", email);
             newHotel.append("rooms_count", roomsCount);
@@ -89,94 +86,117 @@ public class MongoDatabaseConnection {
         }
         return true;
     }
-    public void loginAccount(Document document, ActionEvent event){
+
+    public String passwordHashing(String noHashPassword){
+        return BCrypt.withDefaults().hashToString(12, noHashPassword.toCharArray());
+    }
+    public boolean checkingPasswordHash(String password, String hashedPassword){
+        return BCrypt.verifyer().verify(password.toCharArray(), hashedPassword.toCharArray()).verified;
+    }
+
+    public void loginAccount(String login, String password, ActionEvent event){
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = mongoDatabase.getCollection("hotels");
-            if (document.getString("login").equals("Obi-wan_Kenobi")
-                    && document.getString("password").equals("maytheforcebewithyou")
-            ){
-                MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
-                ObservableList<Hotel> hotels = FXCollections.observableArrayList();
-                ObservableList<Client> clients = FXCollections.observableArrayList();
-                FindIterable<Document> clientFindIterable = clientCollection.find();
-                FindIterable<Document> allHotels = collection.find();
-                for(Document hotelFromDB : allHotels){
-                    Hotel hotelToList = new Hotel(hotelFromDB.getObjectId("_id"), hotelFromDB.getString("hotel_name"),
-                            hotelFromDB.getString("address"), hotelFromDB.getString("login"),
-                            hotelFromDB.getString("email"),
-                            hotelFromDB.getInteger("rooms_count"),
-                            hotelFromDB.getString("phone_number"));
-                    hotels.add(hotelToList);
-                }
+//            if (document.getString("login").equals("Obi-wan_Kenobi")
+//                    && document.getString("password").equals("maytheforcebewithyou")
+//            ){
+//                MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
+//                ObservableList<Hotel> hotels = FXCollections.observableArrayList();
+//                ObservableList<Client> clients = FXCollections.observableArrayList();
+//                FindIterable<Document> clientFindIterable = clientCollection.find();
+//                FindIterable<Document> allHotels = collection.find();
+//                for(Document hotelFromDB : allHotels){
+//                    Hotel hotelToList = new Hotel(hotelFromDB.getObjectId("_id"), hotelFromDB.getString("hotel_name"),
+//                            hotelFromDB.getString("address"), hotelFromDB.getString("login"),
+//                            hotelFromDB.getString("email"),
+//                            hotelFromDB.getInteger("rooms_count"),
+//                            hotelFromDB.getString("phone_number"));
+//                    hotels.add(hotelToList);
+//                }
+//
+//                for(Document clientFromDB : clientFindIterable){
+//                    Client clientToList = new Client(
+//                            clientFromDB.getInteger("client_id"),
+//                            clientFromDB.getString("firstname"),
+//                            clientFromDB.getString("lastname"),
+//                            clientFromDB.getString("client_email"),
+//                            clientFromDB.getString("client_phone"),
+//                            clientFromDB.getDate("dateOfBirth")
+//                                    .toInstant()
+//                                    .atZone(ZoneId.systemDefault())
+//                                    .toLocalDate()
+//                    );
+//                    clients.add(clientToList);
+//                }
+//                SuperAdmin superAdmin = new SuperAdmin(hotels, clients);
+//                SuperAdminHolder.getInstance().setSuper(superAdmin);
+//                Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+//                formBuilder.openWindow(stage, "super-admin-forms/super-form.fxml",
+//                        "Супер адміністратор | Hotelis", 1150, 750);
+//                return;
+//            }
 
-                for(Document clientFromDB : clientFindIterable){
-                    Client clientToList = new Client(
-                            clientFromDB.getInteger("client_id"),
-                            clientFromDB.getString("firstname"),
-                            clientFromDB.getString("lastname"),
-                            clientFromDB.getString("client_email"),
-                            clientFromDB.getString("client_phone"),
-                            clientFromDB.getDate("dateOfBirth")
-                                    .toInstant()
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalDate()
-                    );
-                    clients.add(clientToList);
-                }
-                SuperAdmin superAdmin = new SuperAdmin(hotels, clients);
-                SuperAdminHolder.getInstance().setSuper(superAdmin);
-                Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                formBuilder.openWindow(stage, "super-admin-forms/super-form.fxml",
-                        "Супер адміністратор | Hotelis", 1150, 750);
-                return;
-            }
-            Document findHotel = collection.find(document).first();
+            Document findHotel = collection.find(new Document("login", login)).first();
             if(findHotel != null){
-                this.hotel = new Hotel(findHotel.getObjectId("_id"), findHotel.getString("hotel_name"),
-                        findHotel.getString("address"), findHotel.getString("login"),
-                        findHotel.getString("password"), findHotel.getString("email"),
-                        findHotel.getInteger("rooms_count"),
-                        findHotel.getString("phone_number"));
-                hotelHolder.setUser(hotel);
-                setRoomsList();
-                setBookingsList();
-                setGuestsList();
-                setRoomTypes();
-                Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
-                        "Версія для адміністратора | Hotelis", 1350, 750);
-                return;
+                if(checkingPasswordHash(password, findHotel.getString("password"))){
+                    this.hotel = new Hotel(
+                            findHotel.getObjectId("_id"),
+                            findHotel.getString("hotel_name"),
+                            findHotel.getString("address"),
+                            findHotel.getString("login"),
+                            findHotel.getString("email"),
+                            findHotel.getInteger("rooms_count"),
+                            findHotel.getString("phone_number")
+                    );
+                    hotelHolder.setUser(hotel);
+                    setRoomsList();
+                    setBookingsList();
+                    setGuestsList();
+                    setRoomTypes();
+                    Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                    formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
+                            "Версія для адміністратора | Hotelis", 1350, 750);
+                    return;
+                }
+                else{
+                    formBuilder.errorValidation("Введенно неправильний пароль");
+                    return;
+                }
             }
 
             // Якщо не знайдено акаунт готелю, то шукати акаунт користувача ----------------------
 
             collection = mongoDatabase.getCollection("clients");
-            Document clientDocument = new Document("client_email", document.getString("login"))
-                    .append("password", document.getString("password"));
-            Document findClient = collection.find(clientDocument).first();
+            Document findClient = collection.find(new Document("client_email", login)).first();
             if(findClient != null){
-                this.client = new Client(
-                        findClient.getInteger("client_id"),
-                        findClient.getString("firstname"),
-                        findClient.getString("lastname"),
-                        findClient.getString("client_email"),
-                        findClient.getString("client_phone"),
-                        findClient.getDate("dateOfBirth")
-                                .toInstant()
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDate()
-                );
-                setRoomTypes();
-                Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                formBuilder.openWindow(stage, "client-forms/client-form.fxml",
-                        "Версія для клієнта | Hotelis", 1350, 750);
-                return;
+                if(checkingPasswordHash(password, findClient.getString("password"))){
+                    this.client = new Client(
+                            findClient.getInteger("client_id"),
+                            findClient.getString("firstname"),
+                            findClient.getString("lastname"),
+                            findClient.getString("client_email"),
+                            findClient.getString("client_phone"),
+                            findClient.getDate("dateOfBirth")
+                                    .toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                    );
+                    setRoomTypes();
+                    Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                    formBuilder.openWindow(stage, "client-forms/client-form.fxml",
+                            "Версія для клієнта | Hotelis", 1350, 750);
+                    return;
+                }
+                else{
+                    formBuilder.errorValidation("Введенно неправильний пароль");
+                    return;
+                }
             }
 
             // Якщо не знайдено користувача також, тоді акаунта не існує, або введені неправильні дані
 
-            formBuilder.errorValidation("Неправильно введені дані для авторизації");
+            formBuilder.errorValidation("Акаунта з такими даними не існує");
 
         } catch(Exception exception){
             exception.printStackTrace();

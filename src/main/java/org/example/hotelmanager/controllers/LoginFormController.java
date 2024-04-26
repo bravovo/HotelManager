@@ -3,7 +3,6 @@ package org.example.hotelmanager.controllers;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.stage.Stage;
-import org.bson.Document;
 import org.example.hotelmanager.FormBuilder;
 
 import java.io.IOException;
@@ -26,8 +25,11 @@ public class LoginFormController {
     }
 
     public void loginButtonClick(ActionEvent event){
-        Document loginDoc = new Document("login", login_field.getText()).append("password", pass_field.getText());
-        mongoDatabaseConnection.loginAccount(loginDoc, event);
+        if(login_field.getText().isEmpty() || pass_field.getText().isEmpty()) {
+            formBuilder.errorValidation("Усі обов'язкові поля повинні бути заповненні");
+            return;
+        }
+        mongoDatabaseConnection.loginAccount(login_field.getText(), pass_field.getText(), event);
     }
     public void cancelAndExit(ActionEvent event){
         System.exit(0);
