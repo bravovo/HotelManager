@@ -96,7 +96,7 @@ public class ClientCreateBookingFormController implements Initializable {
             String hotelName = "";
             String typeDescription = "";
             for(Hotel hotel : hotels){
-                if(hotel.getHotel_id() == room.getHotel_id()){
+                if(hotel.getHotel_id().toString().equals(room.getHotel_id().toString())){
                     hotelName = hotel.getHotel_name();
                     room.setHotel(hotel);
                 }
@@ -116,6 +116,7 @@ public class ClientCreateBookingFormController implements Initializable {
             createBookingButton.setOnAction(click -> {
                 Booking clientBooking = new Booking(
                         room.getHotel_id(),
+                        room.getRoom_id(),
                         client.getFirstName(),
                         client.getLastName(),
                         client.getPhoneNumber(),

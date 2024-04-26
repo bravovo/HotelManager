@@ -46,7 +46,7 @@ public class AdminBookingsFormController implements Initializable {
         hotel = hotelHolder.getUser();
         setBookingsTable();
         ObservableList<String> items = FXCollections.observableArrayList(
-                "ID", "Ім'я гостя", "Прізвище гостя", "Cтатус", "Номер кімнати", "Вартість"
+                "Ім'я гостя", "Прізвище гостя", "Cтатус", "Номер кімнати", "Вартість"
         );
         ((ChoiceBox)filter_choice).setItems(items);
         filter_choice.setValue("Фільтр для пошуку");
@@ -130,20 +130,6 @@ public class AdminBookingsFormController implements Initializable {
             return;
         }
         switch (filter_choice.getValue()){
-            case "ID" -> {
-                int bookingID;
-                try{
-                    bookingID = Integer.parseInt(find_input.getText());
-                    filter = "ID";
-                    value = String.valueOf(bookingID);
-                }catch (Exception e){
-                    FormBuilder formBuilder = new FormBuilder();
-                    formBuilder.errorValidation("ID бронювання повинно бути числом!");
-                    find_input.setText("");
-                    return;
-                }
-                setBookingsTable(findBookingsByFilterAndValue(filter, value));
-            }
             case "Cтатус" -> {
                 String status = find_input.getText();
                 filter = "Cтатус";
@@ -196,12 +182,6 @@ public class AdminBookingsFormController implements Initializable {
         ObservableList<Booking> bookings = FXCollections.observableArrayList();
         for(Booking booking : hotel.getBookingsForList()){
             switch (filter){
-                case "ID" -> {
-                    int IDvalue = Integer.parseInt(value);
-                    if (booking.getBookingID() == IDvalue){
-                        bookings.add(booking);
-                    }
-                }
                 case "Номер кімнати" -> {
                     int roomNumberValue = Integer.parseInt(value);
                     if (booking.getRoomNumber() == roomNumberValue){

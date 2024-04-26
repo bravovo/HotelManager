@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.model.*;
 
@@ -14,6 +15,8 @@ import javafx.event.ActionEvent;
 
 import java.time.*;
 import java.util.*;
+
+import static com.mongodb.client.model.Projections.include;
 
 public class MongoDatabaseConnection {
     FormBuilder formBuilder = new FormBuilder();
@@ -64,12 +67,10 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = mongoDatabase.getCollection("hotels");
-            int hotelCount = (int)collection.countDocuments();
             if(collection.find(new Document("address", address)).first() != null ||
                     collection.find(new Document("login", login)).first() != null){
                 return false;
             }
-            newHotel.append("hotel_id", hotelCount);
             newHotel.append("hotel_name", hotelName);
             newHotel.append("login", login);
             newHotel.append("password", adminPass);
@@ -78,7 +79,7 @@ public class MongoDatabaseConnection {
             newHotel.append("rooms_count", roomsCount);
             newHotel.append("phone_number", phoneNumber);
             collection.insertOne(newHotel);
-            this.hotel = new Hotel(hotelCount, hotelName, address, login, adminPass, email, roomsCount, phoneNumber);
+            this.hotel = new Hotel(newHotel.getObjectId("_id"), hotelName, address, login, adminPass, email, roomsCount, phoneNumber);
             setRoomTypes();
             hotelHolder.setUser(hotel);
             return true;
@@ -100,7 +101,7 @@ public class MongoDatabaseConnection {
                 FindIterable<Document> clientFindIterable = clientCollection.find();
                 FindIterable<Document> allHotels = hotelCollection.find();
                 for(Document hotelFromDB : allHotels){
-                    Hotel hotelToList = new Hotel(hotelFromDB.getInteger("hotel_id"), hotelFromDB.getString("hotel_name"),
+                    Hotel hotelToList = new Hotel(hotelFromDB.getObjectId("_id"), hotelFromDB.getString("hotel_name"),
                             hotelFromDB.getString("address"), hotelFromDB.getString("login"),
                             hotelFromDB.getString("email"),
                             hotelFromDB.getInteger("rooms_count"),
@@ -131,7 +132,7 @@ public class MongoDatabaseConnection {
             }
             Document findHotel = hotelCollection.find(document).first();
             if(findHotel != null){
-                this.hotel = new Hotel(findHotel.getInteger("hotel_id"), findHotel.getString("hotel_name"),
+                this.hotel = new Hotel(findHotel.getObjectId("_id"), findHotel.getString("hotel_name"),
                         findHotel.getString("address"), findHotel.getString("login"),
                         findHotel.getString("password"), findHotel.getString("email"),
                         findHotel.getInteger("rooms_count"),
@@ -182,16 +183,19 @@ public class MongoDatabaseConnection {
     }
 
     private void setBookingsList() {
+        hotel = hotelHolder.getUser();
         ObservableList<Booking> bookings = FXCollections.observableArrayList();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> bookingsCollection = mongoDatabase.getCollection("bookings");
-            FindIterable<Document> bookingOfHotel =
-                    bookingsCollection.find(new Document("hotel_id", hotel.getHotel_id()));
+            List<Document> bookingOfHotel = bookingsCollection.find(
+                    new Document("hotel_id", hotel.getHotel_id())).into(new ArrayList<>()
+            );
             for(Document bookingDoc : bookingOfHotel){
                 Booking booking = new Booking(
-                        bookingDoc.getInteger("booking_id"),
+                        bookingDoc.getObjectId("_id"),
                         hotel.getHotel_id(),
+                        bookingDoc.getObjectId("room_id"),
                         bookingDoc.getInteger("client_id"),
                         bookingDoc.getString("guest_first_name"),
                         bookingDoc.getString("guest_second_name"),
@@ -220,19 +224,13 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
-            Document sortedByIDRoom = roomsCollection.find().sort(Sorts.descending("room_id")).first();
-            int roomID = 0;
-            if (sortedByIDRoom != null){
-                roomID = sortedByIDRoom.getInteger("room_id") + 1;
-            }
             FindIterable<Document> roomsOfThisHotel = roomsCollection.find(new Document("hotel_id", hotel.getHotel_id()));
             Document sortedByNumberRoom = roomsOfThisHotel.sort(Sorts.descending("room_number")).first();
             int roomNumber = 0;
             if (sortedByNumberRoom != null){
                 roomNumber = sortedByNumberRoom.getInteger("room_number");
             }
-            Document room = new Document("room_id", roomID);
-            room.append("hotel_id", hotel.getHotel_id());
+            Document room = new Document("hotel_id", hotel.getHotel_id());
             room.append("type_id", typeID);
             room.append("type_name", typeName);
             room.append("room_name", roomName);
@@ -275,20 +273,14 @@ public class MongoDatabaseConnection {
             } else if (room.getType_name().charAt(1) == 'D' || room.getType_name().charAt(1) == 'T'){
                 capacity = 2;
             }
-            Document roomDocument = new Document("$set", new Document("room_id", room.getRoom_id())
-                    .append("hotel_id", hotel.getHotel_id())
-                    .append("type_id", room.getType_id())
+            Document roomDocument = new Document("$set", new Document("type_id", room.getType_id())
                     .append("type_name", room.getType_name())
                     .append("room_name", room.getRoom_name())
                     .append("description", room.getRoom_description())
-                    .append("room_number", room.getRoom_number())
                     .append("status", room.getStatus())
-                    .append("from", room.getDateFrom())
-                    .append("to", room.getDateTo())
                     .append("price", room.getPrice())
                     .append("capacity", capacity));
-            roomCollection.updateOne(new Document("hotel_id", hotel.getHotel_id())
-                    .append("room_number", room.getRoom_number()), roomDocument);
+            roomCollection.updateOne(new Document("_id", room.getRoom_id()), roomDocument);
 
             // Після оновлення кімнати,
             // потрібно оновити дані про бронювання,
@@ -313,16 +305,15 @@ public class MongoDatabaseConnection {
     }
     public void setRoomsList(){
         hotel = hotelHolder.getUser();
-        int id = hotel.getHotel_id();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
-            FindIterable<Document> roomDocuments = roomsCollection.find(new Document("hotel_id", id));
+            FindIterable<Document> roomDocuments = roomsCollection.find(new Document("hotel_id", hotel.getHotel_id()));
             MongoCollection<Document> bookingsCollection = mongoDatabase.getCollection("bookings");
             MongoCollection<Document> bookingsDoneCollection = mongoDatabase.getCollection("booking_done");
             for(Document roomDoc : roomDocuments){
                 FindIterable<Document> bookingDocuments =
-                        bookingsCollection.find(new Document("hotel_id", id)
+                        bookingsCollection.find(new Document("hotel_id", hotel.getHotel_id())
                                 .append("room_number", roomDoc.getInteger("room_number")));
                 Document updatedRoom;
                 for(Document bookingDoc : bookingDocuments) {
@@ -384,12 +375,7 @@ public class MongoDatabaseConnection {
                         toUpdate = true;
                     }
                     if(toUpdate){
-                        updatedRoom = new Document("$set", new Document(
-                                "room_id", roomDoc.getInteger("room_id"))
-                                .append("hotel_id", roomDoc.getInteger("hotel_id"))
-                                .append("type_id", roomDoc.getInteger("type_id"))
-                                .append("type_name", roomDoc.getString("type_name"))
-                                .append("room_name", roomDoc.getString("room_name"))
+                        updatedRoom = new Document("$set", new Document("room_name", roomDoc.getString("room_name"))
                                 .append("description", roomDoc.getString("description"))
                                 .append("room_number", roomDoc.getInteger("room_number"))
                                 .append("status", status)
@@ -398,7 +384,7 @@ public class MongoDatabaseConnection {
                                 .append("price", roomDoc.getDouble("price"))
                                 .append("capacity", roomDoc.getInteger("capacity"))
                         );
-                        roomsCollection.updateOne(new Document("hotel_id", id)
+                        roomsCollection.updateOne(new Document("hotel_id", hotel.getHotel_id())
                                 .append("room_number", roomDoc.getInteger("room_number")), updatedRoom);
                         break;
                     }
@@ -409,12 +395,7 @@ public class MongoDatabaseConnection {
                     localDateTime = LocalDateTime.now().plusDays(1);
                     instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
                     dateTO = Date.from(instant);
-                    updatedRoom = new Document("$set", new Document(
-                            "room_id", roomDoc.getInteger("room_id"))
-                            .append("hotel_id", roomDoc.getInteger("hotel_id"))
-                            .append("type_id", roomDoc.getInteger("type_id"))
-                            .append("type_name", roomDoc.getString("type_name"))
-                            .append("room_name", roomDoc.getString("room_name"))
+                    updatedRoom = new Document("$set", new Document("room_name", roomDoc.getString("room_name"))
                             .append("description", roomDoc.getString("description"))
                             .append("room_number", roomDoc.getInteger("room_number"))
                             .append("status", status)
@@ -423,17 +404,17 @@ public class MongoDatabaseConnection {
                             .append("price", roomDoc.getDouble("price"))
                             .append("capacity", roomDoc.getInteger("capacity"))
                     );
-                    roomsCollection.updateOne(new Document("hotel_id", id)
+                    roomsCollection.updateOne(new Document("hotel_id", hotel.getHotel_id())
                             .append("room_number", roomDoc.getInteger("room_number")), updatedRoom);
                 }
             }
             ObservableList<Booking> bookingsFromHotel = hotel.getBookingsForList();
             ObservableList<Room> roomList = FXCollections.observableArrayList();
-            roomDocuments = roomsCollection.find(new Document("hotel_id", id));
+            roomDocuments = roomsCollection.find(new Document("hotel_id", hotel.getHotel_id()));
             for(Document roomDoc : roomDocuments){
                 Room room = new Room(
-                        roomDoc.getInteger("room_id"),
-                        roomDoc.getInteger("hotel_id"),
+                        roomDoc.getObjectId("_id"),
+                        roomDoc.getObjectId("hotel_id"),
                         roomDoc.getInteger("type_id"),
                         roomDoc.getString("type_name"),
                         roomDoc.getString("room_name"),
@@ -475,7 +456,7 @@ public class MongoDatabaseConnection {
             for(Document roomDoc : allRoomsInDataBase){
                 boolean isAvailable = true;
                 FindIterable<Document> roomBookings = bookingCollection.find(
-                        new Document("room_number", roomDoc.getInteger("room_number"))
+                        new Document("room_id", roomDoc.get("_id"))
                 );
                 for(Document roomBooking : roomBookings) {
                     Date checkIn = roomBooking.getDate("checkIN_date");
@@ -490,8 +471,8 @@ public class MongoDatabaseConnection {
                 }
                 if(isAvailable){
                     Room availableRoom = new Room(
-                            roomDoc.getInteger("room_id"),
-                            roomDoc.getInteger("hotel_id"),
+                            roomDoc.getObjectId("_id"),
+                            roomDoc.getObjectId("hotel_id"),
                             roomDoc.getInteger("type_id"),
                             roomDoc.getString("type_name"),
                             roomDoc.getString("room_name"),
@@ -536,19 +517,14 @@ public class MongoDatabaseConnection {
     }
     public void deleteRoom() {
         hotel = hotelHolder.getUser();
-        Document roomDocument;
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             roomToDelete = roomHolder.getRoom();
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
-            bookingCollection.deleteMany(new Document("hotel_id", roomToDelete.getHotel_id())
+            bookingCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id())
                     .append("room_number", roomToDelete.getRoom_number()));
-            roomDocument = roomsCollection.find(new Document("hotel_id", roomToDelete.getHotel_id())
-                    .append("room_id", roomToDelete.getRoom_id())).first();
-            if (roomDocument != null){
-                roomsCollection.deleteOne(roomDocument);
-            }
+            roomsCollection.deleteOne(new Document("_id", roomToDelete.getRoom_id()));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -558,16 +534,10 @@ public class MongoDatabaseConnection {
     }
     public void deleteBooking(Booking booking) {
         hotel = hotelHolder.getUser();
-        Document bookingDocument;
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> bookingsCollection = mongoDatabase.getCollection("bookings");
-            bookingToDelete = bookingHolder.getBooking();
-            bookingDocument = bookingsCollection.find(new Document("hotel_id", bookingToDelete.getHotelID())
-                    .append("booking_id", bookingToDelete.getBookingID())).first();
-            if (bookingDocument != null){
-                bookingsCollection.deleteOne(bookingDocument);
-            }
+            bookingsCollection.deleteOne(new Document("_id", booking.getBookingID()));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -586,13 +556,15 @@ public class MongoDatabaseConnection {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
             MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
-            FindIterable<Document> hotelRooms = roomsCollection.find(new Document("hotel_id", hotel.getHotel_id())
-                    .append("capacity", new Document("$gte", booking.getPeopleCount())));
+            List<Document> hotelRooms = roomsCollection.find(
+                    new Document("hotel_id", hotel.getHotel_id())
+                            .append("capacity", new Document("$gte", booking.getPeopleCount()))).into(new ArrayList<>()
+            );
             for(Document hotelRoom : hotelRooms){
                 boolean isAvailable = true;
-                FindIterable<Document> hotelBookings =
-                        bookingCollection.find(new Document("hotel_id", hotel.getHotel_id())
-                                .append("room_number", hotelRoom.getInteger("room_number")));
+                List<Document> hotelBookings = bookingCollection.find(new Document(
+                        "room_id", hotelRoom.getObjectId("_id"))).into(new ArrayList<>()
+                );
                 for(Document hotelBooking : hotelBookings) {
                     Date checkIn = hotelBooking.getDate("checkIN_date");
                     Date checkOut = hotelBooking.getDate("checkOUT_date");
@@ -606,8 +578,8 @@ public class MongoDatabaseConnection {
                 }
                 if(isAvailable){
                     Room availableRoom = new Room(
-                            hotelRoom.getInteger("room_id"),
-                            hotelRoom.getInteger("hotel_id"),
+                            hotelRoom.getObjectId("_id"),
+                            hotel.getHotel_id(),
                             hotelRoom.getInteger("type_id"),
                             hotelRoom.getString("type_name"),
                             hotelRoom.getString("room_name"),
@@ -634,17 +606,12 @@ public class MongoDatabaseConnection {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
             Document sortedByIdGuest = bookingCollection.find().sort(Sorts.descending("client_id")).first();
-            Document sortedByIdBooking = bookingCollection.find().sort(Sorts.descending("booking_id")).first();
-            int bookingID = 0;
-            if (sortedByIdBooking != null){
-                bookingID = sortedByIdBooking.getInteger("booking_id");
-            }
             int guestID = 0;
             if (sortedByIdGuest != null){
                 guestID = sortedByIdGuest.getInteger("client_id");
             }
             Document adminBooking = new Document("hotel_id", hotel.getHotel_id())
-                    .append("booking_id", bookingID + 1)
+                    .append("room_id", booking.getRoomID())
                     .append("client_id", guestID + 1)
                     .append("guest_first_name", booking.getGuestFirstName())
                     .append("guest_second_name", booking.getGuestSecondName())
@@ -675,24 +642,40 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
-            Document sortedByIdBooking = bookingCollection.find().sort(Sorts.descending("booking_id")).first();
-            int bookingID = 4;
-            if (sortedByIdBooking != null){
-                bookingID = sortedByIdBooking.getInteger("booking_id");
-            }
+            Document existingBookingDoc = bookingCollection.find(new Document("_id", booking.getBookingID())).first();
             if(findNewAvailable){
                 deleteBooking(booking);
                 ObservableList<Room> availableRoomsForBooking = adminFindAvailableRoomsForBooking(booking);
+                if(availableRoomsForBooking.size() == 0){
+                    Booking existingBooking = new Booking(
+                            existingBookingDoc.getObjectId("hotel_id"),
+                            existingBookingDoc.getObjectId("room_id"),
+                            existingBookingDoc.getString("guest_first_name"),
+                            existingBookingDoc.getString("guest_second_name"),
+                            existingBookingDoc.getString("guest_phone_number"),
+                            existingBookingDoc.getString("guest_email"),
+                            existingBookingDoc.getInteger("room_number"),
+                            existingBookingDoc.getString("room_type"),
+                            existingBookingDoc.getInteger("people_count"),
+                            existingBookingDoc.getDate("checkIN_date")
+                                    .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                            existingBookingDoc.getDate("checkOUT_date")
+                                    .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                            existingBookingDoc.getDouble("total_price"),
+                            existingBookingDoc.getString("add_info")
+                    );
+                    createAdminBooking(existingBooking);
+                }
                 roomHolder.setRoomList(availableRoomsForBooking);
             }else{
-                Document bookingToEdit = new Document("$set", new Document("booking_id", bookingID)
-                        .append("guest_first_name", booking.getGuestFirstName())
+                Document bookingToEdit = new Document("$set", new Document(
+                        "guest_first_name", booking.getGuestFirstName())
                         .append("guest_second_name", booking.getGuestSecondName())
                         .append("guest_phone_number", booking.getGuestPhoneNumber())
                         .append("guest_email", booking.getGuestEmail())
                         .append("add_info", booking.getAdditionalInfo())
                 );
-                bookingCollection.updateOne(new Document("booking_id", bookingID), bookingToEdit);
+                bookingCollection.updateOne(new Document("_id", booking.getBookingID()), bookingToEdit);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -708,14 +691,15 @@ public class MongoDatabaseConnection {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
             MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
+            Document existingBookingDoc = bookingCollection.find(new Document("_id", booking.getBookingID())).first();
             if(findNewAvailable){
                 deleteBooking(booking);
                 boolean isAvailable = true;
                 Document roomForBookingEditing = roomsCollection.find(
-                        new Document("hotel_id", booking.getHotelID()).append("room_number", booking.getRoomNumber())
+                        new Document("_id", booking.getRoomID())
                 ).first();
                 FindIterable<Document> roomBookings = bookingCollection.find(
-                        new Document("hotel_id", booking.getHotelID()).append("room_number", booking.getRoomNumber())
+                        new Document("room_id", booking.getRoomID())
                 );
                 for(Document roomBooking : roomBookings) {
                     Date checkIn = roomBooking.getDate("checkIN_date");
@@ -737,6 +721,7 @@ public class MongoDatabaseConnection {
                 if(isAvailable && booking.getPeopleCount() <= peopleCount){
                     Booking clientBooking = new Booking(
                             booking.getHotelID(),
+                            booking.getRoomID(),
                             client.getFirstName(),
                             client.getLastName(),
                             client.getPhoneNumber(),
@@ -765,6 +750,7 @@ public class MongoDatabaseConnection {
                         }
                         Booking clientBooking = new Booking(
                                 roomToBook.getHotel_id(),
+                                roomToBook.getRoom_id(),
                                 client.getFirstName(),
                                 client.getLastName(),
                                 client.getPhoneNumber(),
@@ -780,18 +766,35 @@ public class MongoDatabaseConnection {
                         createClientBooking(clientBooking);
                     }
                     else{
+                        Booking existingBooking = new Booking(
+                                existingBookingDoc.getObjectId("hotel_id"),
+                                existingBookingDoc.getObjectId("room_id"),
+                                existingBookingDoc.getString("guest_first_name"),
+                                existingBookingDoc.getString("guest_second_name"),
+                                existingBookingDoc.getString("guest_phone_number"),
+                                existingBookingDoc.getString("guest_email"),
+                                existingBookingDoc.getInteger("room_number"),
+                                existingBookingDoc.getString("room_type"),
+                                existingBookingDoc.getInteger("people_count"),
+                                existingBookingDoc.getDate("checkIN_date")
+                                        .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                                existingBookingDoc.getDate("checkOUT_date")
+                                        .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                                existingBookingDoc.getDouble("total_price"),
+                                existingBookingDoc.getString("add_info")
+                        );
+                        createClientBooking(existingBooking);
                         formBuilder.errorValidation("Не вдалось знайти вільних кімнат за запитом");
                     }
                 }
             }else{
-                Document bookingToEdit = new Document("$set", new Document("booking_id", booking.getBookingID())
-                        .append("guest_first_name", booking.getGuestFirstName())
+                Document bookingToEdit = new Document("$set", new Document("guest_first_name", booking.getGuestFirstName())
                         .append("guest_second_name", booking.getGuestSecondName())
                         .append("guest_phone_number", booking.getGuestPhoneNumber())
                         .append("guest_email", booking.getGuestEmail())
                         .append("add_info", booking.getAdditionalInfo())
                 );
-                bookingCollection.updateOne(new Document("booking_id", booking.getBookingID()), bookingToEdit);
+                bookingCollection.updateOne(new Document("_id", booking.getBookingID()), bookingToEdit);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -800,13 +803,12 @@ public class MongoDatabaseConnection {
 
     public void createClientBooking(Booking booking) {
         client = clientHolder.getUser();
-        int bookingID = 0;
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
             boolean isAvailable = true;
             FindIterable<Document> roomBookings = bookingCollection.find(
-                    new Document("hotel_id", booking.getHotelID()).append("room_number", booking.getRoomNumber())
+                    new Document("room_id", booking.getRoomID())
             );
             for(Document roomBooking : roomBookings) {
                 Date checkIn = roomBooking.getDate("checkIN_date");
@@ -820,12 +822,8 @@ public class MongoDatabaseConnection {
                 }
             }
             if(isAvailable){
-                Document sortedByIdBooking = bookingCollection.find().sort(Sorts.descending("booking_id")).first();
-                if (sortedByIdBooking != null){
-                    bookingID = sortedByIdBooking.getInteger("booking_id");
-                }
                 Document clientBooking = new Document("hotel_id", booking.getHotelID())
-                        .append("booking_id", bookingID + 1)
+                        .append("room_id", booking.getRoomID())
                         .append("client_id", client.getClientID())
                         .append("guest_first_name", booking.getGuestFirstName())
                         .append("guest_second_name", booking.getGuestSecondName())
@@ -857,10 +855,10 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
-            FindIterable<Document> hotelDocs = hotelCollection.find();
+            List<Document> hotelDocs = hotelCollection.find().into(new ArrayList<>());
             for(Document hotelDoc : hotelDocs){
                 Hotel hotel = new Hotel(
-                        hotelDoc.getInteger("hotel_id"),
+                        hotelDoc.getObjectId("_id"),
                         hotelDoc.getString("hotel_name"),
                         hotelDoc.getString("address"),
                         hotelDoc.getString("email"),
@@ -883,9 +881,10 @@ public class MongoDatabaseConnection {
             FindIterable<Document> bookingDocs = hotelCollection.find(new Document("client_id", client.getClientID()));
             for(Document bookingDoc : bookingDocs){
                 Booking booking = new Booking(
-                        bookingDoc.getInteger("booking_id"),
-                        bookingDoc.getInteger("hotel_id"),
-                        bookingDoc == null ? 0 : bookingDoc.getInteger("client_id"),
+                        bookingDoc.getObjectId("_id"),
+                        bookingDoc.getObjectId("hotel_id"),
+                        bookingDoc.getObjectId("room_id"),
+                        bookingDoc.getInteger("client_id"),
                         bookingDoc.getString("guest_first_name"),
                         bookingDoc.getString("guest_second_name"),
                         bookingDoc.getString("guest_phone_number"),
@@ -941,15 +940,14 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
-            Document editedHotel = new Document("$set", new Document("hotel_id", hotel.getHotel_id())
-                    .append("hotel_name", hotel.getHotel_name())
+            Document editedHotel = new Document("$set", new Document("hotel_name", hotel.getHotel_name())
                     .append("login", hotel.getLogin())
                     .append("address", hotel.getAddress())
                     .append("email", hotel.getEmail())
                     .append("phone_number", hotel.getPhone_number())
             );
             hotelCollection.findOneAndUpdate(
-                    new Document("hotel_id", hotel.getHotel_id()), editedHotel);
+                    new Document("_id", hotel.getHotel_id()), editedHotel);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -978,7 +976,7 @@ public class MongoDatabaseConnection {
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
             roomCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id()));
             bookingCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id()));
-            hotelCollection.deleteOne(new Document("hotel_id", hotel.getHotel_id()));
+            hotelCollection.deleteOne(new Document("_id", hotel.getHotel_id()));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1004,7 +1002,7 @@ public class MongoDatabaseConnection {
                 boolean foundEqual = false;
                 Guest guest = new Guest(
                         bookingDoc.getInteger("client_id"),
-                        hotel.getHotel_id(),
+                        hotel.getHotel_id().toHexString(),
                         bookingDoc.getInteger("room_number"),
                         bookingDoc.getString("guest_first_name"),
                         bookingDoc.getString("guest_second_name"),

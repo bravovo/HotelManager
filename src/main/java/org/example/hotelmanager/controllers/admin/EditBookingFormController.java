@@ -84,6 +84,7 @@ public class EditBookingFormController implements Initializable {
     }
 
     public void saveButtonClick(javafx.event.ActionEvent event) throws IOException {
+        booking = bookingHolder.getBooking();
         TextField[] textFields = {
                 guest_first_name,
                 guest_second_name,
@@ -99,6 +100,9 @@ public class EditBookingFormController implements Initializable {
         }
         long nightPeriod = ChronoUnit.DAYS.between(checkIN.getValue(), checkOUT.getValue());
         Booking bookingToEdit = new Booking(
+                booking.getBookingID(),
+                booking.getHotelID(),
+                booking.getRoomID(),
                 guest_first_name.getText(),
                 guest_second_name.getText(),
                 guest_phone_number.getText(),

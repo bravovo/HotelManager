@@ -62,7 +62,7 @@ public class ClientMyBookingsFormController implements Initializable {
     LocalDate checkINFirst = LocalDate.now();
     LocalDate checkOUTFirst = LocalDate.now();
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        scroll_pane.setStyle("-fx-background-color: transparent; -fx-border-width: 0px;");
+        scroll_pane.setStyle("-fx-background-color: white; -fx-border-width: 0px;");
         changeListener = (observable, oldValue, newValue) -> {
             if (Objects.equals(addInfoFirst, notes_area.getText())
                     && Objects.equals(peopleCountFirst, people_count_field.getText())
@@ -94,7 +94,7 @@ public class ClientMyBookingsFormController implements Initializable {
         setPage();
     }
     public void editBookingButtonClick(ActionEvent event) throws IOException{
-        bookingToEdit = chosenBooking;
+        bookingToEdit = bookingHolder.getBooking();
         bookingToEdit.setAdditionalInfo(notes_area.getText());
         bookingToEdit.setCheckIN_date(checkIN_picker.getValue());
         bookingToEdit.setCheckOUT_date(checkOUT_picker.getValue());
@@ -118,7 +118,6 @@ public class ClientMyBookingsFormController implements Initializable {
     }
 
     public void deleteBookingButtonClick(ActionEvent event) throws IOException {
-        bookingHolder.setBooking(chosenBooking);
         formBuilder.openDialog("confirming-booking-dialog-form.fxml", "Видалити бронювання", 300, 200);
         if(bookingHolder.getBookingDone()) {
             bookingHolder.setBookingDone(false);
@@ -147,7 +146,7 @@ public class ClientMyBookingsFormController implements Initializable {
             for(Booking booking : bookings){
                 String hotelName = "";
                 for(Hotel hotel : hotels){
-                    if(hotel.getHotel_id() == booking.getHotelID()){
+                    if(hotel.getHotel_id().toString().equals(booking.getHotelID().toString())){
                         hotelName = hotel.getHotel_name();
                     }
                 }
@@ -191,6 +190,7 @@ public class ClientMyBookingsFormController implements Initializable {
                     try{
                         if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() >= 1) {
                             chosenBooking = bookingVBoxMap.get(vbox);
+                            bookingHolder.setBooking(chosenBooking);
                             hotel_name.setText(finalHotelName);
                             room_number.setText(String.valueOf(booking.getRoomNumber()));
                             notes_area.setWrapText(true);

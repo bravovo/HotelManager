@@ -65,8 +65,9 @@ public class WatchAndConfirmBookingFormController implements Initializable {
     public void createBookingButtonClick(ActionEvent event) {
         Booking clientBooking = new Booking(
                 room.getHotel_id(),
-                guest_firstname.getText(),
-                guest_secondname.getText(),
+                room.getRoom_id(),
+                client.getFirstName(),
+                client.getLastName(),
                 client.getPhoneNumber(),
                 client.getEmail(),
                 room.getRoom_number(),

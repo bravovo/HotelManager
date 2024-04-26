@@ -42,7 +42,7 @@ public class SuperHotelsFormController implements Initializable {
         superAdmin = superAdminHolder.getSuper();
         setHotelsTable();
         ObservableList<String> items = FXCollections.observableArrayList(
-                "ID", "Назва", "Електронна пошта", "Номер телефону", "Логін", "Адреса"
+                "Назва", "Електронна пошта", "Номер телефону", "Логін", "Адреса"
         );
         filter_choice.setItems(items);
         filter_choice.setValue("Фільтр для пошуку");
@@ -112,20 +112,6 @@ public class SuperHotelsFormController implements Initializable {
             return;
         }
         switch (filter_choice.getValue()){
-            case "ID" -> {
-                int hotelID = 0;
-                try{
-                    hotelID = Integer.parseInt(find_input.getText());
-                    filter = "ID";
-                    value = String.valueOf(hotelID);
-                }catch (Exception e){
-                    FormBuilder formBuilder = new FormBuilder();
-                    formBuilder.errorValidation("ID повинно бути числом!");
-                    find_input.setText("");
-                    return;
-                }
-                hotelList = findHotelsByFilterAndValue(filter, value);
-            }
             case "Назва" -> {
                 String hotelName = find_input.getText();
                 filter = "Назва";
@@ -164,12 +150,6 @@ public class SuperHotelsFormController implements Initializable {
         ObservableList<Hotel> hotels = FXCollections.observableArrayList();
         for(Hotel hotelFromList : superAdmin.getHotels()){
             switch (filter){
-                case "ID" -> {
-                    int ID = Integer.parseInt(value);
-                    if (hotelFromList.getHotel_id() == ID){
-                        hotels.add(hotelFromList);
-                    }
-                }
                 case "Назва" -> {
                     if(hotelFromList.getHotel_name().equals(value)){
                         hotels.add(hotelFromList);

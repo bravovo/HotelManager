@@ -5,12 +5,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.bson.types.ObjectId;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
-import org.example.hotelmanager.model.Booking;
-import org.example.hotelmanager.model.BookingHolder;
-import org.example.hotelmanager.model.Room;
-import org.example.hotelmanager.model.RoomHolder;
+import org.example.hotelmanager.model.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -44,6 +42,7 @@ public class ConfirmBookingFormController implements Initializable {
         availableRoomList = roomHolder.getRoomsList();
         booking = bookingHolder.getBooking();
         room = availableRoomList.get(0);
+        roomHolder.setRoom(room);
         setBookingFields();
     }
 
@@ -74,15 +73,20 @@ public class ConfirmBookingFormController implements Initializable {
     public void nextAvailableRoomButtonClick(javafx.event.ActionEvent e){
         roomID++;
         room = availableRoomList.get(roomID);
+        roomHolder.setRoom(room);
         setBookingFields();
     }
     public void previousAvailableRoomButtonClick(javafx.event.ActionEvent e){
         roomID--;
         room = availableRoomList.get(roomID);
+        roomHolder.setRoom(room);
         setBookingFields();
     }
     public void confirmBookingButtonClick(javafx.event.ActionEvent e){
+        room = roomHolder.getRoom();
         Booking adminBooking = new Booking(
+                room.getHotel_id(),
+                room.getRoom_id(),
                 guest_first_name.getText(),
                 guest_second_name.getText(),
                 booking.getGuestPhoneNumber(),
