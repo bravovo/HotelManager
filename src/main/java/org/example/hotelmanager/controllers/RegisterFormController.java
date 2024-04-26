@@ -6,7 +6,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
@@ -18,6 +17,9 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 public class RegisterFormController implements Initializable {
+    private final int maxRoomCount = 25;
+    private final int minRoomCount = 1;
+    private final int minAgeToRegister = 18;
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
     private Stage stage;
     /* Елементи вкладки Гості */
@@ -152,8 +154,10 @@ public class RegisterFormController implements Initializable {
                 return;
             }
         }
-        if(client_date_of_birth.getValue().isAfter(LocalDate.now().minusYears(18))){
-            formBuilder.errorValidation("Лише повнолітні особи можуть створити клієнтський акаунт");
+        if(client_date_of_birth.getValue().isAfter(LocalDate.now().minusYears(minAgeToRegister))){
+            formBuilder.errorValidation(
+                    "Акаунт можна реєструвати після досягнення віку " + minAgeToRegister + " років"
+            );
             return;
         }
         if(!client_password_field.getText().equals(client_password_field_confirm.getText())){
@@ -248,8 +252,12 @@ public class RegisterFormController implements Initializable {
         }
         String roomsCountString = hotel_rooms_count_field.getText();
         int roomsCount = Integer.parseInt(roomsCountString);
-        if (roomsCount > 25){
-            formBuilder.errorValidation("Кількість кімнат не може перевищувати 25");
+        if(roomsCount < minRoomCount){
+            formBuilder.errorValidation("Кількість кімнат не може бути меншою " + minRoomCount);
+            return;
+        }
+        if (roomsCount > maxRoomCount){
+            formBuilder.errorValidation("Кількість кімнат не може перевищувати " + maxRoomCount);
             return;
         }
         if(mongoDatabaseConnection.registerHotel(
