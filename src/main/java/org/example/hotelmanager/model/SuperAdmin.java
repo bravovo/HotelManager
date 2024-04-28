@@ -12,9 +12,7 @@ public class SuperAdmin {
         this.clients = clients;
     }
 
-    public SuperAdmin() {
-
-    }
+    public SuperAdmin() {}
 
     public ObservableList<Hotel> getHotels() {
         return hotels;

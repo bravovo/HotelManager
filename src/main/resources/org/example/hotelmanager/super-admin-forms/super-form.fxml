@@ -20,11 +20,11 @@
                <padding>
                   <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
                </padding>
-               <Button fx:id="hotels_btn" mnemonicParsing="false" onAction="#createBookingFormButtonClick" prefHeight="36.0" prefWidth="164.0" text="Готелі">
+               <Button fx:id="hotels_btn" mnemonicParsing="false" onAction="#hotelsFormButtonClick" prefHeight="36.0" prefWidth="164.0" text="Готелі">
                   <cursor>
                      <Cursor fx:constant="HAND" />
                   </cursor></Button>
-               <Button fx:id="clients_btn" mnemonicParsing="false" onAction="#myBookingsFormButtonClick" prefHeight="36.0" prefWidth="164.0" text="Користувачі">
+               <Button fx:id="clients_btn" mnemonicParsing="false" onAction="#clientsFormButtonClick" prefHeight="36.0" prefWidth="164.0" text="Користувачі">
                   <cursor>
                      <Cursor fx:constant="HAND" />
                   </cursor></Button>

@@ -58,6 +58,20 @@ public class Hotel {
         this.phone_number = phoneNumber;
     }
 
+    public Hotel(ObjectId hotelID,
+                 String hotelName,
+                 String login,
+                 String address,
+                 String email,
+                 String phoneNumber) {
+        this.hotel_id = hotelID;
+        this.hotel_name = hotelName;
+        this.address = address;
+        this.login = login;
+        this.email = email;
+        this.phone_number = phoneNumber;
+    }
+
     public ObjectId getHotel_id() {
         return hotel_id;
     }

@@ -34,15 +34,17 @@ public class SuperFormController implements Initializable {
         }
     }
 
-    public void createBookingFormButtonClick(ActionEvent actionEvent) {
-    }
-
-    public void myBookingsFormButtonClick(ActionEvent actionEvent) {
-    }
-
     public void logoutButtonClick(ActionEvent actionEvent) throws IOException {
         FormBuilder formBuilder = new FormBuilder();
         formBuilder.openWindow((Stage)logout_btn.getScene().getWindow(),
                 "login-form.fxml", "Авторизація | Hotelis", 700, 500);
+    }
+
+    public void hotelsFormButtonClick(ActionEvent actionEvent) {
+        changeCenter("super-admin-forms/super-hotels-form.fxml");
+    }
+
+    public void clientsFormButtonClick(ActionEvent actionEvent) {
+        changeCenter("super-admin-forms/super-clients-form.fxml");
     }
 }

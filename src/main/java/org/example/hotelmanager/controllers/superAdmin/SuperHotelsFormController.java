@@ -9,6 +9,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.example.hotelmanager.FormBuilder;
+import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.*;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SuperHotelsFormController implements Initializable {
+    MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
     SuperAdmin superAdmin = new SuperAdmin();
     SuperAdminHolder superAdminHolder = SuperAdminHolder.getInstance();
     FormBuilder formBuilder = new FormBuilder();
@@ -48,6 +50,7 @@ public class SuperHotelsFormController implements Initializable {
         filter_choice.setValue("Фільтр для пошуку");
         hotel_table.setOnMouseClicked(event -> {
             Hotel selectedHotel = hotel_table.getSelectionModel().getSelectedItem();
+            hotelHolder.setUser(selectedHotel);
             if (event.getClickCount() == 1) { // Одинарне клацання
                 if (selectedHotel != null) {
                     delete_hotel_btn.setDisable(false);
@@ -98,7 +101,8 @@ public class SuperHotelsFormController implements Initializable {
     }
 
     public void deleteHotelButtonClick(ActionEvent actionEvent) throws IOException {
-        formBuilder.openDialog("super-confirm-hotel-delete-form.fxml", "Підтвердити видалення", 300, 200);
+        formBuilder.openDialog("super-admin-forms/super-confirm-hotel-delete-form.fxml", "Підтвердити видалення", 300, 200);
+        superAdmin.setHotels(mongoDatabaseConnection.getHotels());
         setHotelsTable();
         delete_hotel_btn.setDisable(true);
     }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.hotelmanager.controllers.superAdmin.SuperClientFormController">
+    <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0"
+          prefWidth="900.0" spacing="10.0">
+        <padding>
+            <Insets bottom="20.0" top="20.0"/>
+        </padding>
+        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
+            <ToggleButton fx:id="find_client_btn" mnemonicParsing="false" onAction="#findClientButtonClick"
+                          prefHeight="30.0" prefWidth="150.0" text="Пошук користувачів"/>
+            <Button fx:id="delete_client_btn" disable="true" mnemonicParsing="false"
+                    onAction="#deleteClientButtonClick" prefHeight="30.0" prefWidth="150.0"
+                    text="Видалити користувача"/>
+            <VBox alignment="CENTER" prefHeight="100.0" prefWidth="307.0" spacing="15.0">
+                <HBox alignment="CENTER" prefHeight="30.0" prefWidth="381.0" spacing="15.0">
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0"
+                          text="Загальна кількість користувачів:"/>
+                    <Label fx:id="clients_cnt" text="Label"/>
+                </HBox>
+            </VBox>
+        </HBox>
+        <AnchorPane fx:id="hotels_anchor_pane" prefHeight="200.0">
+            <padding>
+                <Insets left="20.0" right="20.0"/>
+            </padding>
+            <VBox fx:id="find_client_vbox" prefHeight="81.0" AnchorPane.leftAnchor="0.0"
+                  AnchorPane.rightAnchor="0.0">
+                <HBox alignment="CENTER" prefHeight="81.0" prefWidth="901.0" spacing="20.0">
+                    <ChoiceBox fx:id="filter_choice" prefHeight="30.0" prefWidth="150.0"/>
+                    <TextField fx:id="find_input" prefHeight="30.0" prefWidth="250.0"/>
+                    <Button fx:id="find_button" mnemonicParsing="false" onAction="#findButtonClick"
+                            prefHeight="30.0" prefWidth="100.0" text="Знайти"/>
+                    <Button fx:id="reset_button" mnemonicParsing="false"
+                            onAction="#resetTableButtonClick" prefHeight="30.0" prefWidth="100.0"
+                            text="Скинути"/>
+                </HBox>
+            </VBox>
+            <TableView fx:id="client_table" layoutX="40.33613316075515" prefHeight="621.0" prefWidth="862.0"
+                       AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <columns>
+                    <TableColumn fx:id="client_id" prefWidth="54.85714775323868" text="ID"/>
+                    <TableColumn fx:id="client_first_name" minWidth="0.0" prefWidth="153.27729034423828"
+                                 text="Ім'я"/>
+                    <TableColumn fx:id="client_second_name" minWidth="0.0" prefWidth="162.95799255371094"
+                                 text="Прізвище"/>
+                    <TableColumn fx:id="client_email" prefWidth="179.0924072265625" text="Електронна пошта"/>
+                    <TableColumn fx:id="client_phone_number" minWidth="0.0" prefWidth="174.2520751953125"
+                                 text="Номер телефону"/>
+                    <TableColumn fx:id="client_date_of_birth" prefWidth="143.5966796875"
+                                 text="Дата народження"/>
+                </columns>
+            </TableView>
+        </AnchorPane>
+    </VBox>
+</AnchorPane>

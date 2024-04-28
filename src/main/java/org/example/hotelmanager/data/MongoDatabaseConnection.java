@@ -20,13 +20,11 @@ public class MongoDatabaseConnection {
     FormBuilder formBuilder = new FormBuilder();
     DataCredentials dataCredentials = new DataCredentials();
     Room roomToDelete = new Room();
-    Booking bookingToDelete = new Booking();
     Hotel hotel = new Hotel();
     Client client = new Client();
     HotelHolder hotelHolder = HotelHolder.getInstance();
     ClientHolder clientHolder = ClientHolder.getInstance();
     RoomHolder roomHolder = RoomHolder.getInstance();
-    BookingHolder bookingHolder = BookingHolder.getInstance();
 
     public boolean registerClientAccount(String firstName, String lastName, String clientEmail, String clientPhoneNumber,
                                          LocalDate dateOfBirth, String clientPassword){
@@ -51,9 +49,9 @@ public class MongoDatabaseConnection {
             newClient.append("dateOfBirth", dateOfBirth);
             newClient.append("password", passwordHashing(clientPassword));
             clientCollection.insertOne(newClient);
-            this.client = new Client(clientID, firstName, lastName, clientEmail, clientPhoneNumber, dateOfBirth);
-            setRoomTypes();
+            client = new Client(clientID, firstName, lastName, clientEmail, clientPhoneNumber, dateOfBirth);
             clientHolder.setUser(client);
+            setRoomTypes();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -76,10 +74,11 @@ public class MongoDatabaseConnection {
             newHotel.append("email", email);
             newHotel.append("rooms_count", roomsCount);
             newHotel.append("phone_number", phoneNumber);
+            newHotel.append("jedi", false);
             collection.insertOne(newHotel);
-            this.hotel = new Hotel(newHotel.getObjectId("_id"), hotelName, address, login, adminPass, email, roomsCount, phoneNumber);
-            setRoomTypes();
+            hotel = new Hotel(newHotel.getObjectId("_id"), hotelName, address, login, adminPass, email, roomsCount, phoneNumber);
             hotelHolder.setUser(hotel);
+            setRoomTypes();
             return true;
         } catch(Exception exception){
             exception.printStackTrace();
@@ -98,47 +97,52 @@ public class MongoDatabaseConnection {
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
             MongoCollection<Document> collection = mongoDatabase.getCollection("hotels");
-//            if (document.getString("login").equals("Obi-wan_Kenobi")
-//                    && document.getString("password").equals("maytheforcebewithyou")
-//            ){
-//                MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
-//                ObservableList<Hotel> hotels = FXCollections.observableArrayList();
-//                ObservableList<Client> clients = FXCollections.observableArrayList();
-//                FindIterable<Document> clientFindIterable = clientCollection.find();
-//                FindIterable<Document> allHotels = collection.find();
-//                for(Document hotelFromDB : allHotels){
-//                    Hotel hotelToList = new Hotel(hotelFromDB.getObjectId("_id"), hotelFromDB.getString("hotel_name"),
-//                            hotelFromDB.getString("address"), hotelFromDB.getString("login"),
-//                            hotelFromDB.getString("email"),
-//                            hotelFromDB.getInteger("rooms_count"),
-//                            hotelFromDB.getString("phone_number"));
-//                    hotels.add(hotelToList);
-//                }
-//
-//                for(Document clientFromDB : clientFindIterable){
-//                    Client clientToList = new Client(
-//                            clientFromDB.getInteger("client_id"),
-//                            clientFromDB.getString("firstname"),
-//                            clientFromDB.getString("lastname"),
-//                            clientFromDB.getString("client_email"),
-//                            clientFromDB.getString("client_phone"),
-//                            clientFromDB.getDate("dateOfBirth")
-//                                    .toInstant()
-//                                    .atZone(ZoneId.systemDefault())
-//                                    .toLocalDate()
-//                    );
-//                    clients.add(clientToList);
-//                }
-//                SuperAdmin superAdmin = new SuperAdmin(hotels, clients);
-//                SuperAdminHolder.getInstance().setSuper(superAdmin);
-//                Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-//                formBuilder.openWindow(stage, "super-admin-forms/super-form.fxml",
-//                        "Супер адміністратор | Hotelis", 1150, 750);
-//                return;
-//            }
-
             Document findHotel = collection.find(new Document("login", login)).first();
             if(findHotel != null){
+                if(findHotel.getBoolean("jedi")){
+                    if(checkingPasswordHash(password, findHotel.getString("password"))){
+                        MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
+                        ObservableList<Hotel> hotels = FXCollections.observableArrayList();
+                        ObservableList<Client> clients = FXCollections.observableArrayList();
+                        FindIterable<Document> clientFindIterable = clientCollection.find();
+                        FindIterable<Document> allHotels = collection.find();
+                        for(Document hotelFromDB : allHotels){
+                            if(!hotelFromDB.getBoolean("jedi")) {
+                                Hotel hotelToList = new Hotel(hotelFromDB.getObjectId("_id"), hotelFromDB.getString("hotel_name"),
+                                        hotelFromDB.getString("address"), hotelFromDB.getString("login"),
+                                        hotelFromDB.getString("email"),
+                                        hotelFromDB.getInteger("rooms_count"),
+                                        hotelFromDB.getString("phone_number"));
+                                hotels.add(hotelToList);
+                            }
+                        }
+
+                        for(Document clientFromDB : clientFindIterable){
+                            Client clientToList = new Client(
+                                    clientFromDB.getInteger("client_id"),
+                                    clientFromDB.getString("firstname"),
+                                    clientFromDB.getString("lastname"),
+                                    clientFromDB.getString("client_email"),
+                                    clientFromDB.getString("client_phone"),
+                                    clientFromDB.getDate("dateOfBirth")
+                                            .toInstant()
+                                            .atZone(ZoneId.systemDefault())
+                                            .toLocalDate()
+                            );
+                            clients.add(clientToList);
+                        }
+                        SuperAdmin superAdmin = new SuperAdmin(hotels, clients);
+                        SuperAdminHolder.getInstance().setSuper(superAdmin);
+                        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                        formBuilder.openWindow(stage, "super-admin-forms/super-form.fxml",
+                                "Супер адміністратор | Hotelis", 1150, 750);
+                        return;
+                    }
+                    else{
+                        formBuilder.errorValidation("Введенно неправильний пароль");
+                        return;
+                    }
+                }
                 if(checkingPasswordHash(password, findHotel.getString("password"))){
                     this.hotel = new Hotel(
                             findHotel.getObjectId("_id"),
@@ -878,19 +882,48 @@ public class MongoDatabaseConnection {
             MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
             List<Document> hotelDocs = hotelCollection.find().into(new ArrayList<>());
             for(Document hotelDoc : hotelDocs){
-                Hotel hotel = new Hotel(
-                        hotelDoc.getObjectId("_id"),
-                        hotelDoc.getString("hotel_name"),
-                        hotelDoc.getString("address"),
-                        hotelDoc.getString("email"),
-                        hotelDoc.getString("phone_number")
-                );
-                hotels.add(hotel);
+                if(!hotelDoc.getBoolean("jedi")){
+                    Hotel hotel = new Hotel(
+                            hotelDoc.getObjectId("_id"),
+                            hotelDoc.getString("hotel_name"),
+                            hotelDoc.getString("login"),
+                            hotelDoc.getString("address"),
+                            hotelDoc.getString("email"),
+                            hotelDoc.getString("phone_number")
+                    );
+                    hotels.add(hotel);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
         }
         return hotels;
+    }
+
+    public ObservableList<Client> getClient() {
+        ObservableList<Client> clients = FXCollections.observableArrayList();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("clients");
+            List<Document> clientDocs = hotelCollection.find().into(new ArrayList<>());
+            for(Document clientDoc : clientDocs){
+                Client client = new Client(
+                        clientDoc.getInteger("client_id"),
+                        clientDoc.getString("firstname"),
+                        clientDoc.getString("lastname"),
+                        clientDoc.getString("client_email"),
+                        clientDoc.getString("client_phone"),
+                        clientDoc.getDate("dateOfBirth")
+                                .toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                );
+                clients.add(client);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return clients;
     }
 
     public ObservableList<Booking> getClientBookings() {

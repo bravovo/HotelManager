@@ -94,6 +94,22 @@ public class ClientMyBookingsFormController implements Initializable {
         setPage();
     }
     public void editBookingButtonClick(ActionEvent event) throws IOException{
+        if (checkIN_picker.getValue() == null
+                || checkOUT_picker.getValue() == null
+                || people_count_field.getText().length() == 0){
+            formBuilder.errorValidation("Всі обов'язкові поля повинні бути заповненні");
+            return;
+        }
+        if (checkOUT_picker.getValue().isBefore(checkIN_picker.getValue())
+                || checkOUT_picker.getValue().isEqual(checkIN_picker.getValue())){
+            formBuilder.errorValidation("Дата заїзду повинна бути раніше дати виїзду");
+            return;
+        }
+        if (checkOUT_picker.getValue().isBefore(LocalDate.now())
+                || checkIN_picker.getValue().isBefore(LocalDate.now())){
+            formBuilder.errorValidation("Не можна вибирати дати, які раніше ніж сьогоднішня");
+            return;
+        }
         bookingToEdit = bookingHolder.getBooking();
         bookingToEdit.setAdditionalInfo(notes_area.getText());
         bookingToEdit.setCheckIN_date(checkIN_picker.getValue());
