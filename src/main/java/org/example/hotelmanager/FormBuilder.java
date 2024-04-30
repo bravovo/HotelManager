@@ -9,8 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import org.example.hotelmanager.model.Hotel;
 
 import java.io.IOException;
 
@@ -22,14 +20,14 @@ public class FormBuilder {
         stage.setMaximized(false);
         stage.setFullScreen(false);
         stage.setResizable(false);
-        fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
+        fxmlLoader = new FXMLLoader(Main.class.getResource(source));
         scene = new Scene(fxmlLoader.load(), v, v1);
         stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
     }
     public void openWindow(String source, String title, int v, int v1) throws IOException {
-        fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
+        fxmlLoader = new FXMLLoader(Main.class.getResource(source));
         Stage stage = new Stage();
         stage.setTitle(title);
         Scene dialogScene = new Scene(fxmlLoader.load(), v, v1);
@@ -37,7 +35,7 @@ public class FormBuilder {
         stage.showAndWait();
     }
     public void openDialog(String source, String title, int v, int v1) throws IOException{
-        fxmlLoader = new FXMLLoader(ManagerApplication.class.getResource(source));
+        fxmlLoader = new FXMLLoader(Main.class.getResource(source));
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.APPLICATION_MODAL);
         dialogStage.setTitle(title);

@@ -13,7 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
-import org.example.hotelmanager.ManagerApplication;
+import org.example.hotelmanager.Main;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.*;
 
@@ -235,7 +235,7 @@ public class AdminRoomsFormController  implements Initializable {
     public void roomTypesButtonClicked(ActionEvent event) throws IOException{
         Stage stage = new Stage();
         FXMLLoader fxmlLoader =
-                new FXMLLoader(ManagerApplication.class.getResource("admin-forms/room-types-form.fxml"));
+                new FXMLLoader(Main.class.getResource("admin-forms/room-types-form.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600,400);
         stage.setMaximized(false);
         stage.setFullScreen(false);

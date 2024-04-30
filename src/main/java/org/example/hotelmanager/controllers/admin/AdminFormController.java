@@ -11,7 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
-import org.example.hotelmanager.ManagerApplication;
+import org.example.hotelmanager.Main;
 import org.example.hotelmanager.model.Hotel;
 import org.example.hotelmanager.model.HotelHolder;
 
@@ -52,7 +52,7 @@ public class AdminFormController implements Initializable {
     }
     public void changeCenter(String fxmlFile){
         try {
-            FXMLLoader loader = new FXMLLoader(ManagerApplication.class.getResource(fxmlFile));
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxmlFile));
             Node centerContent = loader.load();
             admin_board_pane.setCenter(centerContent);
         } catch (IOException e) {

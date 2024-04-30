@@ -53,7 +53,7 @@ public class MongoDatabaseConnection {
             clientHolder.setUser(client);
             setRoomTypes();
         }catch(Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         return true;
     }
@@ -81,7 +81,7 @@ public class MongoDatabaseConnection {
             setRoomTypes();
             return true;
         } catch(Exception exception){
-            exception.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         return true;
     }
@@ -203,7 +203,7 @@ public class MongoDatabaseConnection {
             formBuilder.errorValidation("Акаунта з такими даними не існує");
 
         } catch(Exception exception){
-            exception.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
     }
 
@@ -241,7 +241,7 @@ public class MongoDatabaseConnection {
             hotel.setBookings(bookings);
             hotelHolder.setUser(hotel);
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
     }
     public void createRoom(String typeName, int typeID, String roomName, String roomDescription, String roomPrice){
@@ -280,7 +280,7 @@ public class MongoDatabaseConnection {
             setRoomsList();
             hotelHolder.setUser(hotel);
         } catch(Exception exception){
-            exception.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
     }
     public void editRoom(Room room){
@@ -322,7 +322,7 @@ public class MongoDatabaseConnection {
                         .append("booking_id", bookingToEdit.getInteger("booking_id")), updatedBooking);
             }
         } catch(Exception exception){
-            exception.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         setBookingsList();
         setGuestsList();
@@ -463,7 +463,7 @@ public class MongoDatabaseConnection {
             hotel.setRooms(roomList);
             hotelHolder.setUser(hotel);
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
     }
     public ObservableList<Room> clientFindAvailableRoomsForBooking(LocalDate checkIN,
@@ -513,7 +513,7 @@ public class MongoDatabaseConnection {
                 }
             }
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         return availableRooms;
     }
@@ -551,7 +551,7 @@ public class MongoDatabaseConnection {
                     .append("room_number", roomToDelete.getRoom_number()));
             roomsCollection.deleteOne(new Document("_id", roomToDelete.getRoom_id()));
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         setBookingsList();
         setGuestsList();
@@ -564,7 +564,7 @@ public class MongoDatabaseConnection {
             MongoCollection<Document> bookingsCollection = mongoDatabase.getCollection("bookings");
             bookingsCollection.deleteOne(new Document("_id", booking.getBookingID()));
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         if(hotel != null){
             setBookingsList();
@@ -620,7 +620,7 @@ public class MongoDatabaseConnection {
                 }
             }
         } catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         return availableRooms;
     }
@@ -655,7 +655,7 @@ public class MongoDatabaseConnection {
                     .append("add_info", booking.getAdditionalInfo());
             bookingCollection.insertOne(adminBooking);
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         setBookingsList();
         setGuestsList();
@@ -703,7 +703,7 @@ public class MongoDatabaseConnection {
                 bookingCollection.updateOne(new Document("_id", booking.getBookingID()), bookingToEdit);
             }
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         setBookingsList();
         setGuestsList();
@@ -822,7 +822,7 @@ public class MongoDatabaseConnection {
                 bookingCollection.updateOne(new Document("_id", booking.getBookingID()), bookingToEdit);
             }
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
     }
 
@@ -871,7 +871,7 @@ public class MongoDatabaseConnection {
                 formBuilder.errorValidation("Нажаль, час очікування пройшов. Хтось уже забронював кімнату.");
             }
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
     }
     public ObservableList<Hotel> getHotels() {
@@ -895,7 +895,7 @@ public class MongoDatabaseConnection {
                 }
             }
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         return hotels;
     }
@@ -921,7 +921,7 @@ public class MongoDatabaseConnection {
                 clients.add(client);
             }
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         return clients;
     }
@@ -956,7 +956,7 @@ public class MongoDatabaseConnection {
                 bookings.add(booking);
             }
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         return bookings;
     }
@@ -984,7 +984,7 @@ public class MongoDatabaseConnection {
             editedClient.setRoomTypes(client.getRoomTypes());
             clientHolder.setUser(editedClient);
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         return true;
     }
@@ -1013,7 +1013,7 @@ public class MongoDatabaseConnection {
             editedHotel.setGuests(hotel.getGuests());
             hotelHolder.setUser(editedHotel);
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         return true;
     }
@@ -1027,7 +1027,7 @@ public class MongoDatabaseConnection {
             bookingCollection.deleteMany(new Document("client_id", client.getClientID()));
             clientCollection.deleteOne(new Document("client_id", client.getClientID()));
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         client = null;
     }
@@ -1043,7 +1043,7 @@ public class MongoDatabaseConnection {
             bookingCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id()));
             hotelCollection.deleteOne(new Document("_id", hotel.getHotel_id()));
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         hotel = null;
     }
@@ -1088,7 +1088,7 @@ public class MongoDatabaseConnection {
                 }
             }
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         hotel.setGuests(guests);
         hotelHolder.setUser(hotel);
@@ -1102,7 +1102,7 @@ public class MongoDatabaseConnection {
             bookingCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id())
                     .append("guest_email", guest.getEmail()));
         }catch (Exception e){
-            e.printStackTrace();
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         setBookingsList();
         setGuestsList();

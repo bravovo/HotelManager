@@ -13,7 +13,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>5.10.0</junit.version>
     <client.maven.plugin.version>3.11.0</client.maven.plugin.version>
-    <main.class>org.example.hotelmanager.ManagerApplication</main.class>
+    <main.class>org.example.hotelmanager.Main</main.class>
   </properties>
 
   <dependencies>
@@ -142,7 +142,7 @@
         <artifactId>client-maven-plugin</artifactId>
         <version>0.1.39</version>
         <configuration>
-          <mainClass>org.example.hotelmanager.ManagerApplication</mainClass>
+          <mainClass>org.example.hotelmanager.Main</mainClass>
           <graalvmHome>D:\graalvm-ce-java11-21.2.0</graalvmHome>
         </configuration>
       </plugin>
@@ -155,7 +155,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>org.example.hotelmanager.ManagerApplication</mainClass>
+              <mainClass>org.example.hotelmanager.Main</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>

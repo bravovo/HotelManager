@@ -8,7 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.example.hotelmanager.FormBuilder;
-import org.example.hotelmanager.ManagerApplication;
+import org.example.hotelmanager.Main;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,7 +26,7 @@ public class SuperFormController implements Initializable {
 
     public void changeCenter(String fxmlFile){
         try {
-            FXMLLoader loader = new FXMLLoader(ManagerApplication.class.getResource(fxmlFile));
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxmlFile));
             Node centerContent = loader.load();
             super_border_pane.setCenter(centerContent);
         } catch (IOException e) {
