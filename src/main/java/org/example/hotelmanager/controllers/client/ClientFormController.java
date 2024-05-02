@@ -20,10 +20,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ClientFormController implements Initializable {
-    public VBox profile_vbox;
-    public Button settings_btn;
     ClientHolder clientHolder = ClientHolder.getInstance();
     Client client;
+    public VBox profile_vbox;
+    public Button settings_btn;
+    public Button reviews_btn;
     public Button create_booking_form_btn;
     public Button my_bookings_form_btn;
     public BorderPane client_border_pane;
@@ -71,11 +72,19 @@ public class ClientFormController implements Initializable {
         changeCenter("client-forms/client-create-booking-form.fxml");
         my_bookings_form_btn.setDisable(false);
         create_booking_form_btn.setDisable(true);
+        reviews_btn.setDisable(false);
     }
     public void myBookingsFormButtonClick(ActionEvent event) {
         changeCenter("client-forms/client-my-bookings-form.fxml");
         create_booking_form_btn.setDisable(false);
         my_bookings_form_btn.setDisable(true);
+        reviews_btn.setDisable(false);
+    }
+    public void reviewsButtonClick(ActionEvent actionEvent) {
+        changeCenter("client-forms/client-reviews-form.fxml");
+        create_booking_form_btn.setDisable(false);
+        my_bookings_form_btn.setDisable(false);
+        reviews_btn.setDisable(true);
     }
 
     public void settingsButtonClick(ActionEvent event) throws IOException {
@@ -90,4 +99,5 @@ public class ClientFormController implements Initializable {
             formBuilder.openWindow((Stage)settings_btn.getScene().getWindow(), "login-form.fxml", "Авторизація | Hotelis", 700, 500);
         }
     }
+
 }

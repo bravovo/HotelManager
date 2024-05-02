@@ -52,6 +52,7 @@ public class MongoDatabaseConnection {
             client = new Client(clientID, firstName, lastName, clientEmail, clientPhoneNumber, dateOfBirth);
             clientHolder.setUser(client);
             setRoomTypes();
+            client.setHotels(getHotels());
         }catch(Exception e){
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
@@ -187,6 +188,7 @@ public class MongoDatabaseConnection {
                                     .toLocalDate()
                     );
                     setRoomTypes();
+                    client.setHotels(getHotels());
                     Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                     formBuilder.openWindow(stage, "client-forms/client-form.fxml",
                             "Версія для клієнта | Hotelis", 1350, 750);
@@ -1107,5 +1109,22 @@ public class MongoDatabaseConnection {
         setBookingsList();
         setGuestsList();
         setRoomsList();
+    }
+
+    public void createClientReview(Hotel hotelToReview, String reviewText){
+        client = clientHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> reviewCollection = mongoDatabase.getCollection("reviews");
+            Document reviewDoc = new Document("hotel_id", hotelToReview.getHotel_id())
+                    .append("client_id", client.getClientID())
+                    .append("hotel_name", hotelToReview.getHotel_name())
+                    .append("client_first_name", client.getFirstName())
+                    .append("client_email", client.getEmail())
+                    .append("review_text", reviewText);
+            reviewCollection.insertOne(reviewDoc);
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
     }
 }

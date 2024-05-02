@@ -15,6 +15,7 @@ public class Client {
     private String phoneNumber;
     private LocalDate dateOfBirth;
     private ObservableList<RoomType> roomTypes = FXCollections.observableArrayList();
+    private ObservableList<Hotel> hotels = FXCollections.observableArrayList();
 
     public Client() {
 
@@ -33,6 +34,13 @@ public class Client {
         this.dateOfBirth = dateOfBirth;
     }
 
+    public ObservableList<Hotel> getHotels() {
+        return hotels;
+    }
+
+    public void setHotels(ObservableList<Hotel> hotels) {
+        this.hotels = hotels;
+    }
 
     public int getClientID() {
         return clientID;
