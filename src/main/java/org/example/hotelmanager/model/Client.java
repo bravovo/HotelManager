@@ -16,6 +16,7 @@ public class Client {
     private LocalDate dateOfBirth;
     private ObservableList<RoomType> roomTypes = FXCollections.observableArrayList();
     private ObservableList<Hotel> hotels = FXCollections.observableArrayList();
+    private ObservableList<Review> reviews = FXCollections.observableArrayList();
 
     public Client() {
 
@@ -37,39 +38,33 @@ public class Client {
     public ObservableList<Hotel> getHotels() {
         return hotels;
     }
-
     public void setHotels(ObservableList<Hotel> hotels) {
         this.hotels = hotels;
     }
-
     public int getClientID() {
         return clientID;
     }
-
     public String getFirstName() {
         return firstName;
     }
-
     public String getLastName() {
         return lastName;
     }
-
     public String getEmail() {
         return email;
     }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
-
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
-
     public ObservableList<RoomType> getRoomTypes() {
         return roomTypes;
     }
-
+    public ObservableList<Review> getReviews() {
+        return reviews;
+    }
     public void setRoomTypes(ObservableList<RoomType> roomTypes) {
         this.roomTypes = roomTypes;
     }
@@ -88,5 +83,9 @@ public class Client {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public void setReviews(ObservableList<Review> reviews) {
+        this.reviews = reviews;
     }
 }

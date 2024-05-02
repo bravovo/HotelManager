@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 
 import java.time.*;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class MongoDatabaseConnection {
     FormBuilder formBuilder = new FormBuilder();
@@ -50,9 +51,9 @@ public class MongoDatabaseConnection {
             newClient.append("password", passwordHashing(clientPassword));
             clientCollection.insertOne(newClient);
             client = new Client(clientID, firstName, lastName, clientEmail, clientPhoneNumber, dateOfBirth);
-            clientHolder.setUser(client);
             setRoomTypes();
             client.setHotels(getHotels());
+            clientHolder.setUser(client);
         }catch(Exception e){
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
@@ -189,6 +190,8 @@ public class MongoDatabaseConnection {
                     );
                     setRoomTypes();
                     client.setHotels(getHotels());
+                    client.setReviews(setClientReviewsList());
+                    clientHolder.setUser(client);
                     Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                     formBuilder.openWindow(stage, "client-forms/client-form.fxml",
                             "Версія для клієнта | Hotelis", 1350, 750);
@@ -1123,6 +1126,46 @@ public class MongoDatabaseConnection {
                     .append("client_email", client.getEmail())
                     .append("review_text", reviewText);
             reviewCollection.insertOne(reviewDoc);
+            client.setReviews(setClientReviewsList());
+            clientHolder.setUser(client);
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+    }
+
+    public ObservableList<Review> setClientReviewsList(){
+        client = clientHolder.getUser();
+        ObservableList<Review> reviews = FXCollections.observableArrayList();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> reviewCollection = mongoDatabase.getCollection("reviews");
+            List<Document> reviewsFromDB = reviewCollection.find(new Document("client_id", client.getClientID())).into(new ArrayList<>());
+            for(Document reviewFromDB : reviewsFromDB){
+                Review review = new Review(
+                        reviewFromDB.getObjectId("_id"),
+                        reviewFromDB.getObjectId("hotel_id"),
+                        reviewFromDB.getString("hotel_name"),
+                        reviewFromDB.getInteger("client_id"),
+                        reviewFromDB.getString("client_first_name"),
+                        reviewFromDB.getString("client_email"),
+                        reviewFromDB.getString("review_text")
+                );
+                reviews.add(review);
+            }
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        return reviews;
+    }
+
+    public void deleteClientReview(Review review) {
+        client = clientHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> reviewCollection = mongoDatabase.getCollection("reviews");
+            reviewCollection.deleteOne(new Document("_id", review.getID()));
+            client.setReviews(setClientReviewsList());
+            clientHolder.setUser(client);
         }catch (Exception e){
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
