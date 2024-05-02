@@ -12,6 +12,7 @@ import org.example.hotelmanager.model.Client;
 import org.example.hotelmanager.model.ClientHolder;
 
 import java.net.URL;
+import java.text.Normalizer;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
@@ -115,6 +116,15 @@ public class ClientProfileFormController implements Initializable {
 
 
     public void saveButtonClick(ActionEvent event) {
+        if(first_name_field.getText().length() == 0
+                || second_name_field.getText().length() == 0
+                || email_field.getText().length() == 0
+                || phone_number_field.getText().length() == 0
+        ){
+            FormBuilder formBuilder = new FormBuilder();
+            formBuilder.errorValidation("Всі обов'язков поля повинні бути заповненні");
+            return;
+        }
         Client editedClient = new Client(
                 client.getClientID(),
                 first_name_field.getText(),

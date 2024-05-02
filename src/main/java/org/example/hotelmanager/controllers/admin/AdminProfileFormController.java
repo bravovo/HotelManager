@@ -103,6 +103,15 @@ public class AdminProfileFormController implements Initializable {
     }
 
     public void saveButtonClick(ActionEvent event) {
+        if(hotel_name_field.getText().length() == 0
+                || login_field.getText().length() == 0
+                || email_field.getText().length() == 0
+                || phone_number_field.getText().length() == 0
+        ){
+            FormBuilder formBuilder = new FormBuilder();
+            formBuilder.errorValidation("Всі обов'язков поля повинні бути заповненні");
+            return;
+        }
         Hotel editedHotel = new Hotel(
                 hotel.getHotel_id(),
                 hotel_name_field.getText(),
