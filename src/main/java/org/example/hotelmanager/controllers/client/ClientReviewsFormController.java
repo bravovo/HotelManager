@@ -37,7 +37,7 @@ public class ClientReviewsFormController implements Initializable {
     ObservableList<Hotel> hotelObservableList = FXCollections.observableArrayList();
     ObservableList<String> hotelNames = FXCollections.observableArrayList();
 
-    public int MAX_REVIEW_CHARACTERS = 170;
+    public final int MAX_REVIEW_CHARACTERS = 170;
 
     public void initialize(URL url, ResourceBundle rb) {
         setReviewForm();
@@ -123,17 +123,13 @@ public class ClientReviewsFormController implements Initializable {
             VBox.setVgrow(spacerBottom, Priority.ALWAYS);
 
             // Стилі маленьких форм відгуків
+            mainVbox.getStyleClass().add("review-form");
+            hotelNameLabel.getStyleClass().add("review-form-label");
+            reviewText.getStyleClass().add("review-text");
+            deleteReviewButton.getStyleClass().add("review-delete-button");
+
             mainVbox.setOnMouseEntered(event -> mainVbox.setCursor(Cursor.HAND));
             mainVbox.setOnMouseExited(event -> mainVbox.setCursor(Cursor.DEFAULT));
-            mainVbox.setOnMouseClicked(event -> {
-                try{
-                    if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() >= 1) {
-                        System.out.println(review.getID());
-                    }
-                }catch (Exception ex){
-                    ex.printStackTrace();
-                }
-            });
             client_reviews_hbox.getChildren().add(mainVbox);
         }
     }

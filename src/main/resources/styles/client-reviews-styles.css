@@ -1,4 +1,4 @@
-.edit-booking-form{
+.create-review-form{
     -fx-background-color: #FFFFFF;
     -fx-font-size: 14px;
     -fx-border-color: transparent;
@@ -32,27 +32,6 @@
     -fx-faint-focus-color: transparent;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 0);
 }
-.date-picker {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-.date-picker .text-field {
-    -fx-text-fill: #646464;
-    -fx-font-size: 14px;
-}
-.date-picker .arrow-button {
-    -fx-background-color: transparent;
-}
-.date-picker .button{
-    -fx-text-fill: #646464;
-    -fx-font-size: 10px;
-    -fx-border-color: transparent;
-    -fx-background-radius: 15px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0), 10, 0, 0, 0);
-}
-.date-picker .button:hover{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 0);
-}
 .button{
     -fx-background-color: #FFFFFF;
     -fx-text-fill: #646464;
@@ -69,24 +48,54 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0), 10, 0, 0, 0);
 }
 
-/* ----------------------- Стилі для форм бронювань --------------------------- */
+/* ----------------------- Стилі для форм відгуків користувча --------------------------- */
 
-.booking-form{
+.your-reviews-label{
+    -fx-text-fill: #646464;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+.review-form{
     -fx-background-color: #FFFFFF;
     -fx-border-color: transparent;
     -fx-background-radius: 15px;
     -fx-padding: 10px, 0, 10px, 0;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 0);
 }
-.booking-form:hover{
+.review-form:hover{
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.50), 20, 0, 0, 0);
 }
-.booking-form-label{
+.review-form-label{
     -fx-text-fill: #646464;
     -fx-font-size: 6px;
 }
-.total-price-label{
+.review-text{
     -fx-text-fill: #646464;
     -fx-font-weight: bold;
     -fx-font-size: 6px;
+}
+.review-delete-button{
+    -fx-background-color: #ff0000;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-font-size: 6px;
+    -fx-border-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-padding: 7px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 0);
+}
+.review-delete-button:hover{
+    -fx-background-color: #d60000;
+    -fx-cursor: hand;
+}
+.hotel-choice {
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 0);
+}
+.hotel-choice .arrow {
+    -fx-background-color: #000000;
+}
+.hotel-choice .label {
+    -fx-text-fill: #646464;
+    -fx-font-size: 14px;
 }

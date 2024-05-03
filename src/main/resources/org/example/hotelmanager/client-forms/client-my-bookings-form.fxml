@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -58,8 +59,14 @@
                <Insets left="10.0" />
             </padding>
             <children>
-               <Button fx:id="edit_booking_btn" disable="true" mnemonicParsing="false" onAction="#editBookingButtonClick" prefHeight="47.0" prefWidth="191.0" text="Зберегти зміни" />
-               <Button fx:id="delete_booking_btn" disable="true" mnemonicParsing="false" onAction="#deleteBookingButtonClick" prefHeight="47.0" prefWidth="178.0" text="Видалити бронювання" />
+               <Button fx:id="edit_booking_btn" disable="true" mnemonicParsing="false" onAction="#editBookingButtonClick" prefHeight="47.0" prefWidth="191.0" text="Зберегти зміни">
+                  <cursor>
+                     <Cursor fx:constant="HAND" />
+                  </cursor></Button>
+               <Button fx:id="delete_booking_btn" disable="true" mnemonicParsing="false" onAction="#deleteBookingButtonClick" prefHeight="47.0" prefWidth="178.0" text="Видалити бронювання">
+                  <cursor>
+                     <Cursor fx:constant="HAND" />
+                  </cursor></Button>
             </children>
          </HBox>
       </VBox>
