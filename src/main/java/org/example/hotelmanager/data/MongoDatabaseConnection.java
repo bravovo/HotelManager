@@ -26,6 +26,8 @@ public class MongoDatabaseConnection {
     ClientHolder clientHolder = ClientHolder.getInstance();
     RoomHolder roomHolder = RoomHolder.getInstance();
 
+    /* -------------------------- Методи для реєстрації та авторизації ----------------------------- */
+
     public boolean registerClientAccount(String firstName, String lastName, String clientEmail, String clientPhoneNumber,
                                          LocalDate dateOfBirth, String clientPassword){
         Document newClient = new Document();
@@ -159,6 +161,7 @@ public class MongoDatabaseConnection {
                     setBookingsList();
                     setGuestsList();
                     setRoomTypes();
+                    setHotelReviews();
                     Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                     formBuilder.openWindow(stage, "admin-forms/admin-form.fxml",
                             "Версія для адміністратора | Hotelis", 1350, 750);
@@ -211,6 +214,8 @@ public class MongoDatabaseConnection {
         }
     }
 
+    /* -------------------- Методи запису необхідних даних у класи для адмінської версії ------------------------ */
+
     private void setBookingsList() {
         hotel = hotelHolder.getUser();
         ObservableList<Booking> bookings = FXCollections.observableArrayList();
@@ -248,90 +253,7 @@ public class MongoDatabaseConnection {
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
     }
-    public void createRoom(String typeName, int typeID, String roomName, String roomDescription, String roomPrice){
-        hotel = hotelHolder.getUser();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
-            FindIterable<Document> roomsOfThisHotel = roomsCollection.find(new Document("hotel_id", hotel.getHotel_id()));
-            Document sortedByNumberRoom = roomsOfThisHotel.sort(Sorts.descending("room_number")).first();
-            int roomNumber = 0;
-            if (sortedByNumberRoom != null){
-                roomNumber = sortedByNumberRoom.getInteger("room_number");
-            }
-            Document room = new Document("hotel_id", hotel.getHotel_id());
-            room.append("type_id", typeID);
-            room.append("type_name", typeName);
-            room.append("room_name", roomName);
-            room.append("description", roomDescription);
-            room.append("room_number", roomNumber + 1);
-            room.append("status", "Доступна");
-            room.append("from", LocalDate.now());
-            room.append("to", LocalDate.now().plusDays(1));
-            double roomPriceConverted = Double.parseDouble(roomPrice);
-            room.append("price", roomPriceConverted);
-            int capacity = 0;
-            if(typeName.equals("F")){
-                capacity = 4;
-            } else if (typeName.charAt(1) == 'S') {
-                capacity = 1;
-            } else if (typeName.charAt(1) == 'D' || typeName.charAt(1) == 'T'){
-                capacity = 2;
-            }
-            room.append("capacity", capacity);
 
-            roomsCollection.insertOne(room);
-            setRoomsList();
-            hotelHolder.setUser(hotel);
-        } catch(Exception exception){
-            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
-        }
-    }
-    public void editRoom(Room room){
-        hotel = hotelHolder.getUser();
-        roomHolder.setRoom(room);
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
-            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
-            int capacity = 0;
-            if(room.getType_name().equals("F")){
-                capacity = 4;
-            } else if (room.getType_name().charAt(1) == 'S') {
-                capacity = 1;
-            } else if (room.getType_name().charAt(1) == 'D' || room.getType_name().charAt(1) == 'T'){
-                capacity = 2;
-            }
-            Document roomDocument = new Document("$set", new Document("type_id", room.getType_id())
-                    .append("type_name", room.getType_name())
-                    .append("room_name", room.getRoom_name())
-                    .append("description", room.getRoom_description())
-                    .append("status", room.getStatus())
-                    .append("price", room.getPrice())
-                    .append("capacity", capacity));
-            roomCollection.updateOne(new Document("_id", room.getRoom_id()), roomDocument);
-
-            // Після оновлення кімнати,
-            // потрібно оновити дані про бронювання,
-            // бо вони застарілі і можуть не відповідати даним кімнати
-
-            FindIterable<Document> bookingsToEdit = bookingCollection.find(new Document("hotel_id", hotel.getHotel_id())
-                    .append("room_number", room.getRoom_number()));
-            for(Document bookingToEdit : bookingsToEdit){
-                Document updatedBooking = new Document("$set", new Document("room_number", room.getRoom_number())
-                        .append("room_type", room.getType_name())
-                );
-                bookingCollection.updateOne(new Document("hotel_id", hotel.getHotel_id())
-                        .append("room_number", room.getRoom_number())
-                        .append("booking_id", bookingToEdit.getInteger("booking_id")), updatedBooking);
-            }
-        } catch(Exception exception){
-            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
-        }
-        setBookingsList();
-        setGuestsList();
-        setRoomsList();
-    }
     public void setRoomsList(){
         hotel = hotelHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
@@ -470,57 +392,83 @@ public class MongoDatabaseConnection {
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
     }
-    public ObservableList<Room> clientFindAvailableRoomsForBooking(LocalDate checkIN,
-                                                                   LocalDate checkOUT,
-                                                                   int peopleCount){
-        client = clientHolder.getUser();
-        ObservableList<Room> availableRooms = FXCollections.observableArrayList();
+
+    public void setGuestsList(){
+        hotel = hotelHolder.getUser();
+        ObservableList<Guest> guests = FXCollections.observableArrayList();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
             MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
-            FindIterable<Document> allRoomsInDataBase = roomCollection.find(
-                    new Document("capacity", new Document("$gte", peopleCount))
+            LocalDate localDateNow = LocalDate.now();
+            Date dateNow = Date.from(localDateNow
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant()
             );
-            for(Document roomDoc : allRoomsInDataBase){
-                boolean isAvailable = true;
-                FindIterable<Document> roomBookings = bookingCollection.find(
-                        new Document("room_id", roomDoc.get("_id"))
+            FindIterable<Document> bookingDocs = bookingCollection.find(new Document("hotel_id", hotel.getHotel_id())
+                    .append("checkIN_date", new Document("$lte", dateNow))
+                    .append("checkOUT_date", new Document("$gte", dateNow))
+            );
+            for(Document bookingDoc : bookingDocs){
+                boolean foundEqual = false;
+                Guest guest = new Guest(
+                        bookingDoc.getInteger("client_id"),
+                        hotel.getHotel_id().toHexString(),
+                        bookingDoc.getInteger("room_number"),
+                        bookingDoc.getString("guest_first_name"),
+                        bookingDoc.getString("guest_second_name"),
+                        bookingDoc.getString("guest_email"),
+                        bookingDoc.getString("guest_phone_number"),
+                        bookingDoc.getDouble("total_price")
                 );
-                for(Document roomBooking : roomBookings) {
-                    Date checkIn = roomBooking.getDate("checkIN_date");
-                    Date checkOut = roomBooking.getDate("checkOUT_date");
-                    LocalDate checkInDate = checkIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                    LocalDate checkOutDate = checkOut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                    if (checkInDate.isBefore(checkOUT)
-                            && checkOutDate.isAfter(checkIN)) {
-                        isAvailable = false;
+                for(Guest guestFromList : guests){
+                    if(guest.getEmail().equals(guestFromList.getEmail())){
+                        foundEqual = true;
+                        guestFromList.setTotalPrice(guestFromList.getTotalPrice() + guest.getTotalPrice());
                         break;
                     }
                 }
-                if(isAvailable){
-                    Room availableRoom = new Room(
-                            roomDoc.getObjectId("_id"),
-                            roomDoc.getObjectId("hotel_id"),
-                            roomDoc.getInteger("type_id"),
-                            roomDoc.getString("type_name"),
-                            roomDoc.getString("room_name"),
-                            roomDoc.getString("description"),
-                            roomDoc.getInteger("room_number"),
-                            roomDoc.getString("status"),
-                            roomDoc.getDate("from"),
-                            roomDoc.getDate("to"),
-                            roomDoc.getDouble("price"),
-                            roomDoc.getInteger("capacity")
-                    );
-                    availableRooms.add(availableRoom);
+
+                if(!foundEqual){
+                    guests.add(guest);
                 }
             }
         }catch (Exception e){
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
-        return availableRooms;
+        hotel.setGuests(guests);
+        hotelHolder.setUser(hotel);
     }
+
+    public void setHotelReviews(){
+        hotel = hotelHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> reviewsCollection = mongoDatabase.getCollection("reviews");
+            ObservableList<Review> reviews = FXCollections.observableArrayList();
+            List<Document> reviewsFromDB = reviewsCollection.find(
+                    new Document("hotel_id", hotel.getHotel_id())).into(new ArrayList<>()
+            );
+            for(Document reviewFromDB : reviewsFromDB){
+                Review review = new Review(
+                        reviewFromDB.getObjectId("_id"),
+                        reviewFromDB.getObjectId("hotel_id"),
+                        reviewFromDB.getString("hotel_name"),
+                        reviewFromDB.getInteger("client_id"),
+                        reviewFromDB.getString("client_first_name"),
+                        reviewFromDB.getString("client_email"),
+                        reviewFromDB.getString("review_text")
+                );
+                reviews.add(review);
+            }
+            hotel.setReviews(reviews);
+            hotelHolder.setUser(hotel);
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+    }
+
+    /* ---------------------- Методи запису даних в класи для всіх версій програми ---------------------------- */
+
     public void setRoomTypes(){
         ObservableList<RoomType> roomTypes = FXCollections.observableArrayList();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
@@ -544,6 +492,211 @@ public class MongoDatabaseConnection {
         hotelHolder.setUser(hotel);
         clientHolder.setUser(client);
     }
+
+    public ObservableList<Hotel> getHotels() {
+        ObservableList<Hotel> hotels = FXCollections.observableArrayList();
+        client = clientHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
+            List<Document> hotelDocs = hotelCollection.find().into(new ArrayList<>());
+            for(Document hotelDoc : hotelDocs){
+                if(!hotelDoc.getBoolean("jedi")){
+                    Hotel hotel = new Hotel(
+                            hotelDoc.getObjectId("_id"),
+                            hotelDoc.getString("hotel_name"),
+                            hotelDoc.getString("login"),
+                            hotelDoc.getString("address"),
+                            hotelDoc.getString("email"),
+                            hotelDoc.getString("phone_number")
+                    );
+                    hotels.add(hotel);
+                }
+            }
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        return hotels;
+    }
+
+    /* ------------------ Методи запису даних у класи для клієнтської частини програми ---------------------- */
+
+    public ObservableList<Review> setClientReviewsList(){
+        client = clientHolder.getUser();
+        ObservableList<Review> reviews = FXCollections.observableArrayList();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> reviewCollection = mongoDatabase.getCollection("reviews");
+            List<Document> reviewsFromDB = reviewCollection.find(new Document("client_id", client.getClientID())).into(new ArrayList<>());
+            for(Document reviewFromDB : reviewsFromDB){
+                Review review = new Review(
+                        reviewFromDB.getObjectId("_id"),
+                        reviewFromDB.getObjectId("hotel_id"),
+                        reviewFromDB.getString("hotel_name"),
+                        reviewFromDB.getInteger("client_id"),
+                        reviewFromDB.getString("client_first_name"),
+                        reviewFromDB.getString("client_email"),
+                        reviewFromDB.getString("review_text")
+                );
+                reviews.add(review);
+            }
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        return reviews;
+    }
+
+    public ObservableList<Booking> getClientBookings() {
+        ObservableList<Booking> bookings = FXCollections.observableArrayList();
+        client = clientHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("bookings");
+            FindIterable<Document> bookingDocs = hotelCollection.find(new Document("client_id", client.getClientID()));
+            for(Document bookingDoc : bookingDocs){
+                Booking booking = new Booking(
+                        bookingDoc.getObjectId("_id"),
+                        bookingDoc.getObjectId("hotel_id"),
+                        bookingDoc.getObjectId("room_id"),
+                        bookingDoc.getInteger("client_id"),
+                        bookingDoc.getString("guest_first_name"),
+                        bookingDoc.getString("guest_second_name"),
+                        bookingDoc.getString("guest_phone_number"),
+                        bookingDoc.getString("guest_email"),
+                        bookingDoc.getInteger("room_number"),
+                        bookingDoc.getString("room_type"),
+                        bookingDoc.getDate("checkIN_date")
+                                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        bookingDoc.getDate("checkOUT_date")
+                                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        bookingDoc.getDouble("total_price"),
+                        bookingDoc.getString("add_info"),
+                        bookingDoc.getInteger("people_count")
+                );
+                bookings.add(booking);
+            }
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        return bookings;
+    }
+
+    /* ---------------- Методи запису даних у класи для суперадмінської версії програми ---------------- */
+
+    public ObservableList<Client> getClient() {
+        ObservableList<Client> clients = FXCollections.observableArrayList();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("clients");
+            List<Document> clientDocs = hotelCollection.find().into(new ArrayList<>());
+            for(Document clientDoc : clientDocs){
+                Client client = new Client(
+                        clientDoc.getInteger("client_id"),
+                        clientDoc.getString("firstname"),
+                        clientDoc.getString("lastname"),
+                        clientDoc.getString("client_email"),
+                        clientDoc.getString("client_phone"),
+                        clientDoc.getDate("dateOfBirth")
+                                .toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                );
+                clients.add(client);
+            }
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        return clients;
+    }
+
+    /* ------------------------- Основні методи адміністраторської частини програми ----------------------------- */
+
+    public void createRoom(String typeName, int typeID, String roomName, String roomDescription, String roomPrice){
+        hotel = hotelHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> roomsCollection = mongoDatabase.getCollection("rooms");
+            FindIterable<Document> roomsOfThisHotel = roomsCollection.find(new Document("hotel_id", hotel.getHotel_id()));
+            Document sortedByNumberRoom = roomsOfThisHotel.sort(Sorts.descending("room_number")).first();
+            int roomNumber = 0;
+            if (sortedByNumberRoom != null){
+                roomNumber = sortedByNumberRoom.getInteger("room_number");
+            }
+            Document room = new Document("hotel_id", hotel.getHotel_id());
+            room.append("type_id", typeID);
+            room.append("type_name", typeName);
+            room.append("room_name", roomName);
+            room.append("description", roomDescription);
+            room.append("room_number", roomNumber + 1);
+            room.append("status", "Доступна");
+            room.append("from", LocalDate.now());
+            room.append("to", LocalDate.now().plusDays(1));
+            double roomPriceConverted = Double.parseDouble(roomPrice);
+            room.append("price", roomPriceConverted);
+            int capacity = 0;
+            if(typeName.equals("F")){
+                capacity = 4;
+            } else if (typeName.charAt(1) == 'S') {
+                capacity = 1;
+            } else if (typeName.charAt(1) == 'D' || typeName.charAt(1) == 'T'){
+                capacity = 2;
+            }
+            room.append("capacity", capacity);
+
+            roomsCollection.insertOne(room);
+            setRoomsList();
+            hotelHolder.setUser(hotel);
+        } catch(Exception exception){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+    }
+
+    public void editRoom(Room room){
+        hotel = hotelHolder.getUser();
+        roomHolder.setRoom(room);
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())) {
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
+            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
+            int capacity = 0;
+            if(room.getType_name().equals("F")){
+                capacity = 4;
+            } else if (room.getType_name().charAt(1) == 'S') {
+                capacity = 1;
+            } else if (room.getType_name().charAt(1) == 'D' || room.getType_name().charAt(1) == 'T'){
+                capacity = 2;
+            }
+            Document roomDocument = new Document("$set", new Document("type_id", room.getType_id())
+                    .append("type_name", room.getType_name())
+                    .append("room_name", room.getRoom_name())
+                    .append("description", room.getRoom_description())
+                    .append("status", room.getStatus())
+                    .append("price", room.getPrice())
+                    .append("capacity", capacity));
+            roomCollection.updateOne(new Document("_id", room.getRoom_id()), roomDocument);
+
+            // Після оновлення кімнати,
+            // потрібно оновити дані про бронювання,
+            // бо вони застарілі і можуть не відповідати даним кімнати
+
+            FindIterable<Document> bookingsToEdit = bookingCollection.find(new Document("hotel_id", hotel.getHotel_id())
+                    .append("room_number", room.getRoom_number()));
+            for(Document bookingToEdit : bookingsToEdit){
+                Document updatedBooking = new Document("$set", new Document("room_number", room.getRoom_number())
+                        .append("room_type", room.getType_name())
+                );
+                bookingCollection.updateOne(new Document("hotel_id", hotel.getHotel_id())
+                        .append("room_number", room.getRoom_number())
+                        .append("booking_id", bookingToEdit.getInteger("booking_id")), updatedBooking);
+            }
+        } catch(Exception exception){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        setBookingsList();
+        setGuestsList();
+        setRoomsList();
+    }
+
     public void deleteRoom() {
         hotel = hotelHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
@@ -561,6 +714,7 @@ public class MongoDatabaseConnection {
         setGuestsList();
         setRoomsList();
     }
+
     public void deleteBooking(Booking booking) {
         hotel = hotelHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
@@ -577,7 +731,6 @@ public class MongoDatabaseConnection {
         }
     }
 
-    // ----------------------------------------------------------------------------------------------->
     public ObservableList<Room> adminFindAvailableRoomsForBooking(Booking booking){
         hotel = hotelHolder.getUser();
         ObservableList<Room> availableRooms = FXCollections.observableArrayList();
@@ -712,6 +865,120 @@ public class MongoDatabaseConnection {
         setBookingsList();
         setGuestsList();
         setRoomsList();
+    }
+
+    public boolean editHotelProfile(Hotel editedHotel) {
+        hotel = hotelHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
+            FindIterable<Document> findEqualLogins = hotelCollection.find(new Document("_id", new Document("$ne", hotel.getHotel_id())));
+            for (Document document : findEqualLogins) {
+                if(document.getString("login").equals(editedHotel.getLogin())){
+                    return false;
+                }
+            }
+            Document editedHotelDoc = new Document("$set", new Document("hotel_name", editedHotel.getHotel_name())
+                    .append("login", editedHotel.getLogin())
+                    .append("address", editedHotel.getAddress())
+                    .append("email", editedHotel.getEmail())
+                    .append("phone_number", editedHotel.getPhone_number())
+            );
+            hotelCollection.findOneAndUpdate(
+                    new Document("_id", hotel.getHotel_id()), editedHotelDoc);
+            editedHotel.setRooms(hotel.getRoomsForList());
+            editedHotel.setBookings(hotel.getBookingsForList());
+            editedHotel.setGuests(hotel.getGuests());
+            hotelHolder.setUser(editedHotel);
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        return true;
+    }
+
+    public void deleteAdminAccount() {
+        hotel = hotelHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
+            MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
+            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
+            roomCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id()));
+            bookingCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id()));
+            hotelCollection.deleteOne(new Document("_id", hotel.getHotel_id()));
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        hotel = null;
+    }
+
+    public void deleteGuest(Guest guest){
+        hotel = hotelHolder.getUser();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
+            bookingCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id())
+                    .append("guest_email", guest.getEmail()));
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        setBookingsList();
+        setGuestsList();
+        setRoomsList();
+    }
+
+    /* ----------------------- Основні методи клієнтської частини програми ------------------------------ */
+
+    public ObservableList<Room> clientFindAvailableRoomsForBooking(LocalDate checkIN,
+                                                                   LocalDate checkOUT,
+                                                                   int peopleCount){
+        client = clientHolder.getUser();
+        ObservableList<Room> availableRooms = FXCollections.observableArrayList();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
+            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
+            FindIterable<Document> allRoomsInDataBase = roomCollection.find(
+                    new Document("capacity", new Document("$gte", peopleCount))
+            );
+            for(Document roomDoc : allRoomsInDataBase){
+                boolean isAvailable = true;
+                FindIterable<Document> roomBookings = bookingCollection.find(
+                        new Document("room_id", roomDoc.get("_id"))
+                );
+                for(Document roomBooking : roomBookings) {
+                    Date checkIn = roomBooking.getDate("checkIN_date");
+                    Date checkOut = roomBooking.getDate("checkOUT_date");
+                    LocalDate checkInDate = checkIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate checkOutDate = checkOut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    if (checkInDate.isBefore(checkOUT)
+                            && checkOutDate.isAfter(checkIN)) {
+                        isAvailable = false;
+                        break;
+                    }
+                }
+                if(isAvailable){
+                    Room availableRoom = new Room(
+                            roomDoc.getObjectId("_id"),
+                            roomDoc.getObjectId("hotel_id"),
+                            roomDoc.getInteger("type_id"),
+                            roomDoc.getString("type_name"),
+                            roomDoc.getString("room_name"),
+                            roomDoc.getString("description"),
+                            roomDoc.getInteger("room_number"),
+                            roomDoc.getString("status"),
+                            roomDoc.getDate("from"),
+                            roomDoc.getDate("to"),
+                            roomDoc.getDouble("price"),
+                            roomDoc.getInteger("capacity")
+                    );
+                    availableRooms.add(availableRoom);
+                }
+            }
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        return availableRooms;
     }
 
     public void editClientBooking(Booking booking, boolean findNewAvailable){
@@ -878,92 +1145,6 @@ public class MongoDatabaseConnection {
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
     }
-    public ObservableList<Hotel> getHotels() {
-        ObservableList<Hotel> hotels = FXCollections.observableArrayList();
-        client = clientHolder.getUser();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
-            List<Document> hotelDocs = hotelCollection.find().into(new ArrayList<>());
-            for(Document hotelDoc : hotelDocs){
-                if(!hotelDoc.getBoolean("jedi")){
-                    Hotel hotel = new Hotel(
-                            hotelDoc.getObjectId("_id"),
-                            hotelDoc.getString("hotel_name"),
-                            hotelDoc.getString("login"),
-                            hotelDoc.getString("address"),
-                            hotelDoc.getString("email"),
-                            hotelDoc.getString("phone_number")
-                    );
-                    hotels.add(hotel);
-                }
-            }
-        }catch (Exception e){
-            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
-        }
-        return hotels;
-    }
-
-    public ObservableList<Client> getClient() {
-        ObservableList<Client> clients = FXCollections.observableArrayList();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("clients");
-            List<Document> clientDocs = hotelCollection.find().into(new ArrayList<>());
-            for(Document clientDoc : clientDocs){
-                Client client = new Client(
-                        clientDoc.getInteger("client_id"),
-                        clientDoc.getString("firstname"),
-                        clientDoc.getString("lastname"),
-                        clientDoc.getString("client_email"),
-                        clientDoc.getString("client_phone"),
-                        clientDoc.getDate("dateOfBirth")
-                                .toInstant()
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDate()
-                );
-                clients.add(client);
-            }
-        }catch (Exception e){
-            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
-        }
-        return clients;
-    }
-
-    public ObservableList<Booking> getClientBookings() {
-        ObservableList<Booking> bookings = FXCollections.observableArrayList();
-        client = clientHolder.getUser();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("bookings");
-            FindIterable<Document> bookingDocs = hotelCollection.find(new Document("client_id", client.getClientID()));
-            for(Document bookingDoc : bookingDocs){
-                Booking booking = new Booking(
-                        bookingDoc.getObjectId("_id"),
-                        bookingDoc.getObjectId("hotel_id"),
-                        bookingDoc.getObjectId("room_id"),
-                        bookingDoc.getInteger("client_id"),
-                        bookingDoc.getString("guest_first_name"),
-                        bookingDoc.getString("guest_second_name"),
-                        bookingDoc.getString("guest_phone_number"),
-                        bookingDoc.getString("guest_email"),
-                        bookingDoc.getInteger("room_number"),
-                        bookingDoc.getString("room_type"),
-                        bookingDoc.getDate("checkIN_date")
-                                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-                        bookingDoc.getDate("checkOUT_date")
-                                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-                        bookingDoc.getDouble("total_price"),
-                        bookingDoc.getString("add_info"),
-                        bookingDoc.getInteger("people_count")
-                );
-                bookings.add(booking);
-            }
-        }catch (Exception e){
-            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
-        }
-        return bookings;
-    }
 
     public boolean editClientProfile(Client editedClient) {
         client = clientHolder.getUser();
@@ -993,35 +1174,6 @@ public class MongoDatabaseConnection {
         return true;
     }
 
-    public boolean editHotelProfile(Hotel editedHotel) {
-        hotel = hotelHolder.getUser();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
-            FindIterable<Document> findEqualLogins = hotelCollection.find(new Document("_id", new Document("$ne", hotel.getHotel_id())));
-            for (Document document : findEqualLogins) {
-                if(document.getString("login").equals(editedHotel.getLogin())){
-                    return false;
-                }
-            }
-            Document editedHotelDoc = new Document("$set", new Document("hotel_name", editedHotel.getHotel_name())
-                    .append("login", editedHotel.getLogin())
-                    .append("address", editedHotel.getAddress())
-                    .append("email", editedHotel.getEmail())
-                    .append("phone_number", editedHotel.getPhone_number())
-            );
-            hotelCollection.findOneAndUpdate(
-                    new Document("_id", hotel.getHotel_id()), editedHotelDoc);
-            editedHotel.setRooms(hotel.getRoomsForList());
-            editedHotel.setBookings(hotel.getBookingsForList());
-            editedHotel.setGuests(hotel.getGuests());
-            hotelHolder.setUser(editedHotel);
-        }catch (Exception e){
-            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
-        }
-        return true;
-    }
-
     public void deleteClientAccount() {
         client = clientHolder.getUser();
         try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
@@ -1036,82 +1188,6 @@ public class MongoDatabaseConnection {
         client = null;
     }
 
-    public void deleteAdminAccount() {
-        hotel = hotelHolder.getUser();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> hotelCollection = mongoDatabase.getCollection("hotels");
-            MongoCollection<Document> roomCollection = mongoDatabase.getCollection("rooms");
-            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
-            roomCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id()));
-            bookingCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id()));
-            hotelCollection.deleteOne(new Document("_id", hotel.getHotel_id()));
-        }catch (Exception e){
-            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
-        }
-        hotel = null;
-    }
-
-    public void setGuestsList(){
-        hotel = hotelHolder.getUser();
-        ObservableList<Guest> guests = FXCollections.observableArrayList();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
-            LocalDate localDateNow = LocalDate.now();
-            Date dateNow = Date.from(localDateNow
-                    .atStartOfDay(ZoneId.systemDefault())
-                    .toInstant()
-            );
-            FindIterable<Document> bookingDocs = bookingCollection.find(new Document("hotel_id", hotel.getHotel_id())
-                    .append("checkIN_date", new Document("$lte", dateNow))
-                    .append("checkOUT_date", new Document("$gte", dateNow))
-            );
-            for(Document bookingDoc : bookingDocs){
-                boolean foundEqual = false;
-                Guest guest = new Guest(
-                        bookingDoc.getInteger("client_id"),
-                        hotel.getHotel_id().toHexString(),
-                        bookingDoc.getInteger("room_number"),
-                        bookingDoc.getString("guest_first_name"),
-                        bookingDoc.getString("guest_second_name"),
-                        bookingDoc.getString("guest_email"),
-                        bookingDoc.getString("guest_phone_number"),
-                        bookingDoc.getDouble("total_price")
-                );
-                for(Guest guestFromList : guests){
-                    if(guest.getEmail().equals(guestFromList.getEmail())){
-                        foundEqual = true;
-                        guestFromList.setTotalPrice(guestFromList.getTotalPrice() + guest.getTotalPrice());
-                        break;
-                    }
-                }
-
-                if(!foundEqual){
-                    guests.add(guest);
-                }
-            }
-        }catch (Exception e){
-            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
-        }
-        hotel.setGuests(guests);
-        hotelHolder.setUser(hotel);
-    }
-
-    public void deleteGuest(Guest guest){
-        hotel = hotelHolder.getUser();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
-            bookingCollection.deleteMany(new Document("hotel_id", hotel.getHotel_id())
-                    .append("guest_email", guest.getEmail()));
-        }catch (Exception e){
-            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
-        }
-        setBookingsList();
-        setGuestsList();
-        setRoomsList();
-    }
 
     public void createClientReview(Hotel hotelToReview, String reviewText){
         client = clientHolder.getUser();
@@ -1130,31 +1206,6 @@ public class MongoDatabaseConnection {
         }catch (Exception e){
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
-    }
-
-    public ObservableList<Review> setClientReviewsList(){
-        client = clientHolder.getUser();
-        ObservableList<Review> reviews = FXCollections.observableArrayList();
-        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
-            MongoCollection<Document> reviewCollection = mongoDatabase.getCollection("reviews");
-            List<Document> reviewsFromDB = reviewCollection.find(new Document("client_id", client.getClientID())).into(new ArrayList<>());
-            for(Document reviewFromDB : reviewsFromDB){
-                Review review = new Review(
-                        reviewFromDB.getObjectId("_id"),
-                        reviewFromDB.getObjectId("hotel_id"),
-                        reviewFromDB.getString("hotel_name"),
-                        reviewFromDB.getInteger("client_id"),
-                        reviewFromDB.getString("client_first_name"),
-                        reviewFromDB.getString("client_email"),
-                        reviewFromDB.getString("review_text")
-                );
-                reviews.add(review);
-            }
-        }catch (Exception e){
-            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
-        }
-        return reviews;
     }
 
     public void deleteClientReview(Review review) {

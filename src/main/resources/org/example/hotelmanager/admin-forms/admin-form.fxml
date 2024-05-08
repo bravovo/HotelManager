@@ -21,6 +21,7 @@
                   <Button fx:id="rooms_btn" mnemonicParsing="false" onAction="#roomsButtonClick" prefHeight="30.0" prefWidth="150.0" text="Кімнати" />
                   <Button fx:id="bookings_btn" mnemonicParsing="false" onAction="#bookingsButtonClick" prefHeight="30.0" prefWidth="150.0" text="Бронювання" />
                   <Button fx:id="guests_btn" mnemonicParsing="false" onAction="#guestsButtonClick" prefHeight="30.0" prefWidth="150.0" text="Гості" />
+               <Button fx:id="reviews_btn" mnemonicParsing="false" onAction="#reviewsButtonClick" prefHeight="30.0" prefWidth="150.0" text="Відгуки" />
                <padding>
                   <Insets top="40.0" />
                </padding>

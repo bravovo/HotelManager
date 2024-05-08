@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 public class AdminFormController implements Initializable {
     public VBox profile_vbox;
     public Button settings_btn;
+    public Button reviews_btn;
     @FXML private Button bookings_btn;
     @FXML private Button guests_btn;
     @FXML private Label hotel_label;
@@ -84,5 +85,9 @@ public class AdminFormController implements Initializable {
             hotelHolder.setDone(false);
             formBuilder.openWindow((Stage)settings_btn.getScene().getWindow(),"login-form.fxml", "Авторизація | Hotelis", 700, 500);
         }
+    }
+
+    public void reviewsButtonClick(ActionEvent actionEvent) {
+        changeCenter("admin-forms/admin-reviews-form.fxml");
     }
 }
