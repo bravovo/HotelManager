@@ -19,6 +19,7 @@ public class SuperFormController implements Initializable {
     public Button hotels_btn;
     public Button clients_btn;
     public Button logout_btn;
+    public Button reviews_btn;
 
     public void initialize(URL location, ResourceBundle resources) {
         changeCenter("super-admin-forms/super-hotels-form.fxml");
@@ -46,5 +47,9 @@ public class SuperFormController implements Initializable {
 
     public void clientsFormButtonClick(ActionEvent actionEvent) {
         changeCenter("super-admin-forms/super-clients-form.fxml");
+    }
+
+    public void reviewsFormButtonClick(ActionEvent actionEvent) {
+        changeCenter("super-admin-forms/super-reviews-form.fxml");
     }
 }

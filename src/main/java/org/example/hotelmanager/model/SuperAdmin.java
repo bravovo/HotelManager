@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 public class SuperAdmin {
     private ObservableList<Hotel> hotels = FXCollections.observableArrayList();
     private ObservableList<Client> clients = FXCollections.observableArrayList();
+    private ObservableList<Review> reviews = FXCollections.observableArrayList();
 
     public SuperAdmin(ObservableList<Hotel> hotels, ObservableList<Client> clients) {
         this.hotels = hotels;
@@ -28,5 +29,13 @@ public class SuperAdmin {
 
     public void setClients(ObservableList<Client> clients) {
         this.clients = clients;
+    }
+
+    public ObservableList<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(ObservableList<Review> reviews) {
+        this.reviews = reviews;
     }
 }

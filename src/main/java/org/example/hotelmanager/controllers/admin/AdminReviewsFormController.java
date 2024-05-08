@@ -66,13 +66,17 @@ public class AdminReviewsFormController implements Initializable {
             reviewVbox.setMinSize(300, 200);
             reviewVbox.setSpacing(10);
             reviewVbox.setPadding(new Insets(10.0));
+
             Label reviewClientName = new Label(review.getClientName());
             reviewClientName.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
             Text reviewText = new Text(review.getReviewText());
             reviewText.setStyle("-fx-font-size: 14px");
             reviewText.setWrappingWidth(280);
+
             reviewVbox.getChildren().addAll(reviewClientName, new Separator(), reviewText);
             reviewVbox.setStyle("-fx-border-color: grey; -fx-border-width: 1px; -fx-border-radius: 10px");
+
             gridPane.add(reviewVbox, i % 3, i / 3);
             gridPane.setAlignment(Pos.CENTER);
         }

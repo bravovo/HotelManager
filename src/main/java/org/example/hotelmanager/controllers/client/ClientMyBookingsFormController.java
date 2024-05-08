@@ -115,9 +115,11 @@ public class ClientMyBookingsFormController implements Initializable {
         bookingToEdit.setCheckIN_date(checkIN_picker.getValue());
         bookingToEdit.setCheckOUT_date(checkOUT_picker.getValue());
         bookingToEdit.setPeopleCount(Integer.parseInt(people_count_field.getText()));
+
         long nightPeriod = ChronoUnit.DAYS.between(checkIN_picker.getValue(), checkOUT_picker.getValue());
         bookingToEdit.setNightCount(nightPeriod);
         bookingHolder.setBooking(bookingToEdit);
+
         if(peopleCountFirst.equals(people_count_field.getText())
                 && checkINFirst.isEqual(checkIN_picker.getValue())
                 && checkOUTFirst.isEqual(checkOUT_picker.getValue())){

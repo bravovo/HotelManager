@@ -25,6 +25,8 @@ public class MongoDatabaseConnection {
     HotelHolder hotelHolder = HotelHolder.getInstance();
     ClientHolder clientHolder = ClientHolder.getInstance();
     RoomHolder roomHolder = RoomHolder.getInstance();
+    SuperAdmin superAdmin = new SuperAdmin();
+    SuperAdminHolder superAdminHolder = SuperAdminHolder.getInstance();
 
     /* -------------------------- Методи для реєстрації та авторизації ----------------------------- */
 
@@ -134,8 +136,9 @@ public class MongoDatabaseConnection {
                             );
                             clients.add(clientToList);
                         }
-                        SuperAdmin superAdmin = new SuperAdmin(hotels, clients);
-                        SuperAdminHolder.getInstance().setSuper(superAdmin);
+                        superAdmin = new SuperAdmin(hotels, clients);
+                        superAdminHolder.setSuper(superAdmin);
+                        setReviews();
                         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                         formBuilder.openWindow(stage, "super-admin-forms/super-form.fxml",
                                 "Супер адміністратор | Hotelis", 1150, 750);
@@ -581,7 +584,7 @@ public class MongoDatabaseConnection {
         return bookings;
     }
 
-    /* ---------------- Методи запису даних у класи для суперадмінської версії програми ---------------- */
+    /* ----------------  Основні методи для суперадмінської версії програми ---------------- */
 
     public ObservableList<Client> getClient() {
         ObservableList<Client> clients = FXCollections.observableArrayList();
@@ -607,6 +610,41 @@ public class MongoDatabaseConnection {
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
         return clients;
+    }
+
+    public void setReviews(){
+        superAdmin = superAdminHolder.getSuper();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> reviewsCollection = mongoDatabase.getCollection("reviews");
+            ObservableList<Review> reviews = FXCollections.observableArrayList();
+            List<Document> reviewsFromDB = reviewsCollection.find().into(new ArrayList<>());
+            for(Document reviewFromDB : reviewsFromDB){
+                Review review = new Review(
+                        reviewFromDB.getObjectId("_id"),
+                        reviewFromDB.getObjectId("hotel_id"),
+                        reviewFromDB.getString("hotel_name"),
+                        reviewFromDB.getInteger("client_id"),
+                        reviewFromDB.getString("client_first_name"),
+                        reviewFromDB.getString("client_email"),
+                        reviewFromDB.getString("review_text")
+                );
+                reviews.add(review);
+            }
+            superAdmin.setReviews(reviews);
+            superAdminHolder.setSuper(superAdmin);
+        }
+    }
+
+    public void deleteReview(Review review) {
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> reviewCollection = mongoDatabase.getCollection("reviews");
+            reviewCollection.deleteOne(new Document("_id", review.getID()));
+            setReviews();
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
     }
 
     /* ------------------------- Основні методи адміністраторської частини програми ----------------------------- */
