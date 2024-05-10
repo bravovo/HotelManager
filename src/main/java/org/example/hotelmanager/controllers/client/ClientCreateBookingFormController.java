@@ -21,13 +21,7 @@ import java.util.*;
 
 
 public class ClientCreateBookingFormController implements Initializable {
-    Client client = new Client();
-    ClientHolder clientHolder = ClientHolder.getInstance();
-    BookingHolder bookingHolder = BookingHolder.getInstance();
-    MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
-    RoomHolder roomHolder = RoomHolder.getInstance();
-    FormBuilder formBuilder = new FormBuilder();
-    ObservableList<Room> availableRooms = FXCollections.observableArrayList();
+    public Label availble_rooms_cnt;
     public Text message_on_scroll;
     public ScrollPane scroll_pane;
     public VBox create_booking_vbox;
@@ -43,7 +37,16 @@ public class ClientCreateBookingFormController implements Initializable {
     public Separator separator;
     public HBox available_rooms_hbox;
 
+    Client client = new Client();
+    ClientHolder clientHolder = ClientHolder.getInstance();
+    BookingHolder bookingHolder = BookingHolder.getInstance();
+    MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
+    RoomHolder roomHolder = RoomHolder.getInstance();
+    FormBuilder formBuilder = new FormBuilder();
+    ObservableList<Room> availableRooms = FXCollections.observableArrayList();
+
     public void initialize(URL url, ResourceBundle resourceBundle){
+        availble_rooms_cnt.setText("");
         message_on_scroll.toBack();
         available_rooms_hbox.getChildren().clear();
         scroll_pane.setStyle("-fx-background-color: transparent; -fx-border-width: 0px;");
@@ -184,6 +187,7 @@ public class ClientCreateBookingFormController implements Initializable {
             available_rooms_hbox.getChildren().add(vbox);
             roomVBoxMap.put(vbox, room);
         }
+        availble_rooms_cnt.setText(availableRooms.size() + " вільних кімнат");
     }
     private void resetEverything() {
         available_rooms_hbox.getChildren().clear();

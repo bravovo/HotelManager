@@ -4,6 +4,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
@@ -51,19 +52,23 @@
             </VBox>
          </VBox>
          <VBox alignment="CENTER" spacing="5.0">
-            <Separator fx:id="separator" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="500.0" />
+            <HBox alignment="CENTER" spacing="10.0">
+               <Separator fx:id="separator" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="500.0"/>
+               <Label fx:id="availble_rooms_cnt" text="Label"/>
+            </HBox>
             <AnchorPane style="-fx-background-color: white;">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
                <Text fx:id="message_on_scroll" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="500.0" AnchorPane.rightAnchor="500.0" />
-               <ScrollPane fx:id="scroll_pane" fitToHeight="true" fitToWidth="true" vbarPolicy="NEVER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                  <content>
-                     <HBox fx:id="available_rooms_hbox" alignment="CENTER_LEFT" prefHeight="300.0" prefWidth="1021.0" spacing="10.0" style="-fx-background-color: white;">
-                        <padding>
-                           <Insets left="10.0" />
-                        </padding></HBox>
-                  </content>
+               <ScrollPane fx:id="scroll_pane" fitToHeight="true" fitToWidth="true" vbarPolicy="NEVER"
+                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                  <HBox fx:id="available_rooms_hbox" alignment="CENTER_LEFT" prefHeight="300.0" prefWidth="1021.0"
+                        spacing="10.0" style="-fx-background-color: white;">
+                     <padding>
+                        <Insets left="10.0"/>
+                     </padding>
+                  </HBox>
                </ScrollPane>
             </AnchorPane>
             <padding>

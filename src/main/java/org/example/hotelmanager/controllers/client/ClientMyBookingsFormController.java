@@ -47,6 +47,7 @@ public class ClientMyBookingsFormController implements Initializable {
     public Separator separator;
     public ScrollPane scroll_pane;
     public HBox bookings_hbox;
+    public Label bookings_cnt;
     FormBuilder formBuilder = new FormBuilder();
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
     Booking bookingToEdit = new Booking();
@@ -240,5 +241,6 @@ public class ClientMyBookingsFormController implements Initializable {
         }
         edit_booking_btn.setDisable(true);
         delete_booking_btn.setDisable(true);
+        bookings_cnt.setText(bookings.size() + " бронювань");
     }
 }
