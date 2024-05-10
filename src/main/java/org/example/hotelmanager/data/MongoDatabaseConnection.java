@@ -1258,4 +1258,30 @@ public class MongoDatabaseConnection {
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
     }
+
+    public ObservableList<Review> getAllClientsReviews(Hotel hotelToFind) {
+        ObservableList<Review> allReviews = FXCollections.observableArrayList();
+        try(MongoClient mongoClient = MongoClients.create(dataCredentials.getUrl())){
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("HotelDataBase");
+            MongoCollection<Document> reviewCollection = mongoDatabase.getCollection("reviews");
+            List<Document> reviewsFromDB = reviewCollection.find(new Document(
+                    "hotel_id", hotelToFind.getHotel_id())).into(new ArrayList<>()
+            );
+            for(Document reviewFromDB : reviewsFromDB){
+                Review review = new Review(
+                        reviewFromDB.getObjectId("_id"),
+                        reviewFromDB.getObjectId("hotel_id"),
+                        reviewFromDB.getString("hotel_name"),
+                        reviewFromDB.getInteger("client_id"),
+                        reviewFromDB.getString("client_first_name"),
+                        reviewFromDB.getString("client_email"),
+                        reviewFromDB.getString("review_text")
+                );
+                allReviews.add(review);
+            }
+        }catch (Exception e){
+            formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+        }
+        return allReviews;
+    }
 }

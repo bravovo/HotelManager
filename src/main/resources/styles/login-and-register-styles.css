@@ -1,29 +1,8 @@
 .container-right{
-    /*-fx-background-color: #C5EAF7; -------- Синій*/
-    /*-fx-background-color: #D4DF90; -------- Зелений*/
-    /*-fx-background-color: #CAB6B1; -------- Кавовий*/
-    /*-fx-background-color: #FFCAAB; -------- Пустельний*/
-
     /* Мінімалізм */
     -fx-background-color: #E7E7E7FF;
 }
 .button {
-    /*-fx-background-color: #2183A6;*/
-    /*-fx-text-fill: #FFFFFF; ----- Синій*/
-    /*#E5F8FF*/
-
-    /*-fx-background-color: #87933C; ----- Зелений*/
-    /*-fx-text-fill: #ffffff;
-     #F1F6D1*/
-
-    /*-fx-background-color: #AB8077; ----- Кавовий*/
-    /*-fx-text-fill: #FFFFFF;*/
-    /*#F4EDEB*/
-
-    /*-fx-background-color: #8A3C0E; ----- Пустельний*/
-    /*-fx-text-fill: #FFFFFF;*/
-    /*#FEEEE5*/
-
     /* Мінімалізм */
     -fx-background-color: #FFFFFF;
     -fx-text-fill: #646464;

@@ -67,11 +67,11 @@
 }
 .review-form-label{
     -fx-text-fill: #646464;
+    -fx-font-weight: bold;
     -fx-font-size: 6px;
 }
 .review-text{
     -fx-text-fill: #646464;
-    -fx-font-weight: bold;
     -fx-font-size: 6px;
 }
 .review-delete-button{
@@ -96,6 +96,26 @@
     -fx-background-color: #000000;
 }
 .hotel-choice .label {
+    -fx-text-fill: #646464;
+    -fx-font-size: 14px;
+}
+
+.tab-pane {
+    -fx-border-width: 0;
+    -fx-focus-color: transparent;
+    -fx-background-color: #FFFFFF;
+}
+.tab {
+    -fx-focus-color: transparent;
+    -fx-background-color: #F0F0F0;
+    -fx-background-radius: 10px;
+    -fx-padding: 7px;
+}
+.tab:selected {
+    -fx-focus-color: transparent;
+    -fx-background-color: #FFFFFF;
+}
+.tab-label {
     -fx-text-fill: #646464;
     -fx-font-size: 14px;
 }

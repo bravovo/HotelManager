@@ -7,6 +7,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -14,52 +16,92 @@
 <?import javafx.scene.text.Text?>
 
 <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="750.0" prefWidth="600.0" stylesheets="@../../../../styles/client-reviews-styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.hotelmanager.controllers.client.ClientReviewsFormController">
-   <VBox prefHeight="750.0" prefWidth="1000.0">
-      <VBox alignment="CENTER" prefHeight="350.0" spacing="20.0">
-         <HBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" spacing="15.0" styleClass="create-review-form">
-            <VBox fx:id="review_vbox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefWidth="330.0" spacing="25.0">
-               <VBox fx:id="hotel_name_vbox" maxHeight="60.0" minHeight="35.0" prefWidth="200.0">
-                  <ChoiceBox fx:id="hotel_name_choice" styleClass="hotel-choice" />
-               </VBox>
-               <VBox fx:id="review_text_vbox" prefHeight="100.0">
-                  <HBox fx:id="review_labels_hbox" alignment="CENTER" spacing="170.0">
-                     <Label text="Текст відгука" />
-                  </HBox>
-                  <TextArea fx:id="review_area" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="200.0" />
-               </VBox>
+   <TabPane>
+      <Tab fx:id="make_reviews" closable="false" text="Зробити відгук">
+         <VBox prefWidth="1000.0">
+            <VBox alignment="CENTER" prefHeight="350.0" spacing="20.0">
+               <HBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" spacing="15.0" styleClass="create-review-form">
+                  <VBox fx:id="review_vbox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefWidth="330.0" spacing="25.0">
+                     <VBox fx:id="hotel_name_vbox" maxHeight="60.0" minHeight="35.0" prefWidth="200.0">
+                        <ChoiceBox fx:id="hotel_name_choice" styleClass="hotel-choice" />
+                     </VBox>
+                     <VBox fx:id="review_text_vbox" prefHeight="100.0">
+                        <HBox fx:id="review_labels_hbox" alignment="CENTER" spacing="170.0">
+                           <Label text="Текст відгука" />
+                        </HBox>
+                        <TextArea fx:id="review_area" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="200.0" />
+                     </VBox>
+                  </VBox>
+               </HBox>
+               <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="-Infinity" prefHeight="50.0" prefWidth="500.0" spacing="20.0">
+                  <padding>
+                     <Insets left="10.0" />
+                  </padding>
+                  <Button fx:id="save_review_btn" mnemonicParsing="false" onAction="#saveReviewButtonClick" prefHeight="47.0" prefWidth="191.0" text="Зберегти відгук">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </HBox>
             </VBox>
-         </HBox>
-         <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="-Infinity" prefHeight="50.0" prefWidth="500.0" spacing="20.0">
-            <padding>
-               <Insets left="10.0" />
-            </padding>
-            <Button fx:id="save_review_btn" mnemonicParsing="false" onAction="#saveReviewButtonClick" prefHeight="47.0" prefWidth="191.0" text="Зберегти відгук">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor></Button>
-         </HBox>
-      </VBox>
-      <VBox alignment="CENTER" prefHeight="382.0" prefWidth="1000.0" spacing="5.0">
-         <padding>
-            <Insets left="10.0" right="10.0" />
-         </padding>
-         <HBox alignment="CENTER_LEFT" spacing="120.0">
-            <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="your-reviews-label" text="Ваші відгуки">
-               <HBox.margin>
-                  <Insets left="15.0" />
-               </HBox.margin></Text>
-            <Separator fx:id="separator" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="500.0" />
-         </HBox>
-         <ScrollPane fx:id="scroll_pane" fitToHeight="true" fitToWidth="true" style="-fx-background-color: white;" vbarPolicy="NEVER">
-            <HBox fx:id="client_reviews_hbox" alignment="CENTER_LEFT" prefHeight="339.0" prefWidth="979.0" spacing="10.0" style="-fx-background-color: white;">
+            <VBox alignment="CENTER" prefWidth="1000.0" spacing="5.0">
                <padding>
                   <Insets left="10.0" right="10.0" />
                </padding>
-            </HBox>
-         </ScrollPane>
-      </VBox>
-      <padding>
-         <Insets top="20.0" />
-      </padding>
-   </VBox>
+               <HBox alignment="CENTER_LEFT" spacing="120.0">
+                  <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="your-reviews-label" text="Ваші відгуки">
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </Text>
+                  <HBox alignment="CENTER" spacing="10.0">
+                     <children>
+                        <Separator fx:id="separator" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="500.0" />
+                        <Label fx:id="reviews_cnt" text="Label" />
+                     </children>
+                  </HBox>
+               </HBox>
+               <ScrollPane fx:id="scroll_pane" fitToHeight="true" fitToWidth="true" style="-fx-background-color: white;" vbarPolicy="NEVER">
+                  <HBox fx:id="client_reviews_hbox" alignment="CENTER_LEFT" prefHeight="310.0" prefWidth="979.0" spacing="10.0" style="-fx-background-color: white;">
+                     <padding>
+                        <Insets left="10.0" right="10.0" />
+                     </padding>
+                  </HBox>
+               </ScrollPane>
+            </VBox>
+            <padding>
+               <Insets top="20.0" />
+            </padding>
+         </VBox>
+      </Tab>
+      <Tab fx:id="all_reviews" closable="false" text="Всі відгуки">
+         <VBox prefWidth="1000.0" spacing="15.0">
+            <padding>
+               <Insets top="20.0" />
+            </padding>
+            <VBox alignment="CENTER" prefHeight="100.0" spacing="20.0">
+               <ChoiceBox fx:id="hotel_name_see_all" styleClass="hotel-choice" />
+               <Button fx:id="find_reviews_btn" mnemonicParsing="false" onAction="#findReviewsButtonClick" prefHeight="47.0" prefWidth="191.0" text="Знайти відгуки">
+                  <cursor>
+                     <Cursor fx:constant="HAND" />
+                  </cursor>
+               </Button>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="580.0" prefWidth="1000.0" spacing="5.0">
+               <padding>
+                  <Insets left="10.0" right="10.0" />
+               </padding>
+               <HBox alignment="CENTER" spacing="10.0">
+                  <Separator fx:id="separator2" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="500.0" />
+                  <Label fx:id="all_reviews_cnt" text="Label" />
+               </HBox>
+               <AnchorPane prefHeight="575.0">
+                  <ScrollPane fx:id="scroll_pane2" fitToHeight="true" fitToWidth="true" style="-fx-background-color: white;" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white;" />
+                  </ScrollPane>
+               </AnchorPane>
+            </VBox>
+         </VBox>
+      </Tab>
+   </TabPane>
 </AnchorPane>

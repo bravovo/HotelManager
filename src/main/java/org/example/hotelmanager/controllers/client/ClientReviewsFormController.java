@@ -4,14 +4,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.*;
@@ -20,6 +17,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ClientReviewsFormController implements Initializable {
+    public Tab make_reviews;
     public VBox review_vbox;
     public VBox hotel_name_vbox;
     public ChoiceBox hotel_name_choice;
@@ -30,6 +28,14 @@ public class ClientReviewsFormController implements Initializable {
     public ScrollPane scroll_pane;
     public HBox client_reviews_hbox;
     public HBox review_labels_hbox;
+    public Label reviews_cnt;
+
+    public Tab all_reviews;
+    public ChoiceBox hotel_name_see_all;
+    public Button find_reviews_btn;
+    public Separator separator2;
+    public ScrollPane scroll_pane2;
+    public Label all_reviews_cnt;
 
     Client client = new Client();
     ClientHolder clientHolder =  ClientHolder.getInstance();
@@ -67,6 +73,8 @@ public class ClientReviewsFormController implements Initializable {
             hotelObservableList.add(hotel);
         }
         hotel_name_choice.setItems(hotelNames);
+        hotel_name_see_all.setItems(hotelNames);
+        hotel_name_see_all.setValue("Оберіть готель для відгуку");
         hotel_name_choice.setValue("Оберіть готель для відгуку");
         review_area.setText("");
         review_area.setWrapText(true);
@@ -109,6 +117,7 @@ public class ClientReviewsFormController implements Initializable {
             labelsVbox.setSpacing(12.5);
             labelsVbox.getChildren().addAll(
                     hotelNameLabel,
+                    new Separator(),
                     reviewText
             );
             Region spacerTop = new Region();
@@ -132,5 +141,55 @@ public class ClientReviewsFormController implements Initializable {
             mainVbox.setOnMouseExited(event -> mainVbox.setCursor(Cursor.DEFAULT));
             client_reviews_hbox.getChildren().add(mainVbox);
         }
+        reviews_cnt.setText(client.getReviews().size() + " відгуків");
+        all_reviews_cnt.setText("");
+    }
+
+    public void findReviewsButtonClick(ActionEvent actionEvent) {
+        if(hotel_name_see_all.getValue().equals("Оберіть готель для відгуку")){
+            FormBuilder formBuilder = new FormBuilder();
+            formBuilder.errorValidation("Готель повинен бути обраний");
+            return;
+        }
+        Hotel hotelToFind = hotelObservableList.get(hotelNames.indexOf(hotel_name_see_all.getValue()));
+        ObservableList<Review> hotelReviews = mongoDatabaseConnection.getAllClientsReviews(hotelToFind);
+
+        GridPane gridPane = new GridPane();
+        gridPane.setStyle("-fx-background-color: #ffffff");
+        gridPane.setHgap(20);
+        gridPane.setVgap(20);
+        gridPane.setPadding(new Insets(20.0));
+        gridPane.setAlignment(Pos.CENTER);
+
+        for(int i = 0; i < hotelReviews.size(); i++){
+            Review review = hotelReviews.get(i);
+            VBox reviewVbox = new VBox();
+            reviewVbox.setMaxWidth(250);
+            reviewVbox.setMaxHeight(250);
+            reviewVbox.setMinSize(250, 250);
+            reviewVbox.setSpacing(10);
+            reviewVbox.setPadding(new Insets(10.0));
+
+            Label reviewClientName = new Label(
+                    review.getClientName().equals(client.getFirstName()) ? "Ви" : review.getClientName()
+            );
+            Label reviewText = new Label(review.getReviewText());
+            reviewText.setWrapText(true);
+
+            // Стилі маленьких форм відгуків
+            reviewVbox.getStyleClass().add("review-form");
+            reviewClientName.getStyleClass().add("review-form-label");
+            reviewText.getStyleClass().add("review-text");
+
+            reviewVbox.getChildren().addAll(
+                    reviewClientName,
+                    new Separator(),
+                    reviewText
+            );
+
+            gridPane.add(reviewVbox, i % 3, i / 3);
+        }
+        scroll_pane2.setContent(gridPane);
+        all_reviews_cnt.setText(hotelReviews.size() + " відгуків");
     }
 }
