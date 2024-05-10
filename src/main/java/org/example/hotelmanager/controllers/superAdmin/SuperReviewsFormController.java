@@ -79,9 +79,9 @@ public class SuperReviewsFormController implements Initializable {
             Label reviewTitle = new Label(review.getClientName() + " про готель " + review.getHotelName() + ":");
             reviewTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
 
-            Text reviewText = new Text(review.getReviewText());
+            Label reviewText = new Label(review.getReviewText());
             reviewText.setStyle("-fx-font-size: 14px");
-            reviewText.setWrappingWidth(230);
+            reviewText.setWrapText(true);
 
             reviewVbox.getChildren().addAll(
                     reviewTitle,
@@ -97,7 +97,6 @@ public class SuperReviewsFormController implements Initializable {
             reviewVbox.setStyle("-fx-border-color: grey; -fx-border-width: 1px; -fx-border-radius: 10px");
 
             gridPane.add(reviewVbox, i % 3, i / 3);
-            gridPane.setAlignment(Pos.CENTER);
         }
         reviews_scroll_pane.setContent(gridPane);
     }
