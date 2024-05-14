@@ -42,7 +42,7 @@ public class AdminGuestsFormController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle){
         setGuestTable();
         ObservableList<String> items = FXCollections.observableArrayList(
-                "ID", "Ім'я", "Прізвище", "Номер кімнати", "Номер телефону", "Email", "Загальна вартість"
+                "Ім'я", "Прізвище", "Номер кімнати", "Номер телефону", "Email", "Загальна вартість"
         );
         filter_choice.setItems(items);
         filter_choice.setValue("Фільтр для пошуку");
@@ -113,19 +113,6 @@ public class AdminGuestsFormController implements Initializable {
             return;
         }
         switch (filter_choice.getValue().toString()){
-            case "ID" -> {
-                int id = 0;
-                try{
-                    id = Integer.parseInt(find_input.getText());
-                    filter = "ID";
-                    value = String.valueOf(id);
-                }catch (Exception e){
-                    formBuilder.errorValidation("ID повинен бути числом!");
-                    find_input.setText("");
-                    return;
-                }
-                guestList = findGuestsByFilterAndValue(filter, value);
-            }
             case "Ім'я" -> {
                 String firstName = find_input.getText();
                 filter = "Ім'я";
@@ -190,12 +177,6 @@ public class AdminGuestsFormController implements Initializable {
         ObservableList<Guest> guests = FXCollections.observableArrayList();
         for(Guest guestToFind : hotel.getGuests()){
             switch (filter){
-                case "ID" -> {
-                    int id = Integer.parseInt(value);
-                    if(guestToFind.getGuestID() == id){
-                        guests.add(guestToFind);
-                    }
-                }
                 case "Ім'я" -> {
                     String firstName = value;
                     if(guestToFind.getFirstName().equals(firstName)){

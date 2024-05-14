@@ -8,7 +8,7 @@ public class Booking {
     private ObjectId bookingID;
     private ObjectId hotelID;
     private ObjectId roomID;
-    private int guestID;
+    private ObjectId guestID;
     private String guestFirstName;
     private String guestSecondName;
     private String guestPhoneNumber;
@@ -40,7 +40,7 @@ public class Booking {
     public Booking(ObjectId bookingID,
                    ObjectId hotelID,
                    ObjectId roomID,
-                   int guestID,
+                   ObjectId guestID,
                    String guestFirstName,
                    String guestSecondName,
                    String guestPhoneNumber,
@@ -260,7 +260,7 @@ public class Booking {
     public ObjectId getRoomID() {
         return roomID;
     }
-    public int getGuestID() {
+    public ObjectId getGuestID() {
         return guestID;
     }
     public int getRoomNumber() {

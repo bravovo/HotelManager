@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.model.*;
 
@@ -39,13 +40,6 @@ public class MongoDatabaseConnection {
             if(clientCollection.find(new Document("client_email", clientEmail)).first() != null){
                 return false;
             }
-            Document sortedByIDClients = clientCollection.find().sort(Sorts.ascending("client_id")).first();
-            int clientID = 0;
-            if(sortedByIDClients != null){
-                clientID = sortedByIDClients.getInteger("client_id");
-                clientID -= 1;
-            }
-            newClient.append("client_id", clientID);
             newClient.append("firstname", firstName);
             newClient.append("lastname", lastName);
             newClient.append("client_email", clientEmail);
@@ -53,12 +47,14 @@ public class MongoDatabaseConnection {
             newClient.append("dateOfBirth", dateOfBirth);
             newClient.append("password", passwordHashing(clientPassword));
             clientCollection.insertOne(newClient);
-            client = new Client(clientID, firstName, lastName, clientEmail, clientPhoneNumber, dateOfBirth);
+            client = new Client(newClient.getObjectId("_id"), firstName, lastName, clientEmail, clientPhoneNumber, dateOfBirth);
+            clientHolder.setUser(client);
             setRoomTypes();
             client.setHotels(getHotels());
             clientHolder.setUser(client);
         }catch(Exception e){
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+            e.printStackTrace();
         }
         return true;
     }
@@ -124,7 +120,7 @@ public class MongoDatabaseConnection {
 
                         for(Document clientFromDB : clientFindIterable){
                             Client clientToList = new Client(
-                                    clientFromDB.getInteger("client_id"),
+                                    clientFromDB.getObjectId("_id"),
                                     clientFromDB.getString("firstname"),
                                     clientFromDB.getString("lastname"),
                                     clientFromDB.getString("client_email"),
@@ -183,7 +179,7 @@ public class MongoDatabaseConnection {
             if(findClient != null){
                 if(checkingPasswordHash(password, findClient.getString("password"))){
                     this.client = new Client(
-                            findClient.getInteger("client_id"),
+                            findClient.getObjectId("_id"),
                             findClient.getString("firstname"),
                             findClient.getString("lastname"),
                             findClient.getString("client_email"),
@@ -233,7 +229,7 @@ public class MongoDatabaseConnection {
                         bookingDoc.getObjectId("_id"),
                         hotel.getHotel_id(),
                         bookingDoc.getObjectId("room_id"),
-                        bookingDoc.getInteger("client_id"),
+                        bookingDoc.getObjectId("client_id"),
                         bookingDoc.getString("guest_first_name"),
                         bookingDoc.getString("guest_second_name"),
                         bookingDoc.getString("guest_phone_number"),
@@ -414,7 +410,7 @@ public class MongoDatabaseConnection {
             for(Document bookingDoc : bookingDocs){
                 boolean foundEqual = false;
                 Guest guest = new Guest(
-                        bookingDoc.getInteger("client_id"),
+                        bookingDoc.getObjectId("client_id"),
                         hotel.getHotel_id().toHexString(),
                         bookingDoc.getInteger("room_number"),
                         bookingDoc.getString("guest_first_name"),
@@ -456,7 +452,7 @@ public class MongoDatabaseConnection {
                         reviewFromDB.getObjectId("_id"),
                         reviewFromDB.getObjectId("hotel_id"),
                         reviewFromDB.getString("hotel_name"),
-                        reviewFromDB.getInteger("client_id"),
+                        reviewFromDB.getObjectId("client_id"),
                         reviewFromDB.getString("client_first_name"),
                         reviewFromDB.getString("client_email"),
                         reviewFromDB.getString("review_text")
@@ -536,7 +532,7 @@ public class MongoDatabaseConnection {
                         reviewFromDB.getObjectId("_id"),
                         reviewFromDB.getObjectId("hotel_id"),
                         reviewFromDB.getString("hotel_name"),
-                        reviewFromDB.getInteger("client_id"),
+                        reviewFromDB.getObjectId("client_id"),
                         reviewFromDB.getString("client_first_name"),
                         reviewFromDB.getString("client_email"),
                         reviewFromDB.getString("review_text")
@@ -561,7 +557,7 @@ public class MongoDatabaseConnection {
                         bookingDoc.getObjectId("_id"),
                         bookingDoc.getObjectId("hotel_id"),
                         bookingDoc.getObjectId("room_id"),
-                        bookingDoc.getInteger("client_id"),
+                        bookingDoc.getObjectId("client_id"),
                         bookingDoc.getString("guest_first_name"),
                         bookingDoc.getString("guest_second_name"),
                         bookingDoc.getString("guest_phone_number"),
@@ -580,6 +576,7 @@ public class MongoDatabaseConnection {
             }
         }catch (Exception e){
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
+            e.printStackTrace();
         }
         return bookings;
     }
@@ -594,7 +591,7 @@ public class MongoDatabaseConnection {
             List<Document> clientDocs = hotelCollection.find().into(new ArrayList<>());
             for(Document clientDoc : clientDocs){
                 Client client = new Client(
-                        clientDoc.getInteger("client_id"),
+                        clientDoc.getObjectId("_id"),
                         clientDoc.getString("firstname"),
                         clientDoc.getString("lastname"),
                         clientDoc.getString("client_email"),
@@ -624,7 +621,7 @@ public class MongoDatabaseConnection {
                         reviewFromDB.getObjectId("_id"),
                         reviewFromDB.getObjectId("hotel_id"),
                         reviewFromDB.getString("hotel_name"),
-                        reviewFromDB.getInteger("client_id"),
+                        reviewFromDB.getObjectId("client_id"),
                         reviewFromDB.getString("client_first_name"),
                         reviewFromDB.getString("client_email"),
                         reviewFromDB.getString("review_text")
@@ -1192,7 +1189,7 @@ public class MongoDatabaseConnection {
             FindIterable<Document> findEqualEmails = clientCollection.find(new Document("client_email", editedClient.getEmail()));
             for (Document document : findEqualEmails) {
                 if(document.getString("client_email").equals(editedClient.getEmail())
-                        && document.getInteger("client_id") != editedClient.getClientID()){
+                        && document.getObjectId("client_id") != editedClient.getClientID()){
                     return false;
                 }
             }
@@ -1219,7 +1216,7 @@ public class MongoDatabaseConnection {
             MongoCollection<Document> clientCollection = mongoDatabase.getCollection("clients");
             MongoCollection<Document> bookingCollection = mongoDatabase.getCollection("bookings");
             bookingCollection.deleteMany(new Document("client_id", client.getClientID()));
-            clientCollection.deleteOne(new Document("client_id", client.getClientID()));
+            clientCollection.deleteOne(new Document("_id", client.getClientID()));
         }catch (Exception e){
             formBuilder.errorValidation("Помилка з'єднання. Спробуйте ще раз.");
         }
@@ -1272,7 +1269,7 @@ public class MongoDatabaseConnection {
                         reviewFromDB.getObjectId("_id"),
                         reviewFromDB.getObjectId("hotel_id"),
                         reviewFromDB.getString("hotel_name"),
-                        reviewFromDB.getInteger("client_id"),
+                        reviewFromDB.getObjectId("client_id"),
                         reviewFromDB.getString("client_first_name"),
                         reviewFromDB.getString("client_email"),
                         reviewFromDB.getString("review_text")

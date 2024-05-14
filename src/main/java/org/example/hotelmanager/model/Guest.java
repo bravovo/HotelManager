@@ -1,7 +1,9 @@
 package org.example.hotelmanager.model;
 
+import org.bson.types.ObjectId;
+
 public class Guest {
-    private int guestID;
+    private ObjectId guestID;
     private String hotelID;
     private int roomNumber;
     private String firstName;
@@ -10,7 +12,7 @@ public class Guest {
     private String phoneNumber;
     private double totalPrice;
 
-    public Guest(int guestID,
+    public Guest(ObjectId guestID,
                  String hotelID,
                  int roomNumber,
                  String firstName,
@@ -33,7 +35,7 @@ public class Guest {
 
     }
 
-    public int getGuestID() {
+    public ObjectId getGuestID() {
         return guestID;
     }
     public String getHotelID() {

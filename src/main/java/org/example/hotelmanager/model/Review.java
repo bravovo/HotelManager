@@ -6,14 +6,14 @@ public class Review {
     private ObjectId ID;
     private ObjectId hotelID;
     private String hotelName;
-    private int clientID;
+    private ObjectId clientID;
     private String clientName;
     private String clientEmail;
     private String reviewText;
 
     public Review(){}
 
-    public Review(ObjectId ID, ObjectId hotelID, String hotelName, int clientID, String clientName, String clientEmail, String reviewText) {
+    public Review(ObjectId ID, ObjectId hotelID, String hotelName, ObjectId clientID, String clientName, String clientEmail, String reviewText) {
         this.ID = ID;
         this.hotelID = hotelID;
         this.hotelName = hotelName;
@@ -48,11 +48,11 @@ public class Review {
     }
 
 
-    public int getClientID() {
+    public ObjectId getClientID() {
         return clientID;
     }
 
-    public void setClientID(int clientID) {
+    public void setClientID(ObjectId clientID) {
         this.clientID = clientID;
     }
 

@@ -64,6 +64,7 @@ public class SuperClientFormController implements Initializable {
     }
 
     private void setClientsTable() {
+        superAdmin = superAdminHolder.getSuper();
         find_input.setText("");
         client_id.setCellValueFactory(new PropertyValueFactory<>("clientID"));
         client_first_name.setCellValueFactory(new PropertyValueFactory<>("firstName"));

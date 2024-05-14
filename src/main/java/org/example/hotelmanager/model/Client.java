@@ -2,13 +2,12 @@ package org.example.hotelmanager.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.bson.types.ObjectId;
 
-import javax.swing.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Client {
-    private int clientID;
+    private ObjectId clientID;
     private String firstName;
     private String lastName;
     private String email;
@@ -21,7 +20,7 @@ public class Client {
     public Client() {
 
     }
-    public Client(int clientID,
+    public Client(ObjectId clientID,
                   String firstName,
                   String lastName,
                   String email,
@@ -41,7 +40,7 @@ public class Client {
     public void setHotels(ObservableList<Hotel> hotels) {
         this.hotels = hotels;
     }
-    public int getClientID() {
+    public ObjectId getClientID() {
         return clientID;
     }
     public String getFirstName() {
