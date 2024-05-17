@@ -1,5 +1,4 @@
 package org.example.hotelmanager.controllers.client;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -12,14 +11,10 @@ import javafx.scene.text.Text;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.*;
-
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-
-
 public class ClientCreateBookingFormController implements Initializable {
     public Label availble_rooms_cnt;
     public Text message_on_scroll;
@@ -36,7 +31,6 @@ public class ClientCreateBookingFormController implements Initializable {
     public Button create_booking_btn;
     public Separator separator;
     public HBox available_rooms_hbox;
-
     Client client = new Client();
     ClientHolder clientHolder = ClientHolder.getInstance();
     BookingHolder bookingHolder = BookingHolder.getInstance();
@@ -44,7 +38,6 @@ public class ClientCreateBookingFormController implements Initializable {
     RoomHolder roomHolder = RoomHolder.getInstance();
     FormBuilder formBuilder = new FormBuilder();
     ObservableList<Room> availableRooms = FXCollections.observableArrayList();
-
     public void initialize(URL url, ResourceBundle resourceBundle){
         availble_rooms_cnt.setText("");
         message_on_scroll.toBack();
@@ -57,7 +50,6 @@ public class ClientCreateBookingFormController implements Initializable {
             }
         });
     }
-
     public void createBookingButtonClick(javafx.event.ActionEvent e){
         available_rooms_hbox.getChildren().clear();
         client = clientHolder.getUser();
@@ -151,7 +143,6 @@ public class ClientCreateBookingFormController implements Initializable {
                     roomTypeDescription,
                     createBookingButton
             );
-
             // Стилі маленьких форм вільних кімнат
             createBookingButton.setCursor(Cursor.HAND);
             vbox.getStyleClass().add("room-form");
@@ -162,7 +153,6 @@ public class ClientCreateBookingFormController implements Initializable {
             roomTypeDescription.getStyleClass().add("room-form-label");
             createBookingButton.getStyleClass().add("room-form-button");
             vbox.setOnMouseEntered(event -> vbox.setCursor(Cursor.HAND));
-
             if(roomVBoxMap.size() >= 4){
                 scroll_pane.setFitToHeight(false);
             }
@@ -190,6 +180,7 @@ public class ClientCreateBookingFormController implements Initializable {
         availble_rooms_cnt.setText(availableRooms.size() + " вільних кімнат");
     }
     private void resetEverything() {
+        availble_rooms_cnt.setText("");
         available_rooms_hbox.getChildren().clear();
         checkIN_picker.setValue(null);
         checkOUT_picker.setValue(null);

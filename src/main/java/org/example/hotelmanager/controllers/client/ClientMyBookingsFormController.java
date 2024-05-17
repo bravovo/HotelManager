@@ -1,5 +1,4 @@
 package org.example.hotelmanager.controllers.client;
-
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,7 +12,6 @@ import javafx.scene.text.Text;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.*;
-
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -22,9 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
-
 public class ClientMyBookingsFormController implements Initializable {
-
     public Label your_bookings_text;
     public VBox edit_booking_1;
     public VBox hotel_name_vbox;
@@ -116,7 +112,6 @@ public class ClientMyBookingsFormController implements Initializable {
         bookingToEdit.setCheckIN_date(checkIN_picker.getValue());
         bookingToEdit.setCheckOUT_date(checkOUT_picker.getValue());
         bookingToEdit.setPeopleCount(Integer.parseInt(people_count_field.getText()));
-
         long nightPeriod = ChronoUnit.DAYS.between(checkIN_picker.getValue(), checkOUT_picker.getValue());
         bookingToEdit.setNightCount(nightPeriod);
         bookingHolder.setBooking(bookingToEdit);
@@ -135,7 +130,6 @@ public class ClientMyBookingsFormController implements Initializable {
             bookingHolder.setBookingDone(false);
         }
     }
-
     public void deleteBookingButtonClick(ActionEvent event) throws IOException {
         formBuilder.openDialog("confirming-booking-dialog-form.fxml", "Видалити бронювання", 300, 200);
         if(bookingHolder.getBookingDone()) {
@@ -149,7 +143,6 @@ public class ClientMyBookingsFormController implements Initializable {
         checkIN_picker.valueProperty().addListener(changeListenerForDate);
         checkOUT_picker.valueProperty().addListener(changeListenerForDate);
         bookings_hbox.getChildren().clear();
-
         hotel_name.setText("");
         room_number.setText("");
         total_price.setText("");
@@ -157,10 +150,8 @@ public class ClientMyBookingsFormController implements Initializable {
         checkOUT_picker.setValue(null);
         people_count_field.setText("");
         notes_area.setText("");
-
         bookings = mongoDatabaseConnection.getClientBookings();
         hotels = mongoDatabaseConnection.getHotels();
-
         if(bookings.size() != 0){
             for(Booking booking : bookings){
                 String hotelName = "";
@@ -174,7 +165,6 @@ public class ClientMyBookingsFormController implements Initializable {
                 Label checkOUT = new Label("Дата виїзду: " + booking.getCheckOUT_date());
                 Label peopleCountLabel = new Label("Кількість людей: " + booking.getPeopleCount());
                 Label totalPrice = new Label("Загальна вартість проживання:\n" + booking.getTotalPrice());
-
                 VBox vbox = new VBox();
                 double prefWidth = 250;
                 double prefHeight = 200;
@@ -190,7 +180,6 @@ public class ClientMyBookingsFormController implements Initializable {
                         peopleCountLabel,
                         totalPrice
                 );
-
                 // Стилі маленьких форм бронювань
                 vbox.getStyleClass().add("booking-form");
                 hotelNameLabel.getStyleClass().add("booking-form-label");

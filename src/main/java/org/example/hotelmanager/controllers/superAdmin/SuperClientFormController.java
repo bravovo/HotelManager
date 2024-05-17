@@ -1,5 +1,4 @@
 package org.example.hotelmanager.controllers.superAdmin;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -11,15 +10,12 @@ import javafx.scene.layout.VBox;
 import org.example.hotelmanager.FormBuilder;
 import org.example.hotelmanager.data.MongoDatabaseConnection;
 import org.example.hotelmanager.model.*;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 public class SuperClientFormController implements Initializable {
     SuperAdmin superAdmin = new SuperAdmin();
     SuperAdminHolder superAdminHolder = SuperAdminHolder.getInstance();
-    Client client = new Client();
     ClientHolder clientHolder = ClientHolder.getInstance();
     FormBuilder formBuilder = new FormBuilder();
     MongoDatabaseConnection mongoDatabaseConnection = new MongoDatabaseConnection();
@@ -39,7 +35,6 @@ public class SuperClientFormController implements Initializable {
     public TableColumn client_email;
     public TableColumn client_phone_number;
     public TableColumn client_date_of_birth;
-
     public void initialize(URL url, ResourceBundle resourceBundle) {
         superAdmin = superAdminHolder.getSuper();
         setClientsTable();
@@ -62,7 +57,6 @@ public class SuperClientFormController implements Initializable {
             }
         });
     }
-
     private void setClientsTable() {
         superAdmin = superAdminHolder.getSuper();
         find_input.setText("");
@@ -74,10 +68,8 @@ public class SuperClientFormController implements Initializable {
         client_date_of_birth.setCellValueFactory(new PropertyValueFactory<>("dateOfBirth"));
         ObservableList<Client> clients = superAdmin.getClients();
         client_table.setItems(clients);
-
         clients_cnt.setText(String.valueOf(clients.size()));
     }
-
     public void setClientTable(ObservableList<Client> clients){
         client_id.setCellValueFactory(new PropertyValueFactory<>("clientID"));
         client_first_name.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -87,7 +79,6 @@ public class SuperClientFormController implements Initializable {
         client_date_of_birth.setCellValueFactory(new PropertyValueFactory<>("dateOfBirth"));
         client_table.setItems(clients);
     }
-
     public void findClientButtonClick(ActionEvent actionEvent) {
         if(find_client_btn.isSelected()){
             AnchorPane.setTopAnchor(client_table, 80.0);
@@ -142,7 +133,6 @@ public class SuperClientFormController implements Initializable {
         }
         setClientTable(clientList);
     }
-
     private ObservableList<Client> findClientsByFilterAndValue(String filter, String value) {
         ObservableList<Client> clients = FXCollections.observableArrayList();
         for(Client clientFromList : superAdmin.getClients()){
@@ -171,7 +161,6 @@ public class SuperClientFormController implements Initializable {
         }
         return clients;
     }
-
     public void resetTableButtonClick(ActionEvent actionEvent) {
         setClientsTable();
     }

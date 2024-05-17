@@ -1,5 +1,4 @@
 package org.example.hotelmanager;
-
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,9 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-
 public class FormBuilder {
     private FXMLLoader fxmlLoader;
     private Scene scene;
@@ -47,10 +44,8 @@ public class FormBuilder {
         VBox vBox = new VBox();
         Label errorLabel = new Label();
         Button okButton = new Button();
-
         errorLabel.setText(errorText);
         errorLabel.setAlignment(Pos.CENTER);
-
         okButton.setText("OK");
         okButton.setPrefWidth(70);
         okButton.setPrefHeight(30);
@@ -58,12 +53,10 @@ public class FormBuilder {
             Stage stage = (Stage) okButton.getScene().getWindow();
             stage.close();
         });
-
         vBox.getChildren().addAll(errorLabel, okButton);
         vBox.setSpacing(50);
         vBox.setPadding(new Insets(30));
         vBox.setAlignment(Pos.CENTER);
-
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.APPLICATION_MODAL);
         Scene scene = new Scene(vBox);
